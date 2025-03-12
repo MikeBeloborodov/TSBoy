@@ -221,3 +221,58 @@ export const OriginalNintendoLogo = Buffer.from([
   0x6e, 0xe6, 0xdd, 0xdd, 0xd9, 0x99, 0xbb, 0xbb, 0x67, 0x63, 0x6e, 0x0e, 0xec,
   0xcc, 0xdd, 0xdc, 0x99, 0x9f, 0xbb, 0xb9, 0x33, 0x3e,
 ]);
+
+export const CartridgeTypes: { [key: number]: string } = {
+  0x00: 'ROM ONLY',
+  0x01: 'MBC1',
+  0x02: 'MBC1+RAM',
+  0x03: 'MBC1+RAM+BATTERY',
+  0x05: 'MBC2',
+  0x06: 'MBC2+BATTERY',
+  0x08: 'ROM+RAM',
+  0x09: 'ROM+RAM+BATTERY',
+  0x0b: 'MMM01',
+  0x0c: 'MMM01+RAM',
+  0x0d: 'MMM01+RAM+BATTERY',
+  0x0f: 'MBC3+TIMER+BATTERY',
+  0x10: 'MBC3+TIMER+RAM+BATTERY',
+  0x11: 'MBC3',
+  0x12: 'MBC3+RAM',
+  0x13: 'MBC3+RAM+BATTERY',
+  0x19: 'MBC5',
+  0x1a: 'MBC5+RAM',
+  0x1b: 'MBC5+RAM+BATTERY',
+  0x1c: 'MBC5+RUMBLE',
+  0x1d: 'MBC5+RUMBLE+RAM',
+  0x1e: 'MBC5+RUMBLE+RAM+BATTERY',
+  0x20: 'MBC6',
+  0x22: 'MBC7+SENSOR+RUMBLE+RAM+BATTERY',
+  0xfc: 'POCKET CAMERA',
+  0xfd: 'BANDAI TAMA5',
+  0xfe: 'HuC3',
+  0xff: 'HuC1+RAM+BATTERY',
+};
+
+export const ROMSizes: { [key: number]: string } = {
+  0x00: '32 KiB',
+  0x01: '64 KiB',
+  0x02: '128 KiB',
+  0x03: '256 KiB',
+  0x04: '512 KiB',
+  0x05: '1 MiB',
+  0x06: '2 MiB',
+  0x07: '4 MiB',
+  0x08: '8 MiB',
+  0x52: '1.1 MiB',
+  0x53: '1.2 MiB',
+  0x54: '1.5 MiB',
+};
+
+export const RAMSizes: { [key: number]: string } = {
+  0x00: '0 No RAM',
+  0x01: '– Unused',
+  0x02: '8 KiB 1 bank',
+  0x03: '32 KiB 4 banks of 8 KiB each',
+  0x04: '128 KiB 16 banks of 8 KiB each',
+  0x05: '64 KiB 8 banks of 8 KiB each',
+};

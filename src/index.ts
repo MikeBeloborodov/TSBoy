@@ -3,6 +3,9 @@ import {
   NewNintendoLicenseeCodes,
   OldNintendoLicenseeCodes,
   OriginalNintendoLogo,
+  CartridgeTypes,
+  ROMSizes,
+  RAMSizes,
 } from './misc';
 
 const folder = './roms/';
@@ -12,6 +15,7 @@ const files = [
   'Mortal Kombat (USA, Europe).gb',
   "Legend of Zelda, The - Link's Awakening (U) (V1.2) [!].gb",
   "Tony Hawk's Pro Skater 3 (USA, Europe).gbc",
+  'Donkey Kong (JU) (V1.1) [S][!].gb',
 ];
 
 files.forEach((fileName) => {
@@ -51,11 +55,50 @@ function parseCartridgeHeader(file: Buffer): void {
       newLicenseeCodeAddess,
       newLicenseeCodeAddess + 2
     );
+    console.log('New cartridge:', true);
     console.log(
       'Licensee:',
       NewNintendoLicenseeCodes[newLicenseeCode.toString('ascii')]
     );
   } else {
+    console.log('New cartridge:', false);
     console.log('Licensee:', OldNintendoLicenseeCodes[oldLicenseeCode]);
   }
+
+  const sgbFlagAddress = 0x146;
+  console.log('SGB flag:', file[sgbFlagAddress] === 0x03 ? true : false);
+
+  const cartridgeTypeAddress = 0x147;
+  console.log('Cartridge type:', CartridgeTypes[file[cartridgeTypeAddress]]);
+
+  const romSizeAddress = 0x148;
+  console.log('ROM size:', ROMSizes[file[romSizeAddress]]);
+
+  const ramSizeAddress = 0x149;
+  console.log('RAM size:', RAMSizes[file[ramSizeAddress]]);
+
+  const destCodeAddress = 0x14a;
+  console.log(
+    'Destination:',
+    file[destCodeAddress] === 0x00 ? 'Japan' : 'Overseas only'
+  );
+
+  const maskROMAddress = 0x14c;
+  console.log('Mask ROM version number:', file[maskROMAddress]);
+
+  const headerChecksumAddress = 0x14d;
+  console.log(
+    'Header checksum valid:',
+    file[headerChecksumAddress].toString(16) ===
+      headerChecksum(file).toString(16)
+  );
+}
+
+function headerChecksum(file: Buffer) {
+  let checksum = 0;
+  for (let address = 0x0134; address <= 0x014c; address++) {
+    checksum = (checksum - file[address] - 1) & 0xff;
+  }
+
+  return checksum;
 }
