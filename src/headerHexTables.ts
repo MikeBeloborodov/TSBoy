@@ -1,4 +1,6 @@
-export const NewNintendoLicenseeCodes: { [key: string]: string } = {
+import { CodeTable, HexTable } from './types';
+
+export const NewNintendoLicenseeCodes: CodeTable = {
   '00': 'None',
   '01': 'Nintendo Research & Development',
   '08': 'Capcom',
@@ -65,7 +67,7 @@ export const NewNintendoLicenseeCodes: { [key: string]: string } = {
   DK: 'Kodansha',
 };
 
-export const OldNintendoLicenseeCodes: { [key: number]: string } = {
+export const OldNintendoLicenseeCodes: HexTable = {
   0x00: 'None',
   0x01: 'Nintendo',
   0x08: 'Capcom',
@@ -215,14 +217,14 @@ export const OldNintendoLicenseeCodes: { [key: number]: string } = {
   0xff: 'LJN',
 };
 
-export const OriginalNintendoLogo = Buffer.from([
+export const OriginalNintendoLogo: Buffer = Buffer.from([
   0xce, 0xed, 0x66, 0x66, 0xcc, 0x0d, 0x00, 0x0b, 0x03, 0x73, 0x00, 0x83, 0x00,
   0x0c, 0x00, 0x0d, 0x00, 0x08, 0x11, 0x1f, 0x88, 0x89, 0x00, 0x0e, 0xdc, 0xcc,
   0x6e, 0xe6, 0xdd, 0xdd, 0xd9, 0x99, 0xbb, 0xbb, 0x67, 0x63, 0x6e, 0x0e, 0xec,
   0xcc, 0xdd, 0xdc, 0x99, 0x9f, 0xbb, 0xb9, 0x33, 0x3e,
 ]);
 
-export const CartridgeTypes: { [key: number]: string } = {
+export const CartridgeTypes: HexTable = {
   0x00: 'ROM ONLY',
   0x01: 'MBC1',
   0x02: 'MBC1+RAM',
@@ -253,7 +255,7 @@ export const CartridgeTypes: { [key: number]: string } = {
   0xff: 'HuC1+RAM+BATTERY',
 };
 
-export const ROMSizes: { [key: number]: string } = {
+export const ROMSizes: HexTable = {
   0x00: '32 KiB',
   0x01: '64 KiB',
   0x02: '128 KiB',
@@ -268,7 +270,7 @@ export const ROMSizes: { [key: number]: string } = {
   0x54: '1.5 MiB',
 };
 
-export const RAMSizes: { [key: number]: string } = {
+export const RAMSizes: HexTable = {
   0x00: '0 No RAM',
   0x01: '– Unused',
   0x02: '8 KiB 1 bank',
