@@ -6,7 +6,7 @@ import {
   RAMSizes,
   ROMSizes,
 } from './headerHexTables';
-import { Logger } from './types';
+import { HeaderInfo } from './types';
 
 export class CartridgeHeaderParser {
   private isNintendoLogo: boolean;
@@ -36,21 +36,19 @@ export class CartridgeHeaderParser {
     this.isChecksumValid = romFile[0x14d] === this.calculateChecksum(romFile);
   }
 
-  outputParsedInfo(logger: Logger): void {
-    logger.log(
-      JSON.stringify({
-        Title: this.title,
-        'Nintendo logo': this.isNintendoLogo,
-        Licensee: this.licensee,
-        'SGB flag': this.isSGB,
-        'Cartridge type': this.cartridgeType,
-        'ROM size': this.romSize,
-        'RAM size': this.ramSize,
-        Destination: this.destination,
-        'Mask ROM version': this.maskRom,
-        'Checksum valid': this.isChecksumValid,
-      })
-    );
+  getHeaderInfo(): HeaderInfo {
+    return {
+      isNintendoLogo: this.isNintendoLogo,
+      title: this.title,
+      licensee: this.licensee,
+      isSGB: this.isSGB,
+      cartridgeType: this.cartridgeType,
+      romSize: this.romSize,
+      ramSize: this.ramSize,
+      destination: this.destination,
+      maskRom: this.maskRom,
+      isChecksumValid: this.isChecksumValid,
+    };
   }
 
   private checkNintendoLogo(romFile: Buffer): boolean {
