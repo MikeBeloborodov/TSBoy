@@ -19,3 +19,18 @@ export type MockRom = {
   description: string;
   headerContents: HeaderInfo;
 };
+
+export type u8 = number;
+export type u16 = number;
+export type CombinedRegister = 'af' | 'bc' | 'de' | 'hl';
+
+export type Registers = {
+  a: u8;
+  b: u8;
+  c: u8;
+  d: u8;
+  e: u8;
+  f: u8;
+  h: u8;
+  l: u8;
+};
