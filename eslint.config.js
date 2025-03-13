@@ -6,7 +6,7 @@ import globals from 'globals';
 
 export default [
   {
-    files: ['**/*.ts'], // Apply to all TypeScript files
+    files: ['**/*.ts', '**/*.test.ts'], // Apply to all TypeScript files
     languageOptions: {
       parser: tsParser,
       ecmaVersion: 'latest',
