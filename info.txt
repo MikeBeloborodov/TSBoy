@@ -1,0 +1,13 @@
+The program counter is the address of the next opcode in memory to execute. 
+Some opcodes require the next one or two bytes in memory to use as arguments. 
+When this is the case the program counter needs to skip these to point to the next actual opcode.
+
+The program counter is initialized to 0x100
+
+The stack pointer points to the very top of the stack in memory, 
+in other words the area of memory where the next piece of data to be added to the stack would occupy. 
+Like the program counter the stack pointer points to address is memory so a WORD data type would also represent the stack pointer well. 
+However some of the opcodes use the hi and lo bytes of the stack pointer so it would be easier to emulate the stack pointer the 
+same way we do the registers. 
+
+The stack pointer is initialized to 0xFFFE.

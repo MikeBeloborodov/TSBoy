@@ -1,1 +1,1 @@
-https://gbdev.io/ - Community page
+Nintendo Game Boy emulator in TypeScript

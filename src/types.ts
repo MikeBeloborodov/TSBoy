@@ -22,7 +22,13 @@ export type MockRom = {
 
 export type u8 = number;
 export type u16 = number;
-export type CombinedRegister = 'af' | 'bc' | 'de' | 'hl';
+
+export enum CombinedRegister {
+  AF,
+  BC,
+  DE,
+  HL,
+}
 
 export type Registers = {
   a: u8;
@@ -34,3 +40,40 @@ export type Registers = {
   h: u8;
   l: u8;
 };
+
+export type Context = {
+  currInstruction: number;
+  currInstructionAsm: string;
+};
+
+export type Memory = Uint8Array;
+
+export interface IMemoryWritable {
+  memWrite: () => void;
+}
+
+export interface IMemoryReadable {
+  memRead: () => void;
+}
+
+export enum FlagState {
+  CALCULATE,
+  RESET,
+  SET,
+  UNTOUCHED,
+}
+
+export type InstructionInfo = {
+  asm: string;
+  flags: {
+    Z: FlagState;
+    N: FlagState;
+    H: FlagState;
+    C: FlagState;
+  };
+  size: number;
+  cycles: number;
+  fn: (pc: number, memRead: Function, memWrite: Function) => u16 | void;
+};
+
+export type InstructionsMap = { [key: u8]: InstructionInfo };
