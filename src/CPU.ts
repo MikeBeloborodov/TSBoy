@@ -1,54 +1,121 @@
-import { Registers, CombinedRegister, u16 } from './types';
+import { Instructions } from './instructions';
+import {
+  Registers,
+  CombinedRegister,
+  u16,
+  Context,
+  // Memory,
+  // IMemoryReadable,
+  // IMemoryWritable,
+  u8,
+  InstructionInfo,
+} from './types';
+import { sleep } from './utils';
 
 export class CPU {
   registers: Registers;
   pc: number;
+  sp: number;
+  memRead: (address: u16) => u8;
+  memWrite: (address: u16) => void;
 
-  constructor() {
-    this.pc = 0b00000000;
+  constructor(
+    memReadFn: (address: u16) => u8,
+    memWriteFn: (address: u16) => void
+  ) {
+    this.pc = 0x0100;
+    this.sp = 0xfffe;
     this.registers = {
-      a: 0b00000000,
-      b: 0b00000000,
-      c: 0b00000000,
-      d: 0b00000000,
-      e: 0b00000000,
-      f: 0b00000000,
-      h: 0b00000000,
-      l: 0b00000000,
+      a: 0x00,
+      b: 0x00,
+      c: 0x00,
+      d: 0x00,
+      e: 0x00,
+      f: 0x00,
+      h: 0x00,
+      l: 0x00,
     };
+    this.memWrite = memWriteFn;
+    this.memRead = memReadFn;
   }
 
   getCombinedRegister(register: CombinedRegister): u16 {
     switch (register) {
-      case 'af':
+      case CombinedRegister.AF:
         return (this.registers.a << 8) | this.registers.f;
-      case 'bc':
+      case CombinedRegister.BC:
         return (this.registers.b << 8) | this.registers.c;
-      case 'de':
+      case CombinedRegister.DE:
         return (this.registers.d << 8) | this.registers.e;
-      case 'hl':
+      case CombinedRegister.HL:
         return (this.registers.h << 8) | this.registers.l;
     }
   }
 
-  setCombined(register: CombinedRegister, value: u16): void {
+  setCombinedRegister(register: CombinedRegister, value: u16): void {
     switch (register) {
-      case 'af':
+      case CombinedRegister.AF:
         this.registers.a = (value & 0xff00) >> 8;
         this.registers.f = value & 0xff;
         break;
-      case 'bc':
+      case CombinedRegister.BC:
         this.registers.b = (value & 0xff00) >> 8;
         this.registers.c = value & 0xff;
         break;
-      case 'de':
+      case CombinedRegister.DE:
         this.registers.d = (value & 0xff00) >> 8;
         this.registers.e = value & 0xff;
         break;
-      case 'hl':
+      case CombinedRegister.HL:
         this.registers.h = (value & 0xff00) >> 8;
         this.registers.l = value & 0xff;
         break;
     }
+  }
+
+  async execute(ctx: Context): Promise<void> {
+    while (true) {
+      const nextInstruction = this.getInstruction();
+      const instructionInfo = this.translateInstruction(nextInstruction);
+      if (!instructionInfo) {
+        throw new Error(
+          `Instruction ${nextInstruction.toString(16)} is not implemented yet`
+        );
+      }
+
+      ctx.currInstruction = nextInstruction;
+      ctx.currInstructionAsm = instructionInfo.asm;
+      console.log(
+        `PC: ${this.pc.toString(16)}\n`,
+        `Executing ${nextInstruction.toString(16)}: ${instructionInfo.asm}`
+      );
+      console.log('---------------------------------');
+      this.executeInstruction(instructionInfo);
+      await sleep(1000);
+    }
+  }
+
+  getInstruction(): u8 {
+    const nextInstruction = this.memRead(this.pc);
+    return nextInstruction;
+  }
+
+  translateInstruction(instruction: number): InstructionInfo | undefined {
+    return Instructions[instruction];
+  }
+
+  executeInstruction(instructionInfo: InstructionInfo): void {
+    const nextPc = instructionInfo.fn(this.pc, this.memRead, this.memWrite);
+
+    if (nextPc) {
+      this.pc = nextPc;
+      return;
+    }
+
+    this.incrementProgramCounter(instructionInfo.size);
+  }
+
+  incrementProgramCounter(times: number) {
+    this.pc += times;
   }
 }
