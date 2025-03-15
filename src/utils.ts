@@ -8,3 +8,16 @@ export function numTo8bitString(num: number): string {
   }
   return converted;
 }
+
+export function isHalfCarrySubstraction(a: number, b: number): boolean {
+  return (((a & 0xf) - (b & 0xf)) & 0x10) == 0x10;
+}
+
+export function isHalfCarrySum(a: number, b: number): boolean {
+  return (((a & 0xf) + (b & 0xf)) & 0x10) == 0x10;
+}
+
+export function unsignedSubtract(a: number, b: number, bits: number): number {
+  const max = 1 << bits;
+  return (a - b + max) % max;
+}
