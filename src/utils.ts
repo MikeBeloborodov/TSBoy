@@ -10,7 +10,7 @@ export function numTo8bitString(num: number): string {
 }
 
 export function isHalfCarrySubstraction(a: number, b: number): boolean {
-  return (((a & 0xf) - (b & 0xf)) & 0x10) == 0x10;
+  return (a & 0xf) < (b & 0xf);
 }
 
 export function isHalfCarrySum(a: number, b: number): boolean {

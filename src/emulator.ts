@@ -24,7 +24,9 @@ export class Emulator {
       this.memory[address] = value;
       return;
     }
-    throw new Error(`Trying write ${value} to the address: ${address} This address was not implemented for writing`)
+    throw new Error(
+      `Trying write ${value} to the address: ${address} This address was not implemented for writing`
+    );
   }
 
   memoryRead(address: u16): u8 {
