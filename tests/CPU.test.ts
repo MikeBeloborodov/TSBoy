@@ -2,14 +2,14 @@ import { CPU } from '../src/CPU';
 import { Emulator } from '../src/emulator';
 import { CombinedRegister } from '../src/types';
 
+let cpu: CPU;
+
+beforeEach(() => {
+  const emulator = new Emulator(Buffer.alloc(0x200000));
+  cpu = emulator.cpu;
+});
+
 describe('CPU', () => {
-  let cpu: CPU;
-
-  beforeAll(() => {
-    const emulator = new Emulator(new Buffer(1));
-    cpu = emulator.cpu;
-  });
-
   describe('Initial values', () => {
     it('should return correct initial values', () => {
       expect(cpu.registers).toStrictEqual({
