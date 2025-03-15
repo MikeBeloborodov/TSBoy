@@ -5,7 +5,8 @@
     "outDir": "./dist", // Output directory for compiled JS files
     "rootDir": "./src", // Source directory for TS files
     "strict": true, // Enable all strict type-checking options
-    "esModuleInterop": true // Enable compatibility with ES modules
+    "esModuleInterop": true, // Enable compatibility with ES modules
+    "sourceMap": true
   },
   "include": ["src/**/*"] // Include all files in the src directory
 }
