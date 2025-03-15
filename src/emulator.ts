@@ -17,18 +17,21 @@ export class Emulator {
       ...this.memory.slice(0x8000),
     ]);
     this.cartHeaderInfo = new CartridgeHeaderParser(romFile).getHeaderInfo();
-    console.log(this.cartHeaderInfo);
-
-    // entry point
-    this.cpu.execute();
   }
 
-  memoryWrite(address: u16): void {
-    // TODO
-    address;
+  memoryWrite(address: u16, value: u8): void {
+    if (address >= 0xd000 && address <= 0xdfff) {
+      this.memory[address] = value;
+      return;
+    }
+    throw new Error(`Trying write ${value} to the address: ${address} This address was not implemented for writing`)
   }
 
   memoryRead(address: u16): u8 {
     return this.memory[address];
+  }
+
+  start() {
+    this.cpu.execute();
   }
 }

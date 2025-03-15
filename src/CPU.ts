@@ -15,11 +15,11 @@ export class CPU {
   pc: number;
   sp: number;
   memRead: (address: u16) => u8;
-  memWrite: (address: u16) => void;
+  memWrite: (address: u16, value: u8) => void;
 
   constructor(
     memReadFn: (address: u16) => u8,
-    memWriteFn: (address: u16) => void
+    memWriteFn: (address: u16, value: u8) => void
   ) {
     this.pc = 0x0100;
     this.sp = 0xfffe;
@@ -77,7 +77,7 @@ export class CPU {
       const instructionInfo = this.translateInstruction(nextInstruction);
       if (!instructionInfo) {
         throw new Error(
-          `Instruction ${nextInstruction.toString(16)} is not implemented yet`
+          `PC: ${this.pc.toString(16)}\n, Instruction ${nextInstruction.toString(16)} is not implemented yet`
         );
       }
 
@@ -88,7 +88,7 @@ export class CPU {
       console.log('---------------------------------');
 
       this.executeInstruction(instructionInfo);
-      await sleep(1000);
+      await sleep(500);
     }
   }
 

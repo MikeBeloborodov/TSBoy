@@ -17,3 +17,4 @@ import { Emulator } from './emulator';
 export const emu = new Emulator(
   fs.readFileSync('./roms/Tetris (JUE) (V1.1) [!].gb')
 );
+emu.start();
