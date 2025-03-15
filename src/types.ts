@@ -1,3 +1,5 @@
+import { CPU } from './CPU';
+
 export type HexTable = { [key: number]: string };
 export type CodeTable = { [key: string]: string };
 
@@ -56,24 +58,32 @@ export interface IMemoryReadable {
   memRead: () => void;
 }
 
-export enum FlagState {
-  CALCULATE,
-  RESET,
-  SET,
-  UNTOUCHED,
-}
+export type InstructionFn = (cpu: CPU) => void;
 
 export type InstructionInfo = {
   asm: string;
-  flags: {
-    Z: FlagState;
-    N: FlagState;
-    H: FlagState;
-    C: FlagState;
-  };
   size: number;
   cycles: number;
-  fn: (pc: number, memRead: Function, memWrite: Function) => u16 | void;
+  fn: InstructionFn;
 };
 
 export type InstructionsMap = { [key: u8]: InstructionInfo };
+
+export enum FlagState {
+  FALSE,
+  TRUE,
+}
+
+export type FlagSetInstructions = {
+  Z?: FlagState;
+  N?: FlagState;
+  H?: FlagState;
+  C?: FlagState;
+};
+
+export type Flags = {
+  Z: FlagState;
+  N: FlagState;
+  H: FlagState;
+  C: FlagState;
+};

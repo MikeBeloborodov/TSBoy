@@ -3,14 +3,12 @@ import {
   Registers,
   CombinedRegister,
   u16,
-  Context,
-  // Memory,
-  // IMemoryReadable,
-  // IMemoryWritable,
   u8,
   InstructionInfo,
+  FlagSetInstructions,
+  Flags,
 } from './types';
-import { sleep } from './utils';
+import { numTo8bitString, sleep } from './utils';
 
 export class CPU {
   registers: Registers;
@@ -73,7 +71,7 @@ export class CPU {
     }
   }
 
-  async execute(ctx: Context): Promise<void> {
+  async execute(): Promise<void> {
     while (true) {
       const nextInstruction = this.getInstruction();
       const instructionInfo = this.translateInstruction(nextInstruction);
@@ -83,21 +81,19 @@ export class CPU {
         );
       }
 
-      ctx.currInstruction = nextInstruction;
-      ctx.currInstructionAsm = instructionInfo.asm;
       console.log(
         `PC: ${this.pc.toString(16)}\n`,
         `Executing ${nextInstruction.toString(16)}: ${instructionInfo.asm}`
       );
       console.log('---------------------------------');
+
       this.executeInstruction(instructionInfo);
       await sleep(1000);
     }
   }
 
   getInstruction(): u8 {
-    const nextInstruction = this.memRead(this.pc);
-    return nextInstruction;
+    return this.memRead(this.pc);
   }
 
   translateInstruction(instruction: number): InstructionInfo | undefined {
@@ -105,17 +101,65 @@ export class CPU {
   }
 
   executeInstruction(instructionInfo: InstructionInfo): void {
-    const nextPc = instructionInfo.fn(this.pc, this.memRead, this.memWrite);
-
-    if (nextPc) {
-      this.pc = nextPc;
-      return;
-    }
-
-    this.incrementProgramCounter(instructionInfo.size);
+    instructionInfo.fn(this);
   }
 
   incrementProgramCounter(times: number) {
     this.pc += times;
+  }
+
+  setFlags(flags: FlagSetInstructions): void {
+    for (const flag in flags) {
+      switch (flag) {
+        case 'Z': {
+          const newValue = flags[flag];
+          if (newValue === undefined) break;
+          let curFlags = numTo8bitString(this.registers.f);
+          curFlags = newValue.toString().concat(curFlags.slice(1));
+          this.registers.f = parseInt(curFlags, 2);
+          break;
+        }
+        case 'N': {
+          const newValue = flags[flag];
+          if (newValue === undefined) break;
+          let curFlags = numTo8bitString(this.registers.f);
+          curFlags = curFlags
+            .slice(0, 1)
+            .concat(newValue.toString(), curFlags.slice(2));
+          this.registers.f = parseInt(curFlags, 2);
+          break;
+        }
+        case 'H': {
+          const newValue = flags[flag];
+          if (newValue === undefined) break;
+          let curFlags = numTo8bitString(this.registers.f);
+          curFlags = curFlags
+            .slice(0, 2)
+            .concat(newValue.toString(), curFlags.slice(3));
+          this.registers.f = parseInt(curFlags, 2);
+          break;
+        }
+        case 'C': {
+          const newValue = flags[flag];
+          if (newValue === undefined) break;
+          let curFlags = numTo8bitString(this.registers.f);
+          curFlags = curFlags
+            .slice(0, 3)
+            .concat(newValue.toString(), curFlags.slice(4));
+          this.registers.f = parseInt(curFlags, 2);
+          break;
+        }
+      }
+    }
+  }
+
+  getFlags(): Flags {
+    const flagString = numTo8bitString(this.registers.f);
+    return {
+      Z: parseInt(flagString[0]),
+      N: parseInt(flagString[1]),
+      H: parseInt(flagString[2]),
+      C: parseInt(flagString[3]),
+    };
   }
 }
