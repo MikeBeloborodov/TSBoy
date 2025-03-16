@@ -221,6 +221,43 @@ describe('Tests for CPU instructions', () => {
       checkCounterIncrement(0xf3, 1);
     });
   });
+
+  describe('Tests for 0xe0 - LDH [a8], A', () => {
+    beforeEach(() => {
+      cpu.registers.a = 0x12;
+    });
+
+    it('should increment pc by 2', () => {
+      checkCounterIncrement(0xe0, 2);
+    });
+
+    it('should write value from register A to the correct address', () => {
+      cpu.memRead = jest.fn((address: number) => {
+        if (address === 0x0101) return 0xab;
+        return 0xcd;
+      });
+      Instructions[0xe0].fn(cpu);
+      expect(emu.memory[0xffab]).toBe(0x12);
+    });
+
+    it('should write to the edge of the memory', () => {
+      cpu.memRead = jest.fn((address: number) => {
+        if (address === 0x0101) return 0xff;
+        return 0xff;
+      });
+      Instructions[0xe0].fn(cpu);
+      expect(emu.memory[0xffff]).toBe(0x12);
+    });
+
+    it('should write to the beginning of the memory', () => {
+      cpu.memRead = jest.fn((address: number) => {
+        if (address === 0x0101) return 0x00;
+        return 0x00;
+      });
+      Instructions[0xe0].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0x12);
+    });
+  });
 });
 
 function checkCounterIncrement(instruction: number, times: number) {

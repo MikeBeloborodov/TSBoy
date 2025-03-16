@@ -137,8 +137,7 @@ export const Instructions: InstructionsMap = {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
       cpu.incrementProgramCounter(1);
-      const zFlag = cpu.getFlags().Z;
-      if (zFlag) {
+      if (cpu.getFlags().Z) {
         cpu.pc += value;
       }
     },
@@ -156,6 +155,12 @@ export const Instructions: InstructionsMap = {
     asm: 'LDH [a8], A',
     size: 2,
     cycles: 12,
-    fn: (cpu: CPU): void => {},
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      const address = (0xff << 8) | value;
+      cpu.incrementProgramCounter(1);
+      cpu.memWrite(address, cpu.registers.a);
+    },
   },
 };
