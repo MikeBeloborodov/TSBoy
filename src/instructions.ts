@@ -163,4 +163,16 @@ export const Instructions: InstructionsMap = {
       cpu.memWrite(address, cpu.registers.a);
     },
   },
+  0xf0: {
+    asm: 'LDH A, [a8]',
+    size: 2,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      const address = (0xff << 8) | value;
+      cpu.incrementProgramCounter(1);
+      cpu.registers.a = cpu.memRead(address);
+    },
+  },
 };

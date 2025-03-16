@@ -22,7 +22,6 @@ export class Emulator {
   memoryWrite(address: u16, value: u8): void {
     // 4 KiB Work RAM (WRAM)
     if (address >= 0xd000 && address <= 0xdfff) {
-      console.log('Writing to WRAM');
       this.memory[address] = value;
       return;
     }
