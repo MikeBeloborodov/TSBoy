@@ -13,14 +13,14 @@ describe('CPU', () => {
   describe('Initial values', () => {
     it('should return correct initial values', () => {
       expect(cpu.registers).toStrictEqual({
-        a: 0x00,
+        a: 0x01,
         b: 0x00,
-        c: 0x00,
+        c: 0x13,
         d: 0x00,
-        e: 0x00,
-        f: 0x00,
-        h: 0x00,
-        l: 0x00,
+        e: 0xd8,
+        f: 0xb0,
+        h: 0x01,
+        l: 0x4d,
       });
       expect(cpu.sp).toBe(0xfffe);
       expect(cpu.pc).toBe(0x0100);

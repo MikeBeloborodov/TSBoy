@@ -16,6 +16,7 @@ export class Emulator {
       ...this.cartridge.slice(0, 0x8000),
       ...this.memory.slice(0x8000),
     ]);
+    this.memory[0xff44] = 0x90; // For testing purposes
     this.cartHeaderInfo = new CartridgeHeaderParser(romFile).getHeaderInfo();
   }
 

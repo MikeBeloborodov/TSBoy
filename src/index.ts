@@ -15,6 +15,6 @@ import { Emulator } from './emulator';
 // });
 
 export const emu = new Emulator(
-  fs.readFileSync('./roms/Tetris (JUE) (V1.1) [!].gb')
+  fs.readFileSync('./blarggs/individual/03-op sp,hl.gb')
 );
 emu.start();
