@@ -175,4 +175,22 @@ export const Instructions: InstructionsMap = {
       cpu.registers.a = cpu.memRead(address);
     },
   },
+  0xfe: {
+    asm: 'CP n8',
+    size: 2,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      const result = unsignedSubtract(cpu.registers.a, value, 8);
+      const HC = isHalfCarrySubstraction(cpu.registers.a, value);
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: HC ? FlagState.TRUE : FlagState.FALSE,
+        C: cpu.registers.a < value ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
 };
