@@ -33,8 +33,14 @@ export class Emulator {
       return;
     }
 
+    // 4 KiB Work RAM (WRAM)
+    if (address >= 0xc000 && address <= 0xcfff) {
+      this.memory[address] = value;
+      return;
+    }
+
     throw new Error(
-      `Trying write ${value} to the address: ${address} This address was not implemented for writing`
+      `Trying write ${value.toString(16)} to the address: ${address.toString(16)} This address was not implemented for writing`
     );
   }
 

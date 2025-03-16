@@ -791,6 +791,200 @@ describe('Tests for CPU instructions', () => {
       expect(cpu.pc).toBe(0x0101);
     });
   });
+
+  describe('Tests for other LD instructions', () => {
+    it('should test 0x01 - LD BC, n16', () => {
+      cpu.memRead = jest.fn((address) => {
+        if (address === 0x0101) return 0xab;
+        return 0xcd;
+      });
+      Instructions[0x01].fn(cpu);
+      expect(cpu.getCombinedRegister(CombinedRegister.BC)).toBe(0xcdab);
+      expect(cpu.pc).toBe(0x0103);
+    });
+
+    it('should test 0x11 - LD DE, n16', () => {
+      cpu.memRead = jest.fn((address) => {
+        if (address === 0x0101) return 0xab;
+        return 0xcd;
+      });
+      Instructions[0x11].fn(cpu);
+      expect(cpu.getCombinedRegister(CombinedRegister.DE)).toBe(0xcdab);
+      expect(cpu.pc).toBe(0x0103);
+    });
+
+    it('should test 0x31 - LD SP, n16', () => {
+      cpu.memRead = jest.fn((address) => {
+        if (address === 0x0101) return 0xab;
+        return 0xcd;
+      });
+      Instructions[0x31].fn(cpu);
+      expect(cpu.sp).toBe(0xcdab);
+      expect(cpu.pc).toBe(0x0103);
+    });
+
+    it('should test 0x02 - LD (BC), A', () => {
+      cpu.registers.b = 0xff;
+      cpu.registers.c = 0x00;
+      cpu.registers.a = 0x12;
+      Instructions[0x02].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test 0x12 - LD (DE), A', () => {
+      cpu.registers.d = 0xff;
+      cpu.registers.e = 0x00;
+      cpu.registers.a = 0x12;
+      Instructions[0x12].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test 0x22 - LD (HL+), A', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      cpu.registers.a = 0x12;
+      Instructions[0x22].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+      expect(cpu.registers.h).toBe(0xff);
+      expect(cpu.registers.l).toBe(0x01);
+    });
+
+    it('should test 0x16 - LD D, n8', () => {
+      cpu.memRead = jest.fn(() => 0xab);
+      Instructions[0x16].fn(cpu);
+      expect(cpu.registers.d).toBe(0xab);
+      expect(cpu.pc).toBe(0x0102);
+    });
+
+    it('should test 0x26 - LD H, n8', () => {
+      cpu.memRead = jest.fn(() => 0xab);
+      Instructions[0x26].fn(cpu);
+      expect(cpu.registers.h).toBe(0xab);
+      expect(cpu.pc).toBe(0x0102);
+    });
+
+    it('should test 0x36 - LD (HL), n8', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      cpu.memRead = jest.fn(() => 0xab);
+      Instructions[0x36].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0xab);
+      expect(cpu.pc).toBe(0x0102);
+    });
+
+    it('should test 0x0a - LD A, (BC)', () => {
+      cpu.registers.b = 0xff;
+      cpu.registers.c = 0x00;
+      emu.memory[0xff00] = 0x12;
+      Instructions[0x0a].fn(cpu);
+      expect(cpu.registers.a).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test 0x1a - LD A, (DE)', () => {
+      cpu.registers.d = 0xff;
+      cpu.registers.e = 0x00;
+      emu.memory[0xff00] = 0x12;
+      Instructions[0x1a].fn(cpu);
+      expect(cpu.registers.a).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test 0x2a - LD A, (HL+)', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x12;
+      Instructions[0x2a].fn(cpu);
+      expect(cpu.registers.a).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+      expect(cpu.registers.h).toBe(0xff);
+      expect(cpu.registers.l).toBe(0x01);
+    });
+
+    it('should test 0x3a - LD A, (HL-)', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x12;
+      Instructions[0x3a].fn(cpu);
+      expect(cpu.registers.a).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+      expect(cpu.registers.h).toBe(0xfe);
+      expect(cpu.registers.l).toBe(0xff);
+    });
+
+    it('should test 0x1e - LD E, n8', () => {
+      cpu.memRead = jest.fn(() => 0xab);
+      Instructions[0x1e].fn(cpu);
+      expect(cpu.registers.e).toBe(0xab);
+      expect(cpu.pc).toBe(0x0102);
+    });
+
+    it('should test 0x2e - LD L, n8', () => {
+      cpu.memRead = jest.fn(() => 0xab);
+      Instructions[0x2e].fn(cpu);
+      expect(cpu.registers.l).toBe(0xab);
+      expect(cpu.pc).toBe(0x0102);
+    });
+
+    it('should test 0x08 - LD (n16), SP', () => {
+      cpu.sp = 0xa0b0;
+      cpu.memRead = jest.fn((address) => {
+        if (address === 0x0101) return 0x00;
+        return 0xff;
+      });
+      Instructions[0x08].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0xb0);
+      expect(emu.memory[0xff01]).toBe(0xa0);
+      expect(cpu.pc).toBe(0x0103);
+    });
+
+    it('should test 0xe2 - LD (C), A', () => {
+      cpu.registers.c = 0x12;
+      cpu.registers.a = 0xab;
+      Instructions[0xe2].fn(cpu);
+      expect(emu.memory[0xff12]).toBe(0xab);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test 0xf2 - LD A, (C)', () => {
+      cpu.registers.c = 0x12;
+      emu.memory[0xff12] = 0xab;
+      Instructions[0xf2].fn(cpu);
+      expect(cpu.registers.a).toBe(0xab);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test 0xea - LD (n16), A', () => {
+      cpu.registers.a = 0xab;
+      cpu.memRead = jest.fn((address) => {
+        if (address === 0x0101) return 0x00;
+        return 0xff;
+      });
+      Instructions[0xea].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0xab);
+      expect(cpu.pc).toBe(0x0103);
+    });
+
+    it('should test 0xfa - LD A, (n16)', () => {
+      emu.memory[0x0101] = 0x00;
+      emu.memory[0x0102] = 0xff;
+      emu.memory[0xff00] = 0xab;
+      Instructions[0xfa].fn(cpu);
+      expect(cpu.registers.a).toBe(0xab);
+      expect(cpu.pc).toBe(0x0103);
+    });
+
+    it('should test 0xf9 - LD SP, HL', () => {
+      cpu.registers.h = 0xab;
+      cpu.registers.l = 0xcd;
+      Instructions[0xf9].fn(cpu);
+      expect(cpu.sp).toBe(0xabcd);
+      expect(cpu.pc).toBe(0x0101);
+    });
+  });
 });
 
 function checkCounterIncrement(instruction: number, times: number) {

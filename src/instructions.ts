@@ -1,6 +1,10 @@
 import { CPU } from './CPU';
 import { CombinedRegister, FlagState, InstructionsMap } from './types';
-import { isHalfCarrySubstraction, unsignedSubtract } from './utils';
+import {
+  isHalfCarrySubstraction,
+  unsignedAddition,
+  unsignedSubtract,
+} from './utils';
 
 export const Instructions: InstructionsMap = {
   0x00: {
@@ -37,64 +41,6 @@ export const Instructions: InstructionsMap = {
         H: FlagState.FALSE,
         C: FlagState.FALSE,
       });
-    },
-  },
-  0x21: {
-    asm: 'LD HL, n16',
-    size: 3,
-    cycles: 12,
-    fn: (cpu: CPU): void => {
-      cpu.incrementProgramCounter(1);
-      const a = cpu.memRead(cpu.pc);
-      cpu.incrementProgramCounter(1);
-      const b = cpu.memRead(cpu.pc);
-      const value = (b << 8) | a;
-      cpu.setCombinedRegister(CombinedRegister.HL, value);
-      cpu.incrementProgramCounter(1);
-    },
-  },
-  0x0e: {
-    asm: 'LD C, n8',
-    size: 2,
-    cycles: 8,
-    fn: (cpu: CPU): void => {
-      cpu.incrementProgramCounter(1);
-      const value = cpu.memRead(cpu.pc);
-      cpu.registers.c = value;
-      cpu.incrementProgramCounter(1);
-    },
-  },
-  0x06: {
-    asm: 'LD B, n8',
-    size: 2,
-    cycles: 8,
-    fn: (cpu: CPU): void => {
-      cpu.incrementProgramCounter(1);
-      const value = cpu.memRead(cpu.pc);
-      cpu.registers.b = value;
-      cpu.incrementProgramCounter(1);
-    },
-  },
-  0x3e: {
-    asm: 'LD A, n8',
-    size: 2,
-    cycles: 8,
-    fn: (cpu: CPU): void => {
-      cpu.incrementProgramCounter(1);
-      const value = cpu.memRead(cpu.pc);
-      cpu.registers.a = value;
-      cpu.incrementProgramCounter(1);
-    },
-  },
-  0x32: {
-    asm: 'LD [HL-], A',
-    size: 1,
-    cycles: 8,
-    fn: (cpu: CPU): void => {
-      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
-      cpu.memWrite(hl, cpu.registers.a);
-      cpu.setCombinedRegister(CombinedRegister.HL, hl - 1);
-      cpu.incrementProgramCounter(1);
     },
   },
   0x05: {
@@ -149,30 +95,6 @@ export const Instructions: InstructionsMap = {
     fn: (cpu: CPU): void => {
       // TODO: Implement disable interrupt
       cpu.incrementProgramCounter(1);
-    },
-  },
-  0xe0: {
-    asm: 'LDH [a8], A',
-    size: 2,
-    cycles: 12,
-    fn: (cpu: CPU): void => {
-      cpu.incrementProgramCounter(1);
-      const value = cpu.memRead(cpu.pc);
-      const address = (0xff << 8) | value;
-      cpu.incrementProgramCounter(1);
-      cpu.memWrite(address, cpu.registers.a);
-    },
-  },
-  0xf0: {
-    asm: 'LDH A, [a8]',
-    size: 2,
-    cycles: 12,
-    fn: (cpu: CPU): void => {
-      cpu.incrementProgramCounter(1);
-      const value = cpu.memRead(cpu.pc);
-      const address = (0xff << 8) | value;
-      cpu.incrementProgramCounter(1);
-      cpu.registers.a = cpu.memRead(address);
     },
   },
   0xfe: {
@@ -775,4 +697,341 @@ export const Instructions: InstructionsMap = {
       cpu.incrementProgramCounter(1);
     },
   },
+  0x01: {
+    asm: 'LD BC, n16',
+    size: 3,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      const value = (b << 8) | a;
+      cpu.setCombinedRegister(CombinedRegister.BC, value);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x11: {
+    asm: 'LD DE, n16',
+    size: 3,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      const value = (b << 8) | a;
+      cpu.setCombinedRegister(CombinedRegister.DE, value);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x21: {
+    asm: 'LD HL, n16',
+    size: 3,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      const value = (b << 8) | a;
+      cpu.setCombinedRegister(CombinedRegister.HL, value);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x31: {
+    asm: 'LD SP, n16',
+    size: 3,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      const value = (b << 8) | a;
+      cpu.sp = value;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x02: {
+    asm: 'LD [BC], A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const bc = cpu.getCombinedRegister(CombinedRegister.BC);
+      cpu.memWrite(bc, cpu.registers.a);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x12: {
+    asm: 'LD [DE], A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const de = cpu.getCombinedRegister(CombinedRegister.DE);
+      cpu.memWrite(de, cpu.registers.a);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x22: {
+    asm: 'LD [HL+], A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      cpu.memWrite(hl, cpu.registers.a);
+      cpu.setCombinedRegister(CombinedRegister.HL, hl + 1);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x32: {
+    asm: 'LD [HL-], A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      cpu.memWrite(hl, cpu.registers.a);
+      cpu.setCombinedRegister(CombinedRegister.HL, hl - 1);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x06: {
+    asm: 'LD B, n8',
+    size: 2,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      cpu.registers.b = value;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x16: {
+    asm: 'LD D, n8',
+    size: 2,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      cpu.registers.d = value;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x26: {
+    asm: 'LD H, n8',
+    size: 2,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      cpu.registers.h = value;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x36: {
+    asm: 'LD [HL], n8',
+    size: 2,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      cpu.memWrite(hl, value);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x0a: {
+    asm: 'LD A, [BC]',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const bc = cpu.getCombinedRegister(CombinedRegister.BC);
+      cpu.registers.a = cpu.memRead(bc);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x1a: {
+    asm: 'LD A, [DE]',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const de = cpu.getCombinedRegister(CombinedRegister.DE);
+      cpu.registers.a = cpu.memRead(de);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x2a: {
+    asm: 'LD A, [HL+]',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      cpu.registers.a = cpu.memRead(hl);
+      cpu.setCombinedRegister(CombinedRegister.HL, hl + 1);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x3a: {
+    asm: 'LD A, [HL-]',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      cpu.registers.a = cpu.memRead(hl);
+      cpu.setCombinedRegister(CombinedRegister.HL, hl - 1);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x0e: {
+    asm: 'LD C, n8',
+    size: 2,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      cpu.registers.c = value;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x1e: {
+    asm: 'LD E, n8',
+    size: 2,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      cpu.registers.e = value;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x2e: {
+    asm: 'LD L, n8',
+    size: 2,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      cpu.registers.l = value;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x3e: {
+    asm: 'LD A, n8',
+    size: 2,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      cpu.registers.a = value;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x08: {
+    asm: 'LD [a16], SP',
+    size: 3,
+    cycles: 20,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      const address = (b << 8) | a;
+      cpu.incrementProgramCounter(1);
+      cpu.memWrite(address, cpu.sp & 0xff);
+      cpu.memWrite(address + 1, (cpu.sp & 0xff00) >> 8);
+    },
+  },
+  0xe0: {
+    asm: 'LDH [a8], A',
+    size: 2,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      const address = (0xff << 8) | value;
+      cpu.incrementProgramCounter(1);
+      cpu.memWrite(address, cpu.registers.a);
+    },
+  },
+  0xf0: {
+    asm: 'LDH A, [a8]',
+    size: 2,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      const address = (0xff << 8) | value;
+      cpu.incrementProgramCounter(1);
+      cpu.registers.a = cpu.memRead(address);
+    },
+  },
+  0xe2: {
+    asm: 'LD [C], A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const address = (0xff << 8) | cpu.registers.c;
+      cpu.memWrite(address, cpu.registers.a);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xf2: {
+    asm: 'LD A, [C]',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const address = (0xff << 8) | cpu.registers.c;
+      cpu.registers.a = cpu.memRead(address);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xea: {
+    asm: 'LD [a16], A',
+    size: 3,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      const address = (b << 8) | a;
+      cpu.incrementProgramCounter(1);
+      cpu.memWrite(address, cpu.registers.a);
+    },
+  },
+  0xfa: {
+    asm: 'LD A, [a16]',
+    size: 3,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      const address = (b << 8) | a;
+      cpu.incrementProgramCounter(1);
+      cpu.registers.a = cpu.memRead(address);
+    },
+  },
+  0xf9: {
+    asm: 'LD SP, HL',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      cpu.sp = hl;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  // 0xf8: {
+  //   asm: 'LD HL, SP+r8',
+  //   size: 2,
+  //   cycles: 12,
+  //   fn: (cpu: CPU): void => {
+  //     cpu.incrementProgramCounter(1);
+  //     const value = cpu.memRead(cpu.pc);
+  //     const result = unsignedAddition(cpu.sp, value, 16);
+
+  //   }
+  // },
 };

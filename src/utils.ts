@@ -21,3 +21,8 @@ export function unsignedSubtract(a: number, b: number, bits: number): number {
   const max = 1 << bits;
   return (a - b + max) % max;
 }
+
+export function unsignedAddition(a: number, b: number, bits: number): number {
+  const max = 1 << bits;
+  return (a + b) % max;
+}
