@@ -68,10 +68,7 @@ describe('Tests for CPU instructions', () => {
     });
 
     it('should write value to the C register correctly', () => {
-      cpu.memRead = jest.fn((address: number) => {
-        if (address === 0x0101) return 0xab;
-        return 0xcd;
-      });
+      cpu.memRead = jest.fn(() => 0xab);
       Instructions[0x0e].fn(cpu);
       expect(cpu.registers.c).toBe(0xab);
     });
@@ -83,10 +80,7 @@ describe('Tests for CPU instructions', () => {
     });
 
     it('should write value to the B register correctly', () => {
-      cpu.memRead = jest.fn((address: number) => {
-        if (address === 0x0101) return 0xab;
-        return 0xcd;
-      });
+      cpu.memRead = jest.fn(() => 0xab);
       Instructions[0x06].fn(cpu);
       expect(cpu.registers.b).toBe(0xab);
     });
@@ -98,10 +92,7 @@ describe('Tests for CPU instructions', () => {
     });
 
     it('should write value to the A register correctly', () => {
-      cpu.memRead = jest.fn((address: number) => {
-        if (address === 0x0101) return 0xab;
-        return 0xcd;
-      });
+      cpu.memRead = jest.fn(() => 0xab);
       Instructions[0x3e].fn(cpu);
       expect(cpu.registers.a).toBe(0xab);
     });
@@ -192,10 +183,7 @@ describe('Tests for CPU instructions', () => {
 
   describe('Tests for 0x20 - JR NZ, e8', () => {
     beforeEach(() => {
-      cpu.memRead = jest.fn((address: number) => {
-        if (address === 0x0101) return 0x05;
-        return 0x00;
-      });
+      cpu.memRead = jest.fn(() => 0x05);
     });
 
     it('should increment pc by 2', () => {
@@ -232,30 +220,57 @@ describe('Tests for CPU instructions', () => {
     });
 
     it('should write value from register A to the correct address', () => {
-      cpu.memRead = jest.fn((address: number) => {
-        if (address === 0x0101) return 0xab;
-        return 0xcd;
-      });
+      cpu.memRead = jest.fn(() => 0xab);
       Instructions[0xe0].fn(cpu);
       expect(emu.memory[0xffab]).toBe(0x12);
     });
 
     it('should write to the edge of the memory', () => {
-      cpu.memRead = jest.fn((address: number) => {
-        if (address === 0x0101) return 0xff;
-        return 0xff;
-      });
+      cpu.memRead = jest.fn(() => 0xff);
       Instructions[0xe0].fn(cpu);
       expect(emu.memory[0xffff]).toBe(0x12);
     });
 
     it('should write to the beginning of the memory', () => {
-      cpu.memRead = jest.fn((address: number) => {
-        if (address === 0x0101) return 0x00;
-        return 0x00;
-      });
+      cpu.memRead = jest.fn(() => 0x00);
       Instructions[0xe0].fn(cpu);
       expect(emu.memory[0xff00]).toBe(0x12);
+    });
+  });
+
+  describe('Tests for 0xf0 - LDH A, [a8]', () => {
+    it('should increment pc by 2', () => {
+      checkCounterIncrement(0xf0, 2);
+    });
+
+    it('should write value from the correct address to register A', () => {
+      emu.memory[0xffab] = 0x12;
+      cpu.memRead = jest.fn((address) => {
+        if (address === 0x0101) return 0xab;
+        return emu.memory[address];
+      });
+      Instructions[0xf0].fn(cpu);
+      expect(cpu.registers.a).toBe(0x12);
+    });
+
+    it('should read from the edge of the memory', () => {
+      emu.memory[0xffff] = 0x12;
+      cpu.memRead = jest.fn((address) => {
+        if (address === 0x0101) return 0xff;
+        return emu.memory[address];
+      });
+      Instructions[0xf0].fn(cpu);
+      expect(cpu.registers.a).toBe(0x12);
+    });
+
+    it('should read from the beginning of the memory', () => {
+      emu.memory[0xff00] = 0x12;
+      cpu.memRead = jest.fn((address) => {
+        if (address === 0x0101) return 0x00;
+        return emu.memory[address];
+      });
+      Instructions[0xf0].fn(cpu);
+      expect(cpu.registers.a).toBe(0x12);
     });
   });
 });
