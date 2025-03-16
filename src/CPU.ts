@@ -1,4 +1,5 @@
 import { Instructions } from './instructions';
+import { Logger } from './logger';
 import {
   Registers,
   CombinedRegister,
@@ -16,6 +17,7 @@ export class CPU {
   sp: number;
   memRead: (address: u16) => u8;
   memWrite: (address: u16, value: u8) => void;
+  logger: Logger;
 
   constructor(
     memReadFn: (address: u16) => u8,
@@ -24,17 +26,18 @@ export class CPU {
     this.pc = 0x0100;
     this.sp = 0xfffe;
     this.registers = {
-      a: 0x00,
+      a: 0x01,
       b: 0x00,
-      c: 0x00,
+      c: 0x13,
       d: 0x00,
-      e: 0x00,
-      f: 0x00,
-      h: 0x00,
-      l: 0x00,
+      e: 0xd8,
+      f: 0xb0,
+      h: 0x01,
+      l: 0x4d,
     };
     this.memWrite = memWriteFn;
     this.memRead = memReadFn;
+    this.logger = new Logger();
   }
 
   getCombinedRegister(register: CombinedRegister): u16 {
@@ -101,6 +104,17 @@ export class CPU {
   }
 
   executeInstruction(instructionInfo: InstructionInfo): void {
+    const logInfo = (value: number): string =>
+      value.toString(16).length === 1
+        ? `0${value.toString(16)}`
+        : value.toString(16);
+    const logInfo16 = (value: number): string =>
+      value.toString(16).length === 3
+        ? `0${value.toString(16)}`
+        : value.toString(16);
+    this.logger.log(
+      `A:${logInfo(this.registers.a)} F:${logInfo(this.registers.f)} B:${logInfo(this.registers.b)} C:${logInfo(this.registers.c)} D:${logInfo(this.registers.d)} E:${logInfo(this.registers.e)} H:${logInfo(this.registers.h)} L:${logInfo(this.registers.l)} SP:${logInfo(this.sp)} PC:${logInfo16(this.pc)} PCMEM:${logInfo(this.memRead(this.pc))},${logInfo(this.memRead(this.pc + 1))},${logInfo(this.memRead(this.pc + 2))},${logInfo(this.memRead(this.pc + 3))}`
+    );
     instructionInfo.fn(this);
   }
 

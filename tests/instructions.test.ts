@@ -135,13 +135,15 @@ describe('Tests for CPU instructions', () => {
     it('should set flags to 1 1 0 0', () => {
       cpu.registers.b = 0x01;
       Instructions[0x05].fn(cpu);
-      expect(cpu.getFlags()).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 1, N: 1, H: 0 });
     });
 
     it('should set half carry flag to 1', () => {
       cpu.registers.b = 0x10;
       Instructions[0x05].fn(cpu);
-      expect(cpu.getFlags()).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 1, H: 1 });
     });
 
     it('should check register b overflow from 0 to 0xff', () => {
@@ -162,16 +164,18 @@ describe('Tests for CPU instructions', () => {
       expect(cpu.registers.c).toBe(0x00);
     });
 
-    it('should set flags to 1 1 0 0', () => {
+    it('should set flags to 1 1 0', () => {
       cpu.registers.c = 0x01;
       Instructions[0x0d].fn(cpu);
-      expect(cpu.getFlags()).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 1, N: 1, H: 0 });
     });
 
     it('should set half carry flag to 1', () => {
       cpu.registers.c = 0x10;
       Instructions[0x0d].fn(cpu);
-      expect(cpu.getFlags()).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 1, H: 1 });
     });
 
     it('should check register c overflow from 0 to 0xff', () => {
@@ -305,6 +309,124 @@ describe('Tests for CPU instructions', () => {
       cpu.memRead = jest.fn(() => 0x01);
       Instructions[0xfe].fn(cpu);
       expect(cpu.getFlags()).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+  });
+
+  describe('Tests for LD instructions 0x40 - 0x4f', () => {
+    it('should test LD B, B', () => {
+      cpu.registers.b = 0x12;
+      Instructions[0x40].fn(cpu);
+      expect(cpu.registers.b).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD B, C', () => {
+      cpu.registers.c = 0x12;
+      Instructions[0x41].fn(cpu);
+      expect(cpu.registers.b).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD B, D', () => {
+      cpu.registers.d = 0x12;
+      Instructions[0x42].fn(cpu);
+      expect(cpu.registers.b).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD B, E', () => {
+      cpu.registers.e = 0x12;
+      Instructions[0x43].fn(cpu);
+      expect(cpu.registers.b).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD B, H', () => {
+      cpu.registers.h = 0x12;
+      Instructions[0x44].fn(cpu);
+      expect(cpu.registers.b).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD B, L', () => {
+      cpu.registers.l = 0x12;
+      Instructions[0x45].fn(cpu);
+      expect(cpu.registers.b).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD B, (HL)', () => {
+      cpu.registers.h = 0xab;
+      cpu.registers.l = 0xcd;
+      emu.memory[0xabcd] = 0x12;
+      Instructions[0x46].fn(cpu);
+      expect(cpu.registers.b).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD B, A', () => {
+      cpu.registers.a = 0x12;
+      Instructions[0x47].fn(cpu);
+      expect(cpu.registers.b).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD C, B', () => {
+      cpu.registers.b = 0x12;
+      Instructions[0x48].fn(cpu);
+      expect(cpu.registers.c).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD C, C', () => {
+      cpu.registers.c = 0x12;
+      Instructions[0x49].fn(cpu);
+      expect(cpu.registers.c).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD C, D', () => {
+      cpu.registers.d = 0x12;
+      Instructions[0x4a].fn(cpu);
+      expect(cpu.registers.c).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD C, E', () => {
+      cpu.registers.e = 0x12;
+      Instructions[0x4b].fn(cpu);
+      expect(cpu.registers.c).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD C, H', () => {
+      cpu.registers.h = 0x12;
+      Instructions[0x4c].fn(cpu);
+      expect(cpu.registers.c).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD C, L', () => {
+      cpu.registers.l = 0x12;
+      Instructions[0x4d].fn(cpu);
+      expect(cpu.registers.c).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD C, (HL)', () => {
+      cpu.registers.h = 0xab;
+      cpu.registers.l = 0xcd;
+      emu.memory[0xabcd] = 0x12;
+      Instructions[0x4e].fn(cpu);
+      expect(cpu.registers.c).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test LD C, A', () => {
+      cpu.registers.a = 0x12;
+      Instructions[0x4f].fn(cpu);
+      expect(cpu.registers.c).toBe(0x12);
+      expect(cpu.pc).toBe(0x0101);
     });
   });
 });
