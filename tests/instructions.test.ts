@@ -273,6 +273,40 @@ describe('Tests for CPU instructions', () => {
       expect(cpu.registers.a).toBe(0x12);
     });
   });
+
+  describe('Tests for 0xfe - CP n8', () => {
+    it('should increment pc by 2', () => {
+      checkCounterIncrement(0xfe, 2);
+    });
+
+    it('should subtract correctly', () => {
+      cpu.registers.a = 0x01;
+      cpu.memRead = jest.fn(() => 0x01);
+      Instructions[0xfe].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+    });
+
+    it('should set flags correctly', () => {
+      cpu.registers.a = 0x01;
+      cpu.memRead = jest.fn(() => 0x01);
+      Instructions[0xfe].fn(cpu);
+      expect(cpu.getFlags()).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should set flags correctly', () => {
+      cpu.registers.a = 0x10;
+      cpu.memRead = jest.fn(() => 0x01);
+      Instructions[0xfe].fn(cpu);
+      expect(cpu.getFlags()).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should set flags correctly', () => {
+      cpu.registers.a = 0x00;
+      cpu.memRead = jest.fn(() => 0x01);
+      Instructions[0xfe].fn(cpu);
+      expect(cpu.getFlags()).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+  });
 });
 
 function checkCounterIncrement(instruction: number, times: number) {
