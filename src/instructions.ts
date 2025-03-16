@@ -625,4 +625,154 @@ export const Instructions: InstructionsMap = {
       cpu.incrementProgramCounter(1);
     },
   },
+  0x70: {
+    asm: 'LD [HL], B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      cpu.memWrite(hl, cpu.registers.b);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x71: {
+    asm: 'LD [HL], C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      cpu.memWrite(hl, cpu.registers.c);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x72: {
+    asm: 'LD [HL], D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      cpu.memWrite(hl, cpu.registers.d);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x73: {
+    asm: 'LD [HL], E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      cpu.memWrite(hl, cpu.registers.e);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x74: {
+    asm: 'LD [HL], H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      cpu.memWrite(hl, cpu.registers.h);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x75: {
+    asm: 'LD [HL], L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      cpu.memWrite(hl, cpu.registers.l);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  // 0x76: {
+  //   asm: 'HALT',
+  //   size: 1,
+  //   cycles: 4,
+  //   fn: (cpu: CPU): void => {
+  //     // TODO: Implement HALT
+  //   }
+  // },
+  0x77: {
+    asm: 'LD [HL], A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      cpu.memWrite(hl, cpu.registers.a);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x78: {
+    asm: 'LD A, B',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = cpu.registers.b;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x79: {
+    asm: 'LD A, C',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = cpu.registers.c;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x7a: {
+    asm: 'LD A, D',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = cpu.registers.d;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x7b: {
+    asm: 'LD A, E',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = cpu.registers.e;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x7c: {
+    asm: 'LD A, H',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = cpu.registers.h;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x7d: {
+    asm: 'LD A, L',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = cpu.registers.l;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x7e: {
+    asm: 'LD A, [HL]',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      cpu.registers.a = cpu.memRead(hl);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x7f: {
+    asm: 'LD A, A',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+    },
+  },
 };
