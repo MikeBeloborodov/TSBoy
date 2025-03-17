@@ -186,7 +186,13 @@ export class CPU {
 
   pushStack(value: u16): void {
     this.sp -= 2;
-    this.memWrite(this.sp, (value & 0xff00) >> 8);
-    this.memWrite(this.sp + 1, value & 0xff);
+    this.memWrite(this.sp, value & 0xff);
+    this.memWrite(this.sp + 1, (value & 0xff00) >> 8);
+  }
+
+  popStack(): u16 {
+    const value = (this.memRead(this.sp + 1) << 8) | this.memRead(this.sp);
+    this.sp += 2;
+    return value;
   }
 }

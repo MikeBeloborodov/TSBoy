@@ -1278,6 +1278,95 @@ describe('Tests for CPU instructions', () => {
       Instructions[0x38].fn(cpu);
       expect(cpu.pc).toBe(0x00fd);
     });
+
+    it('shoult test 0x30 - JR NC, e8 jump forward', () => {
+      cpu.memRead = jest.fn(() => 0x03);
+      cpu.setFlags({ C: 0 });
+      Instructions[0x30].fn(cpu);
+      expect(cpu.pc).toBe(0x0105);
+    });
+
+    it('shoult test 0x30 - JR NC, e8 no jump', () => {
+      cpu.memRead = jest.fn(() => 0x03);
+      cpu.setFlags({ C: 1 });
+      Instructions[0x30].fn(cpu);
+      expect(cpu.pc).toBe(0x0102);
+    });
+
+    it('shoult test 0x30 - JR NC, e8 jump backward', () => {
+      cpu.memRead = jest.fn(() => 0xfb);
+      cpu.setFlags({ C: 0 });
+      Instructions[0x30].fn(cpu);
+      expect(cpu.pc).toBe(0x00fd);
+    });
+  });
+
+  describe('Tests for A instructions', () => {
+    it('should test ADD A, n8', () => {
+      cpu.memRead = jest.fn(() => 0x12);
+      cpu.registers.a = 0x12;
+      Instructions[0xc6].fn(cpu);
+      expect(cpu.registers.a).toBe(0x24);
+      expect(cpu.pc).toBe(0x0102);
+    });
+
+    it('should test ADD A, n8 half-carry', () => {
+      cpu.memRead = jest.fn(() => 0x01);
+      cpu.registers.a = 0x0f;
+      Instructions[0xc6].fn(cpu);
+      expect(cpu.registers.a).toBe(0x10);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test ADD A, n8 zero', () => {
+      cpu.memRead = jest.fn(() => 0x01);
+      cpu.registers.a = 0xff;
+      Instructions[0xc6].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 0, H: 1, C: 1 });
+    });
+
+    it('should test 0xd6 - SUB A n8', () => {
+      cpu.memRead = jest.fn(() => 0x12);
+      cpu.registers.a = 0x24;
+      Instructions[0xd6].fn(cpu);
+      expect(cpu.registers.a).toBe(0x12);
+      expect(cpu.pc).toBe(0x0102);
+    });
+
+    it('should test 0xd6 - SUB A n8 half-carry', () => {
+      cpu.memRead = jest.fn(() => 0x01);
+      cpu.registers.a = 0x10;
+      Instructions[0xd6].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0f);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 1, H: 1 });
+    });
+
+    it('should test 0xd6 - SUB A n8 zero', () => {
+      cpu.memRead = jest.fn(() => 0x01);
+      cpu.registers.a = 0x01;
+      Instructions[0xd6].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0xd6 - SUB A n8 carry', () => {
+      cpu.memRead = jest.fn(() => 0x01);
+      cpu.registers.a = 0x00;
+      Instructions[0xd6].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
   });
 });
 
