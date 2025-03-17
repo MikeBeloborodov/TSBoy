@@ -1099,4 +1099,70 @@ export const Instructions: InstructionsMap = {
       cpu.incrementProgramCounter(1);
     },
   },
+  0x04: {
+    asm: 'INC B',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedAddition(cpu.registers.b, 1, 8);
+      const HC = isHalfCarrySum(cpu.registers.b, 1);
+      cpu.registers.b = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: HC ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x14: {
+    asm: 'INC D',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedAddition(cpu.registers.d, 1, 8);
+      const HC = isHalfCarrySum(cpu.registers.d, 1);
+      cpu.registers.d = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: HC ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x24: {
+    asm: 'INC H',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedAddition(cpu.registers.h, 1, 8);
+      const HC = isHalfCarrySum(cpu.registers.h, 1);
+      cpu.registers.h = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: HC ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x34: {
+    asm: 'INC [HL]',
+    size: 1,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(hl);
+      const result = unsignedAddition(value, 1, 8);
+      const HC = isHalfCarrySum(value, 1);
+      cpu.memWrite(hl, result);
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: HC ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
 };
