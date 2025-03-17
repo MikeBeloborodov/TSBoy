@@ -183,4 +183,10 @@ export class CPU {
       C: parseInt(flagString[3]),
     };
   }
+
+  pushStack(value: u16): void {
+    this.sp -= 2;
+    this.memWrite(this.sp, (value & 0xff00) >> 8);
+    this.memWrite(this.sp + 1, value & 0xff);
+  }
 }
