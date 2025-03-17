@@ -186,25 +186,25 @@ describe('Tests for CPU instructions', () => {
   });
 
   describe('Tests for 0x20 - JR NZ, e8', () => {
-    beforeEach(() => {
+    it('should jump forward', () => {
+      cpu.registers.f = 0x00;
       cpu.memRead = jest.fn(() => 0x05);
-    });
-
-    it('should increment pc by 2', () => {
-      cpu.setFlags({ Z: 0 });
-      checkCounterIncrement(0x20, 2);
-    });
-
-    it('should jump to the correct address if Z flag is false', () => {
-      cpu.setFlags({ Z: 0 });
-      Instructions[0x20].fn(cpu);
-      expect(cpu.pc).toBe(0x0102);
-    });
-
-    it('should not jump if Z flag is true', () => {
-      cpu.setFlags({ Z: 1 });
       Instructions[0x20].fn(cpu);
       expect(cpu.pc).toBe(0x0107);
+    });
+
+    it('should get negative 8bit and jump backward', () => {
+      cpu.registers.f = 0x00;
+      cpu.memRead = jest.fn(() => 0xfb);
+      Instructions[0x20].fn(cpu);
+      expect(cpu.pc).toBe(0x00fd);
+    });
+
+    it('should not jump if Z flag is set', () => {
+      cpu.registers.f = 0x80;
+      cpu.memRead = jest.fn(() => 0x05);
+      Instructions[0x20].fn(cpu);
+      expect(cpu.pc).toBe(0x0102);
     });
   });
 
@@ -1207,6 +1207,20 @@ describe('Tests for CPU instructions', () => {
       expect(cpu.pc).toBe(0x0101);
       const { Z, N, H } = cpu.getFlags();
       expect({ Z, N, H }).toStrictEqual({ Z: 1, N: 0, H: 1 });
+    });
+  });
+
+  describe('Tests for 0xcd - CALL n16', () => {
+    it('should test CALL n16', () => {
+      cpu.memRead = jest.fn((address) => {
+        if (address === 0x0101) return 0x00;
+        return 0xff;
+      });
+      Instructions[0xcd].fn(cpu);
+      expect(emu.memory[0xfffd]).toBe(0x03);
+      expect(emu.memory[0xfffc]).toBe(0x01);
+      expect(cpu.pc).toBe(0xff00);
+      expect(cpu.sp).toBe(0xfffc);
     });
   });
 });

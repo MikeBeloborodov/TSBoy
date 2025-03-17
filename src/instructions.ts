@@ -1166,4 +1166,19 @@ export const Instructions: InstructionsMap = {
       cpu.incrementProgramCounter(1);
     },
   },
+  0xcd: {
+    asm: 'CALL a16',
+    size: 3,
+    cycles: 24,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const address = (b << 8) | a;
+      cpu.pushStack(cpu.pc);
+      cpu.pc = address;
+    },
+  },
 };
