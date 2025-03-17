@@ -1353,4 +1353,56 @@ export const Instructions: InstructionsMap = {
       cpu.incrementProgramCounter(1);
     },
   },
+  0x03: {
+    asm: 'INC BC',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const result = unsignedAddition(
+        cpu.getCombinedRegister(CombinedRegister.BC),
+        1,
+        16
+      );
+      cpu.setCombinedRegister(CombinedRegister.BC, result);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x13: {
+    asm: 'INC DE',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const result = unsignedAddition(
+        cpu.getCombinedRegister(CombinedRegister.DE),
+        1,
+        16
+      );
+      cpu.setCombinedRegister(CombinedRegister.DE, result);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x23: {
+    asm: 'INC HL',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const result = unsignedAddition(
+        cpu.getCombinedRegister(CombinedRegister.HL),
+        1,
+        16
+      );
+      cpu.setCombinedRegister(CombinedRegister.HL, result);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x33: {
+    asm: 'INC SP',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const result = unsignedAddition(cpu.sp, 1, 16);
+      cpu.sp = result;
+      cpu.incrementProgramCounter(1);
+    },
+  },
 };
