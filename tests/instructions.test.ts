@@ -1455,6 +1455,64 @@ describe('Tests for CPU instructions', () => {
       expect(cpu.sp).toBe(0xfffc);
     });
   });
+
+  describe('Tests for INC instructions', () => {
+    it('should test 0x03 - INC BC', () => {
+      cpu.setCombinedRegister(CombinedRegister.BC, 0xabcd);
+      Instructions[0x03].fn(cpu);
+      expect(cpu.getCombinedRegister(CombinedRegister.BC)).toBe(0xabce);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('shoult text 0x03 - INC BC overflow', () => {
+      cpu.setCombinedRegister(CombinedRegister.BC, 0xffff);
+      Instructions[0x03].fn(cpu);
+      expect(cpu.getCombinedRegister(CombinedRegister.BC)).toBe(0x0000);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test 0x13 - INC DE', () => {
+      cpu.setCombinedRegister(CombinedRegister.DE, 0xabcd);
+      Instructions[0x13].fn(cpu);
+      expect(cpu.getCombinedRegister(CombinedRegister.DE)).toBe(0xabce);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('shoud test 0x13 - INC DE overflow', () => {
+      cpu.setCombinedRegister(CombinedRegister.DE, 0xffff);
+      Instructions[0x13].fn(cpu);
+      expect(cpu.getCombinedRegister(CombinedRegister.DE)).toBe(0x0000);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test 0x23 - INC HL', () => {
+      cpu.setCombinedRegister(CombinedRegister.HL, 0xabcd);
+      Instructions[0x23].fn(cpu);
+      expect(cpu.getCombinedRegister(CombinedRegister.HL)).toBe(0xabce);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('shoud test 0x23 - INC HL overflow', () => {
+      cpu.setCombinedRegister(CombinedRegister.HL, 0xffff);
+      Instructions[0x23].fn(cpu);
+      expect(cpu.getCombinedRegister(CombinedRegister.HL)).toBe(0x0000);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('should test 0x33 - INC SP', () => {
+      cpu.sp = 0xabcd;
+      Instructions[0x33].fn(cpu);
+      expect(cpu.sp).toBe(0xabce);
+      expect(cpu.pc).toBe(0x0101);
+    });
+
+    it('shoud test 0x33 - INC SP overflow', () => {
+      cpu.sp = 0xffff;
+      Instructions[0x33].fn(cpu);
+      expect(cpu.sp).toBe(0x0000);
+      expect(cpu.pc).toBe(0x0101);
+    });
+  });
 });
 
 function checkCounterIncrement(instruction: number, times: number) {
