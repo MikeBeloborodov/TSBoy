@@ -1281,4 +1281,76 @@ export const Instructions: InstructionsMap = {
       }
     },
   },
+  0xc1: {
+    asm: 'POP BC',
+    size: 1,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      cpu.setCombinedRegister(CombinedRegister.BC, cpu.popStack());
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xd1: {
+    asm: 'POP DE',
+    size: 1,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      cpu.setCombinedRegister(CombinedRegister.DE, cpu.popStack());
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xe1: {
+    asm: 'POP HL',
+    size: 1,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      cpu.setCombinedRegister(CombinedRegister.HL, cpu.popStack());
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xf1: {
+    asm: 'POP AF',
+    size: 1,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      cpu.setCombinedRegister(CombinedRegister.AF, cpu.popStack());
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xc5: {
+    asm: 'PUSH BC',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      cpu.pushStack(cpu.getCombinedRegister(CombinedRegister.BC));
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xd5: {
+    asm: 'PUSH DE',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      cpu.pushStack(cpu.getCombinedRegister(CombinedRegister.DE));
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xe5: {
+    asm: 'PUSH HL',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      cpu.pushStack(cpu.getCombinedRegister(CombinedRegister.HL));
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xf5: {
+    asm: 'PUSH AF',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      cpu.pushStack(cpu.getCombinedRegister(CombinedRegister.AF));
+      cpu.incrementProgramCounter(1);
+    },
+  },
 };

@@ -1217,8 +1217,8 @@ describe('Tests for CPU instructions', () => {
         return 0xff;
       });
       Instructions[0xcd].fn(cpu);
-      expect(emu.memory[0xfffd]).toBe(0x03);
-      expect(emu.memory[0xfffc]).toBe(0x01);
+      expect(emu.memory[0xfffd]).toBe(0x01);
+      expect(emu.memory[0xfffc]).toBe(0x03);
       expect(cpu.pc).toBe(0xff00);
       expect(cpu.sp).toBe(0xfffc);
     });
@@ -1366,6 +1366,93 @@ describe('Tests for CPU instructions', () => {
       expect(cpu.pc).toBe(0x0102);
       const { Z, N, H, C } = cpu.getFlags();
       expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+  });
+
+  describe('Tests for push and pop instructions', () => {
+    it('should test 0xc1 - POP BC', () => {
+      cpu.sp = 0xfffc;
+      emu.memory[0xfffc] = 0xab;
+      emu.memory[0xfffd] = 0xcd;
+      Instructions[0xc1].fn(cpu);
+      expect(cpu.getCombinedRegister(CombinedRegister.BC)).toBe(0xcdab);
+      expect(cpu.pc).toBe(0x0101);
+      expect(cpu.sp).toBe(0xfffe);
+    });
+
+    it('should test 0xd1 - POP DE', () => {
+      cpu.sp = 0xfffc;
+      emu.memory[0xfffc] = 0xab;
+      emu.memory[0xfffd] = 0xcd;
+      Instructions[0xd1].fn(cpu);
+      expect(cpu.getCombinedRegister(CombinedRegister.DE)).toBe(0xcdab);
+      expect(cpu.pc).toBe(0x0101);
+      expect(cpu.sp).toBe(0xfffe);
+    });
+
+    it('should test 0xe1 - POP HL', () => {
+      cpu.sp = 0xfffc;
+      emu.memory[0xfffc] = 0xab;
+      emu.memory[0xfffd] = 0xcd;
+      Instructions[0xe1].fn(cpu);
+      expect(cpu.getCombinedRegister(CombinedRegister.HL)).toBe(0xcdab);
+      expect(cpu.pc).toBe(0x0101);
+      expect(cpu.sp).toBe(0xfffe);
+    });
+
+    it('should test 0xf1 - POP AF', () => {
+      cpu.sp = 0xfffc;
+      emu.memory[0xfffc] = 0xab;
+      emu.memory[0xfffd] = 0xcd;
+      Instructions[0xf1].fn(cpu);
+      expect(cpu.getCombinedRegister(CombinedRegister.AF)).toBe(0xcdab);
+      expect(cpu.pc).toBe(0x0101);
+      expect(cpu.sp).toBe(0xfffe);
+    });
+
+    it('should test 0xf1 flags', () => {
+      cpu.sp = 0xfffc;
+      emu.memory[0xfffc] = 0xf0;
+      emu.memory[0xfffd] = 0x00;
+      Instructions[0xf1].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0xc5 - PUSH BC', () => {
+      cpu.setCombinedRegister(CombinedRegister.BC, 0xcdab);
+      Instructions[0xc5].fn(cpu);
+      expect(emu.memory[0xfffd]).toBe(0xcd);
+      expect(emu.memory[0xfffc]).toBe(0xab);
+      expect(cpu.pc).toBe(0x0101);
+      expect(cpu.sp).toBe(0xfffc);
+    });
+
+    it('should test 0xd5 - PUSH DE', () => {
+      cpu.setCombinedRegister(CombinedRegister.DE, 0xcdab);
+      Instructions[0xd5].fn(cpu);
+      expect(emu.memory[0xfffd]).toBe(0xcd);
+      expect(emu.memory[0xfffc]).toBe(0xab);
+      expect(cpu.pc).toBe(0x0101);
+      expect(cpu.sp).toBe(0xfffc);
+    });
+
+    it('should test 0xe5 - PUSH HL', () => {
+      cpu.setCombinedRegister(CombinedRegister.HL, 0xcdab);
+      Instructions[0xe5].fn(cpu);
+      expect(emu.memory[0xfffd]).toBe(0xcd);
+      expect(emu.memory[0xfffc]).toBe(0xab);
+      expect(cpu.pc).toBe(0x0101);
+      expect(cpu.sp).toBe(0xfffc);
+    });
+
+    it('should test 0xf5 - PUSH AF', () => {
+      cpu.setCombinedRegister(CombinedRegister.AF, 0xcdab);
+      Instructions[0xf5].fn(cpu);
+      expect(emu.memory[0xfffd]).toBe(0xcd);
+      expect(emu.memory[0xfffc]).toBe(0xab);
+      expect(cpu.pc).toBe(0x0101);
+      expect(cpu.sp).toBe(0xfffc);
     });
   });
 });
