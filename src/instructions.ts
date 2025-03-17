@@ -1,6 +1,8 @@
 import { CPU } from './CPU';
 import { CombinedRegister, FlagState, InstructionsMap } from './types';
 import {
+  isCarrySubstraction,
+  isCarrySum,
   isHalfCarrySubstraction,
   isHalfCarrySum,
   signed8bit,
@@ -1214,6 +1216,67 @@ export const Instructions: InstructionsMap = {
       const value = signed8bit(cpu.memRead(cpu.pc));
       cpu.incrementProgramCounter(1);
       if (cpu.getFlags().C) {
+        cpu.pc += value;
+      }
+    },
+  },
+  0xc9: {
+    asm: 'RET',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      cpu.pc = cpu.popStack();
+    },
+  },
+  0xc6: {
+    asm: 'ADD A, n8',
+    size: 2,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      const result = unsignedAddition(cpu.registers.a, value, 8);
+      const H = isHalfCarrySum(cpu.registers.a, value);
+      const C = isCarrySum(cpu.registers.a, value);
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: H ? FlagState.TRUE : FlagState.FALSE,
+        C: C ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xd6: {
+    asm: 'SUB A n8',
+    size: 2,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      const result = unsignedSubtract(cpu.registers.a, value, 8);
+      const H = isHalfCarrySubstraction(cpu.registers.a, value);
+      const C = isCarrySubstraction(cpu.registers.a, value);
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: H ? FlagState.TRUE : FlagState.FALSE,
+        C: C ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x30: {
+    asm: 'JR NC, r8',
+    size: 2,
+    cycles: 12 / 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = signed8bit(cpu.memRead(cpu.pc));
+      cpu.incrementProgramCounter(1);
+      if (!cpu.getFlags().C) {
         cpu.pc += value;
       }
     },

@@ -17,6 +17,14 @@ export function isHalfCarrySum(a: number, b: number): boolean {
   return (((a & 0xf) + (b & 0xf)) & 0x10) == 0x10;
 }
 
+export function isCarrySum(a: number, b: number): boolean {
+  return a + b > 0xff;
+}
+
+export function isCarrySubstraction(a: number, b: number): boolean {
+  return (a & 0xf) < (b & 0xf);
+}
+
 export function unsignedSubtract(a: number, b: number, bits: number): number {
   const max = 1 << bits;
   return (a - b + max) % max;
