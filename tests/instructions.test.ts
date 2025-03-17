@@ -1223,6 +1223,62 @@ describe('Tests for CPU instructions', () => {
       expect(cpu.sp).toBe(0xfffc);
     });
   });
+
+  describe('Tests for JR instructions e8, Z, C ', () => {
+    it('should test JR e8 jump forward', () => {
+      cpu.memRead = jest.fn(() => 0x03);
+      Instructions[0x18].fn(cpu);
+      expect(cpu.pc).toBe(0x0105);
+    });
+
+    it('should test JR e8 jump backward', () => {
+      cpu.memRead = jest.fn(() => 0xfb);
+      Instructions[0x18].fn(cpu);
+      expect(cpu.pc).toBe(0x00fd);
+    });
+
+    it('should test JR Z, e8 jump forward', () => {
+      cpu.memRead = jest.fn(() => 0x03);
+      cpu.setFlags({ Z: 1 });
+      Instructions[0x28].fn(cpu);
+      expect(cpu.pc).toBe(0x0105);
+    });
+
+    it('should test JR Z, e8 no jump', () => {
+      cpu.memRead = jest.fn(() => 0x03);
+      cpu.setFlags({ Z: 0 });
+      Instructions[0x28].fn(cpu);
+      expect(cpu.pc).toBe(0x0102);
+    });
+
+    it('should test JR Z, e8 jump backward', () => {
+      cpu.memRead = jest.fn(() => 0xfb);
+      cpu.setFlags({ Z: 1 });
+      Instructions[0x28].fn(cpu);
+      expect(cpu.pc).toBe(0x00fd);
+    });
+
+    it('should test JR C, e8 jump forward', () => {
+      cpu.memRead = jest.fn(() => 0x03);
+      cpu.setFlags({ C: 1 });
+      Instructions[0x38].fn(cpu);
+      expect(cpu.pc).toBe(0x0105);
+    });
+
+    it('should test JR C, e8 no jump', () => {
+      cpu.memRead = jest.fn(() => 0x03);
+      cpu.setFlags({ C: 0 });
+      Instructions[0x38].fn(cpu);
+      expect(cpu.pc).toBe(0x0102);
+    });
+
+    it('should test JR C, e8 jump backward', () => {
+      cpu.memRead = jest.fn(() => 0xfb);
+      cpu.setFlags({ C: 1 });
+      Instructions[0x38].fn(cpu);
+      expect(cpu.pc).toBe(0x00fd);
+    });
+  });
 });
 
 function checkCounterIncrement(instruction: number, times: number) {

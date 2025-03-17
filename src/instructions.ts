@@ -1181,4 +1181,41 @@ export const Instructions: InstructionsMap = {
       cpu.pc = address;
     },
   },
+  0x18: {
+    asm: 'JR r8',
+    size: 2,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = signed8bit(cpu.memRead(cpu.pc));
+      cpu.incrementProgramCounter(1);
+      cpu.pc += value;
+    },
+  },
+  0x28: {
+    asm: 'JR Z, r8',
+    size: 2,
+    cycles: 12 / 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = signed8bit(cpu.memRead(cpu.pc));
+      cpu.incrementProgramCounter(1);
+      if (cpu.getFlags().Z) {
+        cpu.pc += value;
+      }
+    },
+  },
+  0x38: {
+    asm: 'JR C, r8',
+    size: 2,
+    cycles: 12 / 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = signed8bit(cpu.memRead(cpu.pc));
+      cpu.incrementProgramCounter(1);
+      if (cpu.getFlags().C) {
+        cpu.pc += value;
+      }
+    },
+  },
 };
