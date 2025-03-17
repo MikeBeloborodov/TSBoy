@@ -987,6 +987,120 @@ describe('Tests for CPU instructions', () => {
   });
 
   describe('Tests for INC instructions', () => {
+    it('should test 0x04 - INC B', () => {
+      cpu.registers.b = 0x12;
+      Instructions[0x04].fn(cpu);
+      expect(cpu.registers.b).toBe(0x13);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 0 });
+    });
+
+    it('should test 0x04 - INC B half-carry', () => {
+      cpu.registers.b = 0x0f;
+      Instructions[0x04].fn(cpu);
+      expect(cpu.registers.b).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x04 - INC B zero', () => {
+      cpu.registers.b = 0xff;
+      Instructions[0x04].fn(cpu);
+      expect(cpu.registers.b).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x14 - INC D', () => {
+      cpu.registers.d = 0x12;
+      Instructions[0x14].fn(cpu);
+      expect(cpu.registers.d).toBe(0x13);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 0 });
+    });
+
+    it('should test 0x14 - INC D half-carry', () => {
+      cpu.registers.d = 0x0f;
+      Instructions[0x14].fn(cpu);
+      expect(cpu.registers.d).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x14 - INC D zero', () => {
+      cpu.registers.d = 0xff;
+      Instructions[0x14].fn(cpu);
+      expect(cpu.registers.d).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x24 - INC H', () => {
+      cpu.registers.h = 0x12;
+      Instructions[0x24].fn(cpu);
+      expect(cpu.registers.h).toBe(0x13);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 0 });
+    });
+
+    it('should test 0x24 - INC H half-carry', () => {
+      cpu.registers.h = 0x0f;
+      Instructions[0x24].fn(cpu);
+      expect(cpu.registers.h).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x24 - INC H zero', () => {
+      cpu.registers.h = 0xff;
+      Instructions[0x24].fn(cpu);
+      expect(cpu.registers.h).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x34 - INC (HL)', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x12;
+      Instructions[0x34].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0x13);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 0 });
+    });
+
+    it('should test 0x34 - INC (HL) half-carry', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x0f;
+      Instructions[0x34].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x34 - INC (HL) zero', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      Instructions[0x34].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 1, N: 0, H: 1 });
+    });
+
     it('should test 0x0c - INC C', () => {
       cpu.registers.c = 0x12;
       Instructions[0x0c].fn(cpu);
