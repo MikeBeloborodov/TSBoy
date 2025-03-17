@@ -985,6 +985,116 @@ describe('Tests for CPU instructions', () => {
       expect(cpu.pc).toBe(0x0101);
     });
   });
+
+  describe('Tests for INC instructions', () => {
+    it('should test 0x0c - INC C', () => {
+      cpu.registers.c = 0x12;
+      Instructions[0x0c].fn(cpu);
+      expect(cpu.registers.c).toBe(0x13);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 0 });
+    });
+
+    it('should test 0x0c - INC C half-carry', () => {
+      cpu.registers.c = 0x0f;
+      Instructions[0x0c].fn(cpu);
+      expect(cpu.registers.c).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x0c - INC C zero', () => {
+      cpu.registers.c = 0xff;
+      Instructions[0x0c].fn(cpu);
+      expect(cpu.registers.c).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x1c - INC E', () => {
+      cpu.registers.e = 0x12;
+      Instructions[0x1c].fn(cpu);
+      expect(cpu.registers.e).toBe(0x13);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 0 });
+    });
+
+    it('should test 0x1c - INC E half-carry', () => {
+      cpu.registers.e = 0x0f;
+      Instructions[0x1c].fn(cpu);
+      expect(cpu.registers.e).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x1c - INC E zero', () => {
+      cpu.registers.e = 0xff;
+      Instructions[0x1c].fn(cpu);
+      expect(cpu.registers.e).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x2c - INC L', () => {
+      cpu.registers.l = 0x12;
+      Instructions[0x2c].fn(cpu);
+      expect(cpu.registers.l).toBe(0x13);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 0 });
+    });
+
+    it('should test 0x2c - INC L half-carry', () => {
+      cpu.registers.l = 0x0f;
+      Instructions[0x2c].fn(cpu);
+      expect(cpu.registers.l).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x2c - INC L zero', () => {
+      cpu.registers.l = 0xff;
+      Instructions[0x2c].fn(cpu);
+      expect(cpu.registers.l).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x3c - INC A', () => {
+      cpu.registers.a = 0x12;
+      Instructions[0x3c].fn(cpu);
+      expect(cpu.registers.a).toBe(0x13);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 0 });
+    });
+
+    it('should test 0x3c - INC A half-carry', () => {
+      cpu.registers.a = 0x0f;
+      Instructions[0x3c].fn(cpu);
+      expect(cpu.registers.a).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x3c - INC A zero', () => {
+      cpu.registers.a = 0xff;
+      Instructions[0x3c].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 1, N: 0, H: 1 });
+    });
+  });
 });
 
 function checkCounterIncrement(instruction: number, times: number) {

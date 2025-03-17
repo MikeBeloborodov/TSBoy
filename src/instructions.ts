@@ -2,6 +2,7 @@ import { CPU } from './CPU';
 import { CombinedRegister, FlagState, InstructionsMap } from './types';
 import {
   isHalfCarrySubstraction,
+  isHalfCarrySum,
   unsignedAddition,
   unsignedSubtract,
 } from './utils';
@@ -1034,4 +1035,68 @@ export const Instructions: InstructionsMap = {
 
   //   }
   // },
+  0x0c: {
+    asm: 'INC C',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedAddition(cpu.registers.c, 1, 8);
+      const HC = isHalfCarrySum(cpu.registers.c, 1);
+      cpu.registers.c = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: HC ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x1c: {
+    asm: 'INC E',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedAddition(cpu.registers.e, 1, 8);
+      const HC = isHalfCarrySum(cpu.registers.e, 1);
+      cpu.registers.e = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: HC ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x2c: {
+    asm: 'INC L',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedAddition(cpu.registers.l, 1, 8);
+      const HC = isHalfCarrySum(cpu.registers.l, 1);
+      cpu.registers.l = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: HC ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x3c: {
+    asm: 'INC A',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedAddition(cpu.registers.a, 1, 8);
+      const HC = isHalfCarrySum(cpu.registers.a, 1);
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: HC ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
 };
