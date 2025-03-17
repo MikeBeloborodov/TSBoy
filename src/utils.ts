@@ -26,3 +26,11 @@ export function unsignedAddition(a: number, b: number, bits: number): number {
   const max = 1 << bits;
   return (a + b) % max;
 }
+
+export function unsigned8bit(a: number): number {
+  return a & 0xff;
+}
+
+export function signed8bit(a: number): number {
+  return a > 0x7f ? a - 0x100 : a;
+}

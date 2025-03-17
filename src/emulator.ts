@@ -8,8 +8,13 @@ export class Emulator {
   cartridge: Memory;
   cartHeaderInfo: HeaderInfo;
 
-  constructor(romFile: Buffer) {
-    this.cpu = new CPU(this.memoryRead.bind(this), this.memoryWrite.bind(this));
+  constructor(romFile: Buffer, delay?: number, debug?: boolean) {
+    this.cpu = new CPU(
+      this.memoryRead.bind(this),
+      this.memoryWrite.bind(this),
+      delay,
+      debug
+    );
     this.memory = new Uint8Array(0x10000).fill(0);
     this.cartridge = romFile;
     this.memory = new Uint8Array([
