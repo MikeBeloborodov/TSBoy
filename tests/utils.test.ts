@@ -3,6 +3,7 @@ import {
   signed8bit,
   unsigned8bit,
   unsignedSubtract,
+  sumThreeValuesWithCarryInfo,
 } from '../src/utils';
 
 describe('Tests for utils', () => {
@@ -50,6 +51,41 @@ describe('Tests for utils', () => {
     it('should return positive number', () => {
       expect(unsigned8bit(0x01)).toBe(0x01);
       expect(unsigned8bit(0x7f)).toBe(0x7f);
+    });
+  });
+
+  describe('Tests for sumThreeValuesWithCarryInfo', () => {
+    it('should return correct values', () => {
+      const { result, halfCarry, carry } = sumThreeValuesWithCarryInfo(
+        0x01,
+        0x01,
+        0x01
+      );
+      expect(result).toBe(0x03);
+      expect(halfCarry).toBe(false);
+      expect(carry).toBe(false);
+    });
+
+    it('should return correct values', () => {
+      const { result, halfCarry, carry } = sumThreeValuesWithCarryInfo(
+        0x0f,
+        0x01,
+        0x01
+      );
+      expect(result).toBe(0x11);
+      expect(halfCarry).toBe(true);
+      expect(carry).toBe(false);
+    });
+
+    it('should return correct values with carry', () => {
+      const { result, halfCarry, carry } = sumThreeValuesWithCarryInfo(
+        0xff,
+        0x01,
+        0x01
+      );
+      expect(result).toBe(0x01);
+      expect(halfCarry).toBe(true);
+      expect(carry).toBe(true);
     });
   });
 });
