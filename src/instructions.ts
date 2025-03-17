@@ -3,6 +3,7 @@ import { CombinedRegister, FlagState, InstructionsMap } from './types';
 import {
   isHalfCarrySubstraction,
   isHalfCarrySum,
+  signed8bit,
   unsignedAddition,
   unsignedSubtract,
 } from './utils';
@@ -82,9 +83,9 @@ export const Instructions: InstructionsMap = {
     cycles: 12 / 8,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
-      const value = cpu.memRead(cpu.pc);
+      const value = signed8bit(cpu.memRead(cpu.pc));
       cpu.incrementProgramCounter(1);
-      if (cpu.getFlags().Z) {
+      if (!cpu.getFlags().Z) {
         cpu.pc += value;
       }
     },

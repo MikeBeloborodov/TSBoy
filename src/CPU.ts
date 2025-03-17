@@ -18,10 +18,14 @@ export class CPU {
   memRead: (address: u16) => u8;
   memWrite: (address: u16, value: u8) => void;
   logger: Logger;
+  delay?: number;
+  debug?: boolean;
 
   constructor(
     memReadFn: (address: u16) => u8,
-    memWriteFn: (address: u16, value: u8) => void
+    memWriteFn: (address: u16, value: u8) => void,
+    delay?: number,
+    debug?: boolean
   ) {
     this.pc = 0x0100;
     this.sp = 0xfffe;
@@ -38,6 +42,7 @@ export class CPU {
     this.memWrite = memWriteFn;
     this.memRead = memReadFn;
     this.logger = new Logger();
+    this.delay = delay;
   }
 
   getCombinedRegister(register: CombinedRegister): u16 {
@@ -84,14 +89,16 @@ export class CPU {
         );
       }
 
-      console.log(
-        `PC: ${this.pc.toString(16)}\n`,
-        `Executing ${nextInstruction.toString(16)}: ${instructionInfo.asm}`
-      );
-      console.log('---------------------------------');
+      if (this.debug) {
+        console.log(
+          `PC: ${this.pc.toString(16)}\n`,
+          `Executing ${nextInstruction.toString(16)}: ${instructionInfo.asm}`
+        );
+        console.log('---------------------------------');
+      }
 
       this.executeInstruction(instructionInfo);
-      await sleep(500);
+      this.delay && (await sleep(this.delay));
     }
   }
 
