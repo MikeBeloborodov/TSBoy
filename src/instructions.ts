@@ -81,6 +81,54 @@ export const Instructions: InstructionsMap = {
       cpu.incrementProgramCounter(1);
     },
   },
+  0x1d: {
+    asm: 'DEC E',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedSubtract(cpu.registers.e, 1, 8);
+      const HC = isHalfCarrySubstraction(cpu.registers.e, 1);
+      cpu.registers.e = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: HC ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x2d: {
+    asm: 'DEC L',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedSubtract(cpu.registers.l, 1, 8);
+      const HC = isHalfCarrySubstraction(cpu.registers.l, 1);
+      cpu.registers.l = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: HC ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x3d: {
+    asm: 'DEC A',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedSubtract(cpu.registers.a, 1, 8);
+      const HC = isHalfCarrySubstraction(cpu.registers.a, 1);
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: HC ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
   0x20: {
     asm: 'JR NZ, e8',
     size: 2,
