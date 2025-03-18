@@ -1,4 +1,5 @@
 import { CPU } from './CPU';
+import { PrefixInstructions } from './prefixInstructions';
 import { CombinedRegister, FlagState, InstructionsMap } from './types';
 import {
   isCarrySubstraction,
@@ -13,6 +14,21 @@ import {
 } from './utils';
 
 export const Instructions: InstructionsMap = {
+  0xcb: {
+    asm: 'PREFIX CB',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const instruction = cpu.memRead(cpu.pc);
+      const prefixInstruction = PrefixInstructions[instruction];
+      if (!prefixInstruction) {
+        throw new Error(`Unknown prefix instruction ${instruction}`);
+      }
+      prefixInstruction.fn(cpu);
+      cpu.incrementProgramCounter(1);
+    },
+  },
   0x00: {
     asm: `NOP`,
     size: 1,
