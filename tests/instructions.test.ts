@@ -2861,6 +2861,469 @@ describe('Tests for CPU instructions', () => {
       expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 1, H: 1 });
     });
   });
+
+  describe('Tests for OR instructions', () => {
+    it('should test 0xb0 - OR A, B', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.b = 0x01;
+      Instructions[0xb0].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb0 - OR A, B zero', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.b = 0x00;
+      Instructions[0xb0].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb1 - OR A, C', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.c = 0x01;
+      Instructions[0xb1].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb1 - OR A, C zero', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.c = 0x00;
+      Instructions[0xb1].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb2 - OR A, D', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.d = 0x01;
+      Instructions[0xb2].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb2 - OR A, D zero', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.d = 0x00;
+      Instructions[0xb2].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb3 - OR A, E', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.e = 0x01;
+      Instructions[0xb3].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb3 - OR A, E zero', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.e = 0x00;
+      Instructions[0xb3].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb4 - OR A, H', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.h = 0x01;
+      Instructions[0xb4].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb4 - OR A, H zero', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.h = 0x00;
+      Instructions[0xb4].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb5 - OR A, L', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.l = 0x01;
+      Instructions[0xb5].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb5 - OR A, L zero', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.l = 0x00;
+      Instructions[0xb5].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb6 - OR A, (HL)', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x01;
+      Instructions[0xb6].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb6 - OR A, (HL) zero', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x00;
+      Instructions[0xb6].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb7 - OR A, A not zero', () => {
+      cpu.registers.a = 0x01;
+      Instructions[0xb7].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xb7 - OR A, A zero', () => {
+      cpu.registers.a = 0x00;
+      Instructions[0xb7].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 0, H: 0, C: 0 });
+    });
+  });
+
+  describe('Test CP instructions', () => {
+    it('should test 0xb8 - CP A, B zero', () => {
+      cpu.registers.a = 0x01;
+      cpu.registers.b = 0x01;
+      Instructions[0xb8].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0xb8 - CP A, B not zero', () => {
+      cpu.registers.a = 0x02;
+      cpu.registers.b = 0x01;
+      Instructions[0xb8].fn(cpu);
+      expect(cpu.registers.a).toBe(0x02);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('shoud test 0xb8 - CP A, B half carry', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.b = 0x01;
+      Instructions[0xb8].fn(cpu);
+      expect(cpu.registers.a).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0xb8 - CP A, B carry', () => {
+      cpu.registers.a = 0x01;
+      cpu.registers.b = 0x02;
+      Instructions[0xb8].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0xb9 - CP A, C zero', () => {
+      cpu.registers.a = 0x01;
+      cpu.registers.c = 0x01;
+      Instructions[0xb9].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0xb9 - CP A, C not zero', () => {
+      cpu.registers.a = 0x02;
+      cpu.registers.c = 0x01;
+      Instructions[0xb9].fn(cpu);
+      expect(cpu.registers.a).toBe(0x02);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('shoud test 0xb9 - CP A, C half carry', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.c = 0x01;
+      Instructions[0xb9].fn(cpu);
+      expect(cpu.registers.a).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0xb9 - CP A, C carry', () => {
+      cpu.registers.a = 0x01;
+      cpu.registers.c = 0x02;
+      Instructions[0xb9].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0xba - CP A, D zero', () => {
+      cpu.registers.a = 0x01;
+      cpu.registers.d = 0x01;
+      Instructions[0xba].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0xba - CP A, D not zero', () => {
+      cpu.registers.a = 0x02;
+      cpu.registers.d = 0x01;
+      Instructions[0xba].fn(cpu);
+      expect(cpu.registers.a).toBe(0x02);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('shoud test 0xba - CP A, D half carry', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.d = 0x01;
+      Instructions[0xba].fn(cpu);
+      expect(cpu.registers.a).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0xba - CP A, D carry', () => {
+      cpu.registers.a = 0x01;
+      cpu.registers.d = 0x02;
+      Instructions[0xba].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0xbb - CP A, E zero', () => {
+      cpu.registers.a = 0x01;
+      cpu.registers.e = 0x01;
+      Instructions[0xbb].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0xbb - CP A, E not zero', () => {
+      cpu.registers.a = 0x02;
+      cpu.registers.e = 0x01;
+      Instructions[0xbb].fn(cpu);
+      expect(cpu.registers.a).toBe(0x02);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('shoud test 0xbb - CP A, E half carry', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.e = 0x01;
+      Instructions[0xbb].fn(cpu);
+      expect(cpu.registers.a).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0xbb - CP A, E carry', () => {
+      cpu.registers.a = 0x01;
+      cpu.registers.e = 0x02;
+      Instructions[0xbb].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0xbc - CP A, H zero', () => {
+      cpu.registers.a = 0x01;
+      cpu.registers.h = 0x01;
+      Instructions[0xbc].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0xbc - CP A, H not zero', () => {
+      cpu.registers.a = 0x02;
+      cpu.registers.h = 0x01;
+      Instructions[0xbc].fn(cpu);
+      expect(cpu.registers.a).toBe(0x02);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('shoud test 0xbc - CP A, H half carry', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.h = 0x01;
+      Instructions[0xbc].fn(cpu);
+      expect(cpu.registers.a).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0xbc - CP A, H carry', () => {
+      cpu.registers.a = 0x01;
+      cpu.registers.h = 0x02;
+      Instructions[0xbc].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0xbd - CP A, L zero', () => {
+      cpu.registers.a = 0x01;
+      cpu.registers.l = 0x01;
+      Instructions[0xbd].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0xbd - CP A, L not zero', () => {
+      cpu.registers.a = 0x02;
+      cpu.registers.l = 0x01;
+      Instructions[0xbd].fn(cpu);
+      expect(cpu.registers.a).toBe(0x02);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('shoud test 0xbd - CP A, L half carry', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.l = 0x01;
+      Instructions[0xbd].fn(cpu);
+      expect(cpu.registers.a).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0xbd - CP A, L carry', () => {
+      cpu.registers.a = 0x01;
+      cpu.registers.l = 0x02;
+      Instructions[0xbd].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0xbe - CP A, (HL) zero', () => {
+      cpu.registers.a = 0x01;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x01;
+      Instructions[0xbe].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0xbe - CP A, (HL) not zero', () => {
+      cpu.registers.a = 0x02;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x01;
+      Instructions[0xbe].fn(cpu);
+      expect(cpu.registers.a).toBe(0x02);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('shoud test 0xbe - CP A, (HL) half carry', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x01;
+      Instructions[0xbe].fn(cpu);
+      expect(cpu.registers.a).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0xbe - CP A, (HL) carry', () => {
+      cpu.registers.a = 0x01;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x02;
+      Instructions[0xbe].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0xbf - CP A, A zero', () => {
+      cpu.registers.a = 0x01;
+      Instructions[0xbf].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+  });
 });
 
 function checkCounterIncrement(instruction: number, times: number) {
