@@ -412,4 +412,412 @@ describe('Tests prefix instructions', () => {
       expect(cpu.registers.a).toBe(0x80);
     });
   });
+
+  describe('Tests for RES instructions', () => {
+    it('should set bit 0 of register B to 0', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0x80].fn(cpu);
+      expect(cpu.registers.b).toBe(0xfe);
+    });
+
+    it('should set bit 2 of register B to 0', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0x90].fn(cpu);
+      expect(cpu.registers.b).toBe(0xfb);
+    });
+
+    it('should set bit 4 of register B to 0', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0xa0].fn(cpu);
+      expect(cpu.registers.b).toBe(0xef);
+    });
+
+    it('should set bit 6 of register B to 0', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0xb0].fn(cpu);
+      expect(cpu.registers.b).toBe(0xbf);
+    });
+
+    it('should set bit 0 of register C to 0', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0x81].fn(cpu);
+      expect(cpu.registers.c).toBe(0xfe);
+    });
+
+    it('should set bit 2 of register C to 0', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0x91].fn(cpu);
+      expect(cpu.registers.c).toBe(0xfb);
+    });
+
+    it('should set bit 4 of register C to 0', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0xa1].fn(cpu);
+      expect(cpu.registers.c).toBe(0xef);
+    });
+
+    it('should set bit 6 of register C to 0', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0xb1].fn(cpu);
+      expect(cpu.registers.c).toBe(0xbf);
+    });
+
+    it('should set bit 0 of register D to 0', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0x82].fn(cpu);
+      expect(cpu.registers.d).toBe(0xfe);
+    });
+
+    it('should set bit 2 of register D to 0', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0x92].fn(cpu);
+      expect(cpu.registers.d).toBe(0xfb);
+    });
+
+    it('should set bit 4 of register D to 0', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0xa2].fn(cpu);
+      expect(cpu.registers.d).toBe(0xef);
+    });
+
+    it('should set bit 6 of register D to 0', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0xb2].fn(cpu);
+      expect(cpu.registers.d).toBe(0xbf);
+    });
+
+    it('should set bit 0 of register E to 0', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0x83].fn(cpu);
+      expect(cpu.registers.e).toBe(0xfe);
+    });
+
+    it('should set bit 2 of register E to 0', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0x93].fn(cpu);
+      expect(cpu.registers.e).toBe(0xfb);
+    });
+
+    it('should set bit 4 of register E to 0', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0xa3].fn(cpu);
+      expect(cpu.registers.e).toBe(0xef);
+    });
+
+    it('should set bit 6 of register E to 0', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0xb3].fn(cpu);
+      expect(cpu.registers.e).toBe(0xbf);
+    });
+
+    it('should set bit 0 of register H to 0', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0x84].fn(cpu);
+      expect(cpu.registers.h).toBe(0xfe);
+    });
+
+    it('should set bit 2 of register H to 0', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0x94].fn(cpu);
+      expect(cpu.registers.h).toBe(0xfb);
+    });
+
+    it('should set bit 4 of register H to 0', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0xa4].fn(cpu);
+      expect(cpu.registers.h).toBe(0xef);
+    });
+
+    it('should set bit 6 of register H to 0', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0xb4].fn(cpu);
+      expect(cpu.registers.h).toBe(0xbf);
+    });
+
+    it('should set bit 0 of register L to 0', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0x85].fn(cpu);
+      expect(cpu.registers.l).toBe(0xfe);
+    });
+
+    it('should set bit 2 of register L to 0', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0x95].fn(cpu);
+      expect(cpu.registers.l).toBe(0xfb);
+    });
+
+    it('should set bit 4 of register L to 0', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0xa5].fn(cpu);
+      expect(cpu.registers.l).toBe(0xef);
+    });
+
+    it('should set bit 6 of register L to 0', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0xb5].fn(cpu);
+      expect(cpu.registers.l).toBe(0xbf);
+    });
+
+    it('should set bit 0 of value at the address HL to 0', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0x86].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0xfe);
+    });
+
+    it('should set bit 2 of value at the address HL to 0', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0x96].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0xfb);
+    });
+
+    it('should set bit 4 of value at the address HL to 0', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0xa6].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0xef);
+    });
+
+    it('should set bit 6 of value at the address HL to 0', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0xb6].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0xbf);
+    });
+
+    it('should set bit 0 of register A to 0', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0x87].fn(cpu);
+      expect(cpu.registers.a).toBe(0xfe);
+    });
+
+    it('should set bit 2 of register A to 0', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0x97].fn(cpu);
+      expect(cpu.registers.a).toBe(0xfb);
+    });
+
+    it('should set bit 4 of register A to 0', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0xa7].fn(cpu);
+      expect(cpu.registers.a).toBe(0xef);
+    });
+
+    it('should set bit 6 of register A to 0', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0xb7].fn(cpu);
+      expect(cpu.registers.a).toBe(0xbf);
+    });
+
+    it('should set bit 1 of register B to 0', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0x88].fn(cpu);
+      expect(cpu.registers.b).toBe(0xfd);
+    });
+
+    it('should set bit 3 of register B to 0', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0x98].fn(cpu);
+      expect(cpu.registers.b).toBe(0xf7);
+    });
+
+    it('should set bit 5 of register B to 0', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0xa8].fn(cpu);
+      expect(cpu.registers.b).toBe(0xdf);
+    });
+
+    it('should set bit 7 of register B to 0', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0xb8].fn(cpu);
+      expect(cpu.registers.b).toBe(0x7f);
+    });
+
+    it('should set bit 7 of register B to 0', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0xb8].fn(cpu);
+      expect(cpu.registers.b).toBe(0x7f);
+    });
+
+    it('should set bit 1 of register C to 0', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0x89].fn(cpu);
+      expect(cpu.registers.c).toBe(0xfd);
+    });
+
+    it('should set bit 3 of register C to 0', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0x99].fn(cpu);
+      expect(cpu.registers.c).toBe(0xf7);
+    });
+
+    it('should set bit 5 of register C to 0', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0xa9].fn(cpu);
+      expect(cpu.registers.c).toBe(0xdf);
+    });
+
+    it('should set bit 7 of register C to 0', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0xb9].fn(cpu);
+      expect(cpu.registers.c).toBe(0x7f);
+    });
+
+    it('should set bit 1 of register D to 0', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0x8a].fn(cpu);
+      expect(cpu.registers.d).toBe(0xfd);
+    });
+
+    it('should set bit 3 of register D to 0', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0x9a].fn(cpu);
+      expect(cpu.registers.d).toBe(0xf7);
+    });
+
+    it('should set bit 5 of register D to 0', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0xaa].fn(cpu);
+      expect(cpu.registers.d).toBe(0xdf);
+    });
+
+    it('should set bit 7 of register D to 0', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0xba].fn(cpu);
+      expect(cpu.registers.d).toBe(0x7f);
+    });
+
+    it('should set bit 1 of register E to 0', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0x8b].fn(cpu);
+      expect(cpu.registers.e).toBe(0xfd);
+    });
+
+    it('should set bit 3 of register E to 0', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0x9b].fn(cpu);
+      expect(cpu.registers.e).toBe(0xf7);
+    });
+
+    it('should set bit 5 of register E to 0', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0xab].fn(cpu);
+      expect(cpu.registers.e).toBe(0xdf);
+    });
+
+    it('should set bit 7 of register E to 0', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0xbb].fn(cpu);
+      expect(cpu.registers.e).toBe(0x7f);
+    });
+
+    it('should set bit 1 of register H to 0', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0x8c].fn(cpu);
+      expect(cpu.registers.h).toBe(0xfd);
+    });
+
+    it('should set bit 3 of register H to 0', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0x9c].fn(cpu);
+      expect(cpu.registers.h).toBe(0xf7);
+    });
+
+    it('should set bit 5 of register H to 0', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0xac].fn(cpu);
+      expect(cpu.registers.h).toBe(0xdf);
+    });
+
+    it('should set bit 7 of register H to 0', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0xbc].fn(cpu);
+      expect(cpu.registers.h).toBe(0x7f);
+    });
+
+    it('should set bit 1 of register L to 0', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0x8d].fn(cpu);
+      expect(cpu.registers.l).toBe(0xfd);
+    });
+
+    it('should set bit 3 of register L to 0', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0x9d].fn(cpu);
+      expect(cpu.registers.l).toBe(0xf7);
+    });
+
+    it('should set bit 5 of register L to 0', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0xad].fn(cpu);
+      expect(cpu.registers.l).toBe(0xdf);
+    });
+
+    it('should set bit 7 of register L to 0', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0xbd].fn(cpu);
+      expect(cpu.registers.l).toBe(0x7f);
+    });
+
+    it('should set bit 1 of value at address HL to 0', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0x8e].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0xfd);
+    });
+
+    it('should set bit 3 of value at address HL to 0', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0x9e].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0xf7);
+    });
+
+    it('should set bit 5 of value at address HL to 0', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0xae].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0xdf);
+    });
+
+    it('should set bit 7 of value at address HL to 0', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0xbe].fn(cpu);
+      expect(emu.memory[0xff00]).toBe(0x7f);
+    });
+
+    it('should set bit 1 of register A to 0', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0x8f].fn(cpu);
+      expect(cpu.registers.a).toBe(0xfd);
+    });
+
+    it('should set bit 3 of register A to 0', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0x9f].fn(cpu);
+      expect(cpu.registers.a).toBe(0xf7);
+    });
+
+    it('should set bit 5 of register A to 0', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0xaf].fn(cpu);
+      expect(cpu.registers.a).toBe(0xdf);
+    });
+
+    it('should set bit 7 of register A to 0', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0xbf].fn(cpu);
+      expect(cpu.registers.a).toBe(0x7f);
+    });
+  });
 });
