@@ -820,4 +820,934 @@ describe('Tests prefix instructions', () => {
       expect(cpu.registers.a).toBe(0x7f);
     });
   });
+
+  describe('Tests BIT instructions', () => {
+    it('should test 0x40 - bit 0 of register B', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0x40].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x40 - bit 0 of register B zero', () => {
+      cpu.registers.b = 0x00;
+      PrefixInstructions[0x40].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x41 - bit 0 of register C', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0x41].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x41 - bit 0 of register C zero', () => {
+      cpu.registers.c = 0x00;
+      PrefixInstructions[0x41].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x42 - bit 0 of register D', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0x42].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x42 - bit 0 of register D zero', () => {
+      cpu.registers.d = 0x00;
+      PrefixInstructions[0x42].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x43 - bit 0 of register E', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0x43].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x43 - bit 0 of register E zero', () => {
+      cpu.registers.e = 0x00;
+      PrefixInstructions[0x43].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x44 - bit 0 of register H', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0x44].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x44 - bit 0 of register H zero', () => {
+      cpu.registers.h = 0x00;
+      PrefixInstructions[0x44].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x45 - bit 0 of register L', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0x45].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x45 - bit 0 of register L zero', () => {
+      cpu.registers.l = 0x00;
+      PrefixInstructions[0x45].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x46 - bit 0 of value at address HL', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0x46].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x46 - bit 0 of value at address HL zero', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x00;
+      PrefixInstructions[0x46].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x47 - bit 0 of register A', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0x47].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x47 - bit 0 of register A zero', () => {
+      cpu.registers.a = 0x00;
+      PrefixInstructions[0x47].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x48 - bit 1 of register B', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0x48].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x48 - bit 1 of register B zero', () => {
+      cpu.registers.b = 0x00;
+      PrefixInstructions[0x48].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x49 - bit 1 of register C', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0x49].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x49 - bit 1 of register C zero', () => {
+      cpu.registers.c = 0x00;
+      PrefixInstructions[0x49].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x4a - bit 1 of register D', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0x4a].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x4a - bit 1 of register D zero', () => {
+      cpu.registers.d = 0x00;
+      PrefixInstructions[0x4a].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x4b - bit 1 of register E', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0x4b].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x4b - bit 1 of register E zero', () => {
+      cpu.registers.e = 0x00;
+      PrefixInstructions[0x4b].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x4c - bit 1 of register H', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0x4c].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x4c - bit 1 of register H zero', () => {
+      cpu.registers.h = 0x00;
+      PrefixInstructions[0x4c].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x4d - bit 1 of register L', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0x4d].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x4d - bit 1 of register L zero', () => {
+      cpu.registers.l = 0x00;
+      PrefixInstructions[0x4d].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x4e - bit 1 of value at address HL', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0x4e].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x4e - bit 1 of value at address HL zero', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x00;
+      PrefixInstructions[0x4e].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x4f - bit 1 of register A', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0x4f].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x4f - bit 1 of register A zero', () => {
+      cpu.registers.a = 0x00;
+      PrefixInstructions[0x4f].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x50 - bit 2 of register B', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0x50].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x50 - bit 2 of register B zero', () => {
+      cpu.registers.b = 0x00;
+      PrefixInstructions[0x50].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x51 - bit 2 of register C', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0x51].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x51 - bit 2 of register C zero', () => {
+      cpu.registers.c = 0x00;
+      PrefixInstructions[0x51].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x52 - bit 2 of register D', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0x52].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x52 - bit 2 of register D zero', () => {
+      cpu.registers.d = 0x00;
+      PrefixInstructions[0x52].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x53 - bit 2 of register E', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0x53].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x53 - bit 2 of register E zero', () => {
+      cpu.registers.e = 0x00;
+      PrefixInstructions[0x53].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x54 - bit 2 of register H', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0x54].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x54 - bit 2 of register H zero', () => {
+      cpu.registers.h = 0x00;
+      PrefixInstructions[0x54].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x55 - bit 2 of register L', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0x55].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x55 - bit 2 of register L zero', () => {
+      cpu.registers.l = 0x00;
+      PrefixInstructions[0x55].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x56 - bit 2 of value at address HL', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0x56].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x56 - bit 2 of value at address HL zero', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x00;
+      PrefixInstructions[0x56].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x57 - bit 2 of register A', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0x57].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x57 - bit 2 of register A zero', () => {
+      cpu.registers.a = 0x00;
+      PrefixInstructions[0x57].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x58 - bit 3 of register B', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0x58].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x58 - bit 3 of register B zero', () => {
+      cpu.registers.b = 0x00;
+      PrefixInstructions[0x58].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x59 - bit 3 of register C', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0x59].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x59 - bit 3 of register C zero', () => {
+      cpu.registers.c = 0x00;
+      PrefixInstructions[0x59].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x5a - bit 3 of register D', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0x5a].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x5a - bit 3 of register D zero', () => {
+      cpu.registers.d = 0x00;
+      PrefixInstructions[0x5a].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x5b - bit 3 of register E', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0x5b].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x5b - bit 3 of register E zero', () => {
+      cpu.registers.e = 0x00;
+      PrefixInstructions[0x5b].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x5c - bit 3 of register H', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0x5c].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x5c - bit 3 of register H zero', () => {
+      cpu.registers.h = 0x00;
+      PrefixInstructions[0x5c].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x5d - bit 3 of register L', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0x5d].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x5d - bit 3 of register L zero', () => {
+      cpu.registers.l = 0x00;
+      PrefixInstructions[0x5d].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x5e - bit 3 of value at address HL', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0x5e].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x5e - bit 3 of value at address HL zero', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x00;
+      PrefixInstructions[0x5e].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x5f - bit 3 of register A', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0x5f].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x5f - bit 3 of register A zero', () => {
+      cpu.registers.a = 0x00;
+      PrefixInstructions[0x5f].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x60 - bit 4 of register B', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0x60].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x60 - bit 4 of register B zero', () => {
+      cpu.registers.b = 0x00;
+      PrefixInstructions[0x60].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x61 - bit 4 of register C', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0x61].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x61 - bit 4 of register C zero', () => {
+      cpu.registers.c = 0x00;
+      PrefixInstructions[0x61].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x62 - bit 4 of register D', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0x62].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x62 - bit 4 of register D zero', () => {
+      cpu.registers.d = 0x00;
+      PrefixInstructions[0x62].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x63 - bit 4 of register E', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0x63].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x63 - bit 4 of register E zero', () => {
+      cpu.registers.e = 0x00;
+      PrefixInstructions[0x63].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x64 - bit 4 of register H', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0x64].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x64 - bit 4 of register H zero', () => {
+      cpu.registers.h = 0x00;
+      PrefixInstructions[0x64].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x65 - bit 4 of register L', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0x65].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x65 - bit 4 of register L zero', () => {
+      cpu.registers.l = 0x00;
+      PrefixInstructions[0x65].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x66 - bit 4 of value at address HL', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0x66].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x66 - bit 4 of value at address HL zero', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x00;
+      PrefixInstructions[0x66].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x67 - bit 4 of register A', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0x67].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x67 - bit 4 of register A zero', () => {
+      cpu.registers.a = 0x00;
+      PrefixInstructions[0x67].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x68 - bit 5 of register B', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0x68].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x68 - bit 5 of register B zero', () => {
+      cpu.registers.b = 0x00;
+      PrefixInstructions[0x68].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x69 - bit 5 of register C', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0x69].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x69 - bit 5 of register C zero', () => {
+      cpu.registers.c = 0x00;
+      PrefixInstructions[0x69].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x6a - bit 5 of register D', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0x6a].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x6a - bit 5 of register D zero', () => {
+      cpu.registers.d = 0x00;
+      PrefixInstructions[0x6a].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x6b - bit 5 of register E', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0x6b].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x6b - bit 5 of register E zero', () => {
+      cpu.registers.e = 0x00;
+      PrefixInstructions[0x6b].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x6c - bit 5 of register H', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0x6c].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x6c - bit 5 of register H zero', () => {
+      cpu.registers.h = 0x00;
+      PrefixInstructions[0x6c].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x6d - bit 5 of register L', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0x6d].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x6d - bit 5 of register L zero', () => {
+      cpu.registers.l = 0x00;
+      PrefixInstructions[0x6d].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x6e - bit 5 of value at address HL', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0x6e].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x6e - bit 5 of value at address HL zero', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x00;
+      PrefixInstructions[0x6e].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x6f - bit 5 of register A', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0x6f].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x6f - bit 5 of register A zero', () => {
+      cpu.registers.a = 0x00;
+      PrefixInstructions[0x6f].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x70 - bit 6 of register B', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0x70].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x70 - bit 6 of register B zero', () => {
+      cpu.registers.b = 0x00;
+      PrefixInstructions[0x70].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x71 - bit 6 of register C', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0x71].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x71 - bit 6 of register C zero', () => {
+      cpu.registers.c = 0x00;
+      PrefixInstructions[0x71].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x72 - bit 6 of register D', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0x72].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x72 - bit 6 of register D zero', () => {
+      cpu.registers.d = 0x00;
+      PrefixInstructions[0x72].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x73 - bit 6 of register E', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0x73].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x73 - bit 6 of register E zero', () => {
+      cpu.registers.e = 0x00;
+      PrefixInstructions[0x73].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x74 - bit 6 of register H', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0x74].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x74 - bit 6 of register H zero', () => {
+      cpu.registers.h = 0x00;
+      PrefixInstructions[0x74].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x75 - bit 6 of register L', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0x75].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x75 - bit 6 of register L zero', () => {
+      cpu.registers.l = 0x00;
+      PrefixInstructions[0x75].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x76 - bit 6 of value at address HL', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0x76].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x76 - bit 6 of value at address HL zero', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x00;
+      PrefixInstructions[0x76].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x77 - bit 6 of register A', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0x77].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x77 - bit 6 of register A zero', () => {
+      cpu.registers.a = 0x00;
+      PrefixInstructions[0x77].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x78 - bit 7 of register B', () => {
+      cpu.registers.b = 0xff;
+      PrefixInstructions[0x78].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x78 - bit 7 of register B zero', () => {
+      cpu.registers.b = 0x00;
+      PrefixInstructions[0x78].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x79 - bit 7 of register C', () => {
+      cpu.registers.c = 0xff;
+      PrefixInstructions[0x79].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x79 - bit 7 of register C zero', () => {
+      cpu.registers.c = 0x00;
+      PrefixInstructions[0x79].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x7a - bit 7 of register D', () => {
+      cpu.registers.d = 0xff;
+      PrefixInstructions[0x7a].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x7a - bit 7 of register D zero', () => {
+      cpu.registers.d = 0x00;
+      PrefixInstructions[0x7a].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x7b - bit 7 of register E', () => {
+      cpu.registers.e = 0xff;
+      PrefixInstructions[0x7b].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x7b - bit 7 of register E zero', () => {
+      cpu.registers.e = 0x00;
+      PrefixInstructions[0x7b].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x7c - bit 7 of register H', () => {
+      cpu.registers.h = 0xff;
+      PrefixInstructions[0x7c].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x7c - bit 7 of register H zero', () => {
+      cpu.registers.h = 0x00;
+      PrefixInstructions[0x7c].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x7d - bit 7 of register L', () => {
+      cpu.registers.l = 0xff;
+      PrefixInstructions[0x7d].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x7d - bit 7 of register L zero', () => {
+      cpu.registers.l = 0x00;
+      PrefixInstructions[0x7d].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x7e - bit 7 of value at address HL', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0xff;
+      PrefixInstructions[0x7e].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x7e - bit 7 of value at address HL zero', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x00;
+      PrefixInstructions[0x7e].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+
+    it('should test 0x7f - bit 7 of register A', () => {
+      cpu.registers.a = 0xff;
+      PrefixInstructions[0x7f].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 0, N: 0, H: 1 });
+    });
+
+    it('should test 0x7f - bit 7 of register A zero', () => {
+      cpu.registers.a = 0x00;
+      PrefixInstructions[0x7f].fn(cpu);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
+    });
+  });
 });
