@@ -26,6 +26,12 @@ export class Emulator {
   }
 
   memoryWrite(address: u16, value: u8): void {
+    // 8 KiB Video RAM (VRAM)
+    if (address >= 0x8000 && address <= 0x9fff) {
+      this.memory[address] = value;
+      return;
+    }
+
     // 4 KiB Work RAM (WRAM)
     if (address >= 0xd000 && address <= 0xdfff) {
       this.memory[address] = value;
