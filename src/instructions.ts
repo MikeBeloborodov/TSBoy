@@ -6,6 +6,7 @@ import {
   isHalfCarrySubstraction,
   isHalfCarrySum,
   signed8bit,
+  substractThreeValuesWithCarryInfo,
   sumThreeValuesWithCarryInfo,
   unsignedAddition,
   unsignedSubtract,
@@ -1258,7 +1259,7 @@ export const Instructions: InstructionsMap = {
       const value = cpu.memRead(cpu.pc);
       const result = unsignedSubtract(cpu.registers.a, value, 8);
       const H = isHalfCarrySubstraction(cpu.registers.a, value);
-      const C = isCarrySubstraction(cpu.registers.a, value);
+      const C = isCarrySubstraction(cpu.registers.a, value, 8);
       cpu.registers.a = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -1712,6 +1713,339 @@ export const Instructions: InstructionsMap = {
         C: carry ? FlagState.TRUE : FlagState.FALSE,
       });
       cpu.incrementProgramCounter(1);
+    },
+  },
+  0x90: {
+    asm: 'SUB A, B',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedSubtract(cpu.registers.a, cpu.registers.b, 8);
+      const halfCarry = isHalfCarrySubstraction(
+        cpu.registers.a,
+        cpu.registers.b
+      );
+      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.b, 8);
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: halfCarry ? FlagState.TRUE : FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x91: {
+    asm: 'SUB A, C',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedSubtract(cpu.registers.a, cpu.registers.c, 8);
+      const halfCarry = isHalfCarrySubstraction(
+        cpu.registers.a,
+        cpu.registers.c
+      );
+      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.c, 8);
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: halfCarry ? FlagState.TRUE : FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x92: {
+    asm: 'SUB A, D',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedSubtract(cpu.registers.a, cpu.registers.d, 8);
+      const halfCarry = isHalfCarrySubstraction(
+        cpu.registers.a,
+        cpu.registers.d
+      );
+      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.d, 8);
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: halfCarry ? FlagState.TRUE : FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x93: {
+    asm: 'SUB A, E',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedSubtract(cpu.registers.a, cpu.registers.e, 8);
+      const halfCarry = isHalfCarrySubstraction(
+        cpu.registers.a,
+        cpu.registers.e
+      );
+      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.e, 8);
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: halfCarry ? FlagState.TRUE : FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x94: {
+    asm: 'SUB A, H',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedSubtract(cpu.registers.a, cpu.registers.h, 8);
+      const halfCarry = isHalfCarrySubstraction(
+        cpu.registers.a,
+        cpu.registers.h
+      );
+      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.h, 8);
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: halfCarry ? FlagState.TRUE : FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x95: {
+    asm: 'SUB A, L',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const result = unsignedSubtract(cpu.registers.a, cpu.registers.l, 8);
+      const halfCarry = isHalfCarrySubstraction(
+        cpu.registers.a,
+        cpu.registers.l
+      );
+      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.l, 8);
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: halfCarry ? FlagState.TRUE : FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x96: {
+    asm: 'SUB A, (HL)',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
+      const result = unsignedSubtract(cpu.registers.a, value, 8);
+      const halfCarry = isHalfCarrySubstraction(cpu.registers.a, value);
+      const carry = isCarrySubstraction(cpu.registers.a, value, 8);
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: halfCarry ? FlagState.TRUE : FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x97: {
+    asm: 'SUB A, A',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = 0;
+      cpu.setFlags({
+        Z: FlagState.TRUE,
+        N: FlagState.TRUE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x98: {
+    asm: 'SBC A, B',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const C = cpu.getFlags().C;
+      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+        cpu.registers.a,
+        cpu.registers.b,
+        C
+      );
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: halfCarry ? FlagState.TRUE : FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x99: {
+    asm: 'SBC A, C',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const C = cpu.getFlags().C;
+      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+        cpu.registers.a,
+        cpu.registers.c,
+        C
+      );
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: halfCarry ? FlagState.TRUE : FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x9a: {
+    asm: 'SBC A, D',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const C = cpu.getFlags().C;
+      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+        cpu.registers.a,
+        cpu.registers.d,
+        C
+      );
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: halfCarry ? FlagState.TRUE : FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x9b: {
+    asm: 'SBC A, E',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const C = cpu.getFlags().C;
+      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+        cpu.registers.a,
+        cpu.registers.e,
+        C
+      );
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: halfCarry ? FlagState.TRUE : FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x9c: {
+    asm: 'SBC A, H',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const C = cpu.getFlags().C;
+      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+        cpu.registers.a,
+        cpu.registers.h,
+        C
+      );
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: halfCarry ? FlagState.TRUE : FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x9d: {
+    asm: 'SBC A, L',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      const C = cpu.getFlags().C;
+      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+        cpu.registers.a,
+        cpu.registers.l,
+        C
+      );
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: halfCarry ? FlagState.TRUE : FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x9e: {
+    asm: 'SBC A, (HL)',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const C = cpu.getFlags().C;
+      const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
+      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+        cpu.registers.a,
+        value,
+        C
+      );
+      cpu.registers.a = result;
+      cpu.setFlags({
+        Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: halfCarry ? FlagState.TRUE : FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  // TODO CHECK IT COULD BE TROUBLE
+  0x9f: {
+    asm: 'SBC A, A',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const C = cpu.getFlags().C;
+      if (C) {
+        cpu.setFlags({
+          Z: FlagState.FALSE,
+          N: FlagState.TRUE,
+          H: FlagState.TRUE,
+        });
+        cpu.registers.a = 0xff;
+        return;
+      }
+      cpu.setFlags({
+        Z: FlagState.TRUE,
+        N: FlagState.TRUE,
+        H: FlagState.FALSE,
+      });
+      cpu.registers.a = 0;
     },
   },
 };
