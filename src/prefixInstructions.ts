@@ -5,6 +5,10 @@ function SET(value: number, bit: number): number {
   return value | (1 << bit);
 }
 
+function RES(value: number, bit: number): number {
+  return value & ~(1 << bit);
+}
+
 export const PrefixInstructions: InstructionsMap = {
   0xc0: {
     asm: 'SET 0, B',
@@ -540,6 +544,542 @@ export const PrefixInstructions: InstructionsMap = {
     cycles: 8,
     fn: (cpu: CPU): void => {
       cpu.registers.a = SET(cpu.registers.a, 7);
+    },
+  },
+  0x80: {
+    asm: 'RES 0, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.b = RES(cpu.registers.b, 0);
+    },
+  },
+  0x90: {
+    asm: 'RES 2, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.b = RES(cpu.registers.b, 2);
+    },
+  },
+  0xa0: {
+    asm: 'RES 4, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.b = RES(cpu.registers.b, 4);
+    },
+  },
+  0xb0: {
+    asm: 'RES 6, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.b = RES(cpu.registers.b, 6);
+    },
+  },
+  0x81: {
+    asm: 'RES 0, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.c = RES(cpu.registers.c, 0);
+    },
+  },
+  0x91: {
+    asm: 'RES 2, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.c = RES(cpu.registers.c, 2);
+    },
+  },
+  0xa1: {
+    asm: 'RES 4, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.c = RES(cpu.registers.c, 4);
+    },
+  },
+  0xb1: {
+    asm: 'RES 6, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.c = RES(cpu.registers.c, 6);
+    },
+  },
+  0x82: {
+    asm: 'RES 0, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.d = RES(cpu.registers.d, 0);
+    },
+  },
+  0x92: {
+    asm: 'RES 2, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.d = RES(cpu.registers.d, 2);
+    },
+  },
+  0xa2: {
+    asm: 'RES 4, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.d = RES(cpu.registers.d, 4);
+    },
+  },
+  0xb2: {
+    asm: 'RES 6, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.d = RES(cpu.registers.d, 6);
+    },
+  },
+  0x83: {
+    asm: 'RES 0, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.e = RES(cpu.registers.e, 0);
+    },
+  },
+  0x93: {
+    asm: 'RES 2, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.e = RES(cpu.registers.e, 2);
+    },
+  },
+  0xa3: {
+    asm: 'RES 4, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.e = RES(cpu.registers.e, 4);
+    },
+  },
+  0xb3: {
+    asm: 'RES 6, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.e = RES(cpu.registers.e, 6);
+    },
+  },
+  0x84: {
+    asm: 'RES 0, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.h = RES(cpu.registers.h, 0);
+    },
+  },
+  0x94: {
+    asm: 'RES 2, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.h = RES(cpu.registers.h, 2);
+    },
+  },
+  0xa4: {
+    asm: 'RES 4, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.h = RES(cpu.registers.h, 4);
+    },
+  },
+  0xb4: {
+    asm: 'RES 6, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.h = RES(cpu.registers.h, 6);
+    },
+  },
+  0x85: {
+    asm: 'RES 0, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.l = RES(cpu.registers.l, 0);
+    },
+  },
+  0x95: {
+    asm: 'RES 2, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.l = RES(cpu.registers.l, 2);
+    },
+  },
+  0xa5: {
+    asm: 'RES 4, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.l = RES(cpu.registers.l, 4);
+    },
+  },
+  0xb5: {
+    asm: 'RES 6, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.l = RES(cpu.registers.l, 6);
+    },
+  },
+  0x86: {
+    asm: 'RES 0, [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.memWrite(address, RES(value, 0));
+      cpu.registers.a = RES(cpu.registers.a, 0);
+    },
+  },
+  0x96: {
+    asm: 'RES 2, [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.memWrite(address, RES(value, 2));
+      cpu.registers.a = RES(cpu.registers.a, 2);
+    },
+  },
+  0xa6: {
+    asm: 'RES 4, [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.memWrite(address, RES(value, 4));
+      cpu.registers.a = RES(cpu.registers.a, 4);
+    },
+  },
+  0xb6: {
+    asm: 'RES 6, [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.memWrite(address, RES(value, 6));
+      cpu.registers.a = RES(cpu.registers.a, 6);
+    },
+  },
+  0x87: {
+    asm: 'RES 0, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = RES(cpu.registers.a, 0);
+    },
+  },
+  0x97: {
+    asm: 'RES 2, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = RES(cpu.registers.a, 2);
+    },
+  },
+  0xa7: {
+    asm: 'RES 4, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = RES(cpu.registers.a, 4);
+    },
+  },
+  0xb7: {
+    asm: 'RES 6, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = RES(cpu.registers.a, 6);
+    },
+  },
+  0x88: {
+    asm: 'RES 1, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.b = RES(cpu.registers.b, 1);
+    },
+  },
+  0x98: {
+    asm: 'RES 3, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.b = RES(cpu.registers.b, 3);
+    },
+  },
+  0xa8: {
+    asm: 'RES 5, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.b = RES(cpu.registers.b, 5);
+    },
+  },
+  0xb8: {
+    asm: 'RES 7, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.b = RES(cpu.registers.b, 7);
+    },
+  },
+  0x89: {
+    asm: 'RES 1, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.c = RES(cpu.registers.c, 1);
+    },
+  },
+  0x99: {
+    asm: 'RES 3, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.c = RES(cpu.registers.c, 3);
+    },
+  },
+  0xa9: {
+    asm: 'RES 5, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.c = RES(cpu.registers.c, 5);
+    },
+  },
+  0xb9: {
+    asm: 'RES 7, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.c = RES(cpu.registers.c, 7);
+    },
+  },
+  0x8a: {
+    asm: 'RES 1, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.d = RES(cpu.registers.d, 1);
+    },
+  },
+  0x9a: {
+    asm: 'RES 3, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.d = RES(cpu.registers.d, 3);
+    },
+  },
+  0xaa: {
+    asm: 'RES 5, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.d = RES(cpu.registers.d, 5);
+    },
+  },
+  0xba: {
+    asm: 'RES 7, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.d = RES(cpu.registers.d, 7);
+    },
+  },
+  0x8b: {
+    asm: 'RES 1, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.e = RES(cpu.registers.e, 1);
+    },
+  },
+  0x9b: {
+    asm: 'RES 3, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.e = RES(cpu.registers.e, 3);
+    },
+  },
+  0xab: {
+    asm: 'RES 5, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.e = RES(cpu.registers.e, 5);
+    },
+  },
+  0xbb: {
+    asm: 'RES 7, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.e = RES(cpu.registers.e, 7);
+    },
+  },
+  0x8c: {
+    asm: 'RES 1, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.h = RES(cpu.registers.h, 1);
+    },
+  },
+  0x9c: {
+    asm: 'RES 3, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.h = RES(cpu.registers.h, 3);
+    },
+  },
+  0xac: {
+    asm: 'RES 5, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.h = RES(cpu.registers.h, 5);
+    },
+  },
+  0xbc: {
+    asm: 'RES 7, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.h = RES(cpu.registers.h, 7);
+    },
+  },
+  0x8d: {
+    asm: 'RES 1, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.l = RES(cpu.registers.l, 1);
+    },
+  },
+  0x9d: {
+    asm: 'RES 3, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.l = RES(cpu.registers.l, 3);
+    },
+  },
+  0xad: {
+    asm: 'RES 5, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.l = RES(cpu.registers.l, 5);
+    },
+  },
+  0xbd: {
+    asm: 'RES 7, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.l = RES(cpu.registers.l, 7);
+    },
+  },
+  0x8e: {
+    asm: 'RES 1, [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.memWrite(address, RES(value, 1));
+      cpu.registers.a = RES(cpu.registers.a, 1);
+    },
+  },
+  0x9e: {
+    asm: 'RES 3, [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.memWrite(address, RES(value, 3));
+      cpu.registers.a = RES(cpu.registers.a, 3);
+    },
+  },
+  0xae: {
+    asm: 'RES 5, [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.memWrite(address, RES(value, 5));
+      cpu.registers.a = RES(cpu.registers.a, 5);
+    },
+  },
+  0xbe: {
+    asm: 'RES 7, [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.memWrite(address, RES(value, 7));
+      cpu.registers.a = RES(cpu.registers.a, 7);
+    },
+  },
+  0x8f: {
+    asm: 'RES 1, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = RES(cpu.registers.a, 1);
+    },
+  },
+  0x9f: {
+    asm: 'RES 3, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = RES(cpu.registers.a, 3);
+    },
+  },
+  0xaf: {
+    asm: 'RES 5, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = RES(cpu.registers.a, 5);
+    },
+  },
+  0xbf: {
+    asm: 'RES 7, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a = RES(cpu.registers.a, 7);
     },
   },
 };
