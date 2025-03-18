@@ -4,6 +4,7 @@ import {
   unsigned8bit,
   unsignedSubtract,
   sumThreeValuesWithCarryInfo,
+  substractThreeValuesWithCarryInfo,
 } from '../src/utils';
 
 describe('Tests for utils', () => {
@@ -86,6 +87,41 @@ describe('Tests for utils', () => {
       expect(result).toBe(0x01);
       expect(halfCarry).toBe(true);
       expect(carry).toBe(true);
+    });
+  });
+
+  describe('Tests for substractThreeValuesWithCarryInfo', () => {
+    it('should return correct values', () => {
+      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+        0x02,
+        0x01,
+        0x01
+      );
+      expect(result).toBe(0x00);
+      expect(halfCarry).toBe(false);
+      expect(carry).toBe(false);
+    });
+
+    it('should return correct values with carry', () => {
+      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+        0x01,
+        0x01,
+        0x01
+      );
+      expect(result).toBe(0xff);
+      expect(halfCarry).toBe(true);
+      expect(carry).toBe(true);
+    });
+
+    it('should return correct values with half carry', () => {
+      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+        0x10,
+        0x01,
+        0x01
+      );
+      expect(result).toBe(0x0e);
+      expect(halfCarry).toBe(true);
+      expect(carry).toBe(false);
     });
   });
 });

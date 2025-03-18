@@ -1357,16 +1357,6 @@ describe('Tests for CPU instructions', () => {
       const { Z, N, H, C } = cpu.getFlags();
       expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
     });
-
-    it('should test 0xd6 - SUB A n8 carry', () => {
-      cpu.memRead = jest.fn(() => 0x01);
-      cpu.registers.a = 0x00;
-      Instructions[0xd6].fn(cpu);
-      expect(cpu.registers.a).toBe(0xff);
-      expect(cpu.pc).toBe(0x0102);
-      const { Z, N, H, C } = cpu.getFlags();
-      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
-    });
   });
 
   describe('Tests for push and pop instructions', () => {
@@ -2153,6 +2143,722 @@ describe('Tests for CPU instructions', () => {
       expect(cpu.pc).toBe(0x0101);
       const { Z, N, H, C } = cpu.getFlags();
       expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 1 });
+    });
+  });
+
+  describe('Tests for SUB instructions', () => {
+    it('should test 0x90 - SUB A, B', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.b = 0x08;
+      Instructions[0x90].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x90 - SUB A, B half-carry', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.b = 0x01;
+      Instructions[0x90].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0f);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0x90 - SUB A, B carry', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.b = 0x01;
+      Instructions[0x90].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x90 - SUB A, B zero', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.b = 0x08;
+      Instructions[0x90].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0xd6 - SUB A n8 carry', () => {
+      cpu.memRead = jest.fn(() => 0x01);
+      cpu.registers.a = 0x00;
+      Instructions[0xd6].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x91 - SUB A, C', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.c = 0x08;
+      Instructions[0x91].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x91 - SUB A, C half-carry', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.c = 0x01;
+      Instructions[0x91].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0f);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0x91 - SUB A, C carry', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.c = 0x01;
+      Instructions[0x91].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x91 - SUB A, C zero', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.c = 0x08;
+      Instructions[0x91].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x92 - SUB A, D', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.d = 0x08;
+      Instructions[0x92].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x92 - SUB A, D half-carry', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.d = 0x01;
+      Instructions[0x92].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0f);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0x92 - SUB A, D carry', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.d = 0x01;
+      Instructions[0x92].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x92 - SUB A, D zero', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.d = 0x08;
+      Instructions[0x92].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x93 - SUB A, E', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.e = 0x08;
+      Instructions[0x93].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x93 - SUB A, E half-carry', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.e = 0x01;
+      Instructions[0x93].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0f);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0x93 - SUB A, E carry', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.e = 0x01;
+      Instructions[0x93].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x93 - SUB A, E zero', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.e = 0x08;
+      Instructions[0x93].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x94 - SUB A, H', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.h = 0x08;
+      Instructions[0x94].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x94 - SUB A, H half-carry', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.h = 0x01;
+      Instructions[0x94].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0f);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0x94 - SUB A, H carry', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.h = 0x01;
+      Instructions[0x94].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x94 - SUB A, H zero', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.h = 0x08;
+      Instructions[0x94].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x95 - SUB A, L', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.l = 0x08;
+      Instructions[0x95].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x95 - SUB A, L half-carry', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.l = 0x01;
+      Instructions[0x95].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0f);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0x95 - SUB A, L carry', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.l = 0x01;
+      Instructions[0x95].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x95 - SUB A, L zero', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.l = 0x08;
+      Instructions[0x95].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x96 - SUB A, (HL)', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x08;
+      Instructions[0x96].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x96 - SUB A, (HL) half-carry', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x01;
+      Instructions[0x96].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0f);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0x96 - SUB A, (HL) carry', () => {
+      cpu.registers.a = 0x00;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x01;
+      Instructions[0x96].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x96 - SUB A, (HL) zero', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x08;
+      Instructions[0x96].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x97 - SUB A, A', () => {
+      cpu.registers.a = 0x08;
+      Instructions[0x97].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+  });
+
+  describe('Tests SBC A instructions', () => {
+    it('should test 0x98 - SBC A, B', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.b = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x98].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x98 - SBC A, B without carry flag', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.b = 0x04;
+      cpu.setFlags({ C: 0 });
+      Instructions[0x98].fn(cpu);
+      expect(cpu.registers.a).toBe(0x04);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x98 - SBC A, B without other registers', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.b = 0x00;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x98].fn(cpu);
+      expect(cpu.registers.a).toBe(0x07);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x98 - SBC A, B zero', () => {
+      cpu.registers.a = 0x09;
+      cpu.registers.b = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x98].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x98 - SBC A, B half-carry only', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.b = 0x01;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x98].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0e);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0x99 - SBC A, C', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.c = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x99].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x99 - SBC A, C without carry flag', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.c = 0x04;
+      cpu.setFlags({ C: 0 });
+      Instructions[0x99].fn(cpu);
+      expect(cpu.registers.a).toBe(0x04);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x99 - SBC A, C without other registers', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.c = 0x00;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x99].fn(cpu);
+      expect(cpu.registers.a).toBe(0x07);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x99 - SBC A, C zero', () => {
+      cpu.registers.a = 0x09;
+      cpu.registers.c = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x99].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x99 - SBC A, C half-carry only', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.c = 0x01;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x99].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0e);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0x9a - SBC A, D', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.d = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9a].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x9a - SBC A, D without carry flag', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.d = 0x04;
+      cpu.setFlags({ C: 0 });
+      Instructions[0x9a].fn(cpu);
+      expect(cpu.registers.a).toBe(0x04);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9a - SBC A, D without other registers', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.d = 0x00;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9a].fn(cpu);
+      expect(cpu.registers.a).toBe(0x07);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9a - SBC A, D zero', () => {
+      cpu.registers.a = 0x09;
+      cpu.registers.d = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9a].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9a - SBC A, D half-carry only', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.d = 0x01;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9a].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0e);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0x9b - SBC A, E', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.e = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9b].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x9b - SBC A, E without carry flag', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.e = 0x04;
+      cpu.setFlags({ C: 0 });
+      Instructions[0x9b].fn(cpu);
+      expect(cpu.registers.a).toBe(0x04);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9b - SBC A, E without other registers', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.e = 0x00;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9b].fn(cpu);
+      expect(cpu.registers.a).toBe(0x07);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9b - SBC A, E zero', () => {
+      cpu.registers.a = 0x09;
+      cpu.registers.e = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9b].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9b - SBC A, E half-carry only', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.e = 0x01;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9b].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0e);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0x9c - SBC A, H', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.h = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9c].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x9c - SBC A, H without carry flag', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.h = 0x04;
+      cpu.setFlags({ C: 0 });
+      Instructions[0x9c].fn(cpu);
+      expect(cpu.registers.a).toBe(0x04);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9c - SBC A, H without other registers', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.h = 0x00;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9c].fn(cpu);
+      expect(cpu.registers.a).toBe(0x07);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9c - SBC A, H zero', () => {
+      cpu.registers.a = 0x09;
+      cpu.registers.h = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9c].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9c - SBC A, H half-carry only', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.h = 0x01;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9c].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0e);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0x9d - SBC A, L', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.l = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9d].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x9d - SBC A, L without carry flag', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.l = 0x04;
+      cpu.setFlags({ C: 0 });
+      Instructions[0x9d].fn(cpu);
+      expect(cpu.registers.a).toBe(0x04);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9d - SBC A, L without other registers', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.l = 0x00;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9d].fn(cpu);
+      expect(cpu.registers.a).toBe(0x07);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9d - SBC A, L zero', () => {
+      cpu.registers.a = 0x09;
+      cpu.registers.l = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9d].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9d - SBC A, L half-carry only', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.l = 0x01;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9d].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0e);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0x9e - SBC A, (HL)', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9e].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 1 });
+    });
+
+    it('should test 0x9e - SBC A, (HL) without carry flag', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x04;
+      cpu.setFlags({ C: 0 });
+      Instructions[0x9e].fn(cpu);
+      expect(cpu.registers.a).toBe(0x04);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9e - SBC A, (HL) without other registers', () => {
+      cpu.registers.a = 0x08;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x00;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9e].fn(cpu);
+      expect(cpu.registers.a).toBe(0x07);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9e - SBC A, (HL) zero', () => {
+      cpu.registers.a = 0x09;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9e].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
+    });
+
+    it('should test 0x9e - SBC A, (HL) half-carry only', () => {
+      cpu.registers.a = 0x10;
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x01;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9e].fn(cpu);
+      expect(cpu.registers.a).toBe(0x0e);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 1, H: 1, C: 0 });
+    });
+
+    it('should test 0x9f - SBC A, A', () => {
+      cpu.registers.a = 0x08;
+      cpu.setFlags({ C: 1 });
+      Instructions[0x9f].fn(cpu);
+      expect(cpu.registers.a).toBe(0xff);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H } = cpu.getFlags();
+      expect({ Z, N, H }).toStrictEqual({ Z: 0, N: 1, H: 1 });
     });
   });
 });
