@@ -2354,4 +2354,72 @@ export const Instructions: InstructionsMap = {
       cpu.incrementProgramCounter(1);
     },
   },
+  0xc4: {
+    asm: 'CALL NZ, a16',
+    size: 3,
+    cycles: 12 / 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      const jumpAddress = (b << 8) | a;
+      cpu.incrementProgramCounter(1);
+      if (!cpu.getFlags().Z) {
+        cpu.pushStack(cpu.pc);
+        cpu.pc = jumpAddress;
+      }
+    },
+  },
+  0xd4: {
+    asm: 'CALL NC, a16',
+    size: 3,
+    cycles: 12 / 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      const jumpAddress = (b << 8) | a;
+      cpu.incrementProgramCounter(1);
+      if (!cpu.getFlags().C) {
+        cpu.pushStack(cpu.pc);
+        cpu.pc = jumpAddress;
+      }
+    },
+  },
+  0xcc: {
+    asm: 'CALL Z, a16',
+    size: 3,
+    cycles: 12 / 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      const jumpAddress = (b << 8) | a;
+      cpu.incrementProgramCounter(1);
+      if (cpu.getFlags().Z) {
+        cpu.pushStack(cpu.pc);
+        cpu.pc = jumpAddress;
+      }
+    },
+  },
+  0xdc: {
+    asm: 'CALL C, a16',
+    size: 3,
+    cycles: 12 / 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      const jumpAddress = (b << 8) | a;
+      cpu.incrementProgramCounter(1);
+      if (cpu.getFlags().C) {
+        cpu.pushStack(cpu.pc);
+        cpu.pc = jumpAddress;
+      }
+    },
+  },
 };

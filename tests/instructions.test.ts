@@ -3378,6 +3378,89 @@ describe('Tests for CPU instructions', () => {
       expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 0, H: 0, C: 0 });
     });
   });
+
+  describe('Tests for 0xc4 - CALL NZ, a16', () => {
+    it('should test 0xc4 - CALL NZ, zero', () => {
+      cpu.sp = 0xfffe;
+      Instructions[0xc4].fn(cpu);
+      expect(cpu.pc).toBe(0x0103);
+      expect(cpu.sp).toBe(0xfffe);
+    });
+
+    it('should test 0xc4 - CALL NZ, not zero', () => {
+      cpu.sp = 0xfffe;
+      cpu.setFlags({ Z: 0 });
+      emu.memory[0x0101] = 0x00;
+      emu.memory[0x0102] = 0xff;
+      Instructions[0xc4].fn(cpu);
+      expect(cpu.pc).toBe(0xff00);
+      expect(cpu.sp).toBe(0xfffc);
+      emu.memory[0xfffe] = 0x01;
+      emu.memory[0xfffc] = 0x03;
+    });
+  });
+
+  describe('Tests for 0xd4 - CALL NC, a16', () => {
+    it('should test 0xd4 - CALL NC, carry', () => {
+      cpu.sp = 0xfffe;
+      cpu.setFlags({ C: 1 });
+      Instructions[0xd4].fn(cpu);
+      expect(cpu.pc).toBe(0x0103);
+      expect(cpu.sp).toBe(0xfffe);
+    });
+
+    it('should test 0xd4 - CALL NC, not carry', () => {
+      cpu.sp = 0xfffe;
+      cpu.setFlags({ C: 0 });
+      emu.memory[0x0101] = 0x00;
+      emu.memory[0x0102] = 0xff;
+      Instructions[0xd4].fn(cpu);
+      expect(cpu.pc).toBe(0xff00);
+      expect(cpu.sp).toBe(0xfffc);
+      emu.memory[0xfffe] = 0x01;
+      emu.memory[0xfffc] = 0x03;
+    });
+  });
+
+  describe('Tests for 0xcc - CALL Z, a16', () => {
+    it('should test 0xcc - CALL Z, not zero flag', () => {
+      cpu.sp = 0xfffe;
+      cpu.setFlags({ Z: 0 });
+      Instructions[0xcc].fn(cpu);
+      expect(cpu.pc).toBe(0x0103);
+      expect(cpu.sp).toBe(0xfffe);
+    });
+
+    it('should test 0xcc - CALL Z, zero flag', () => {
+      cpu.sp = 0xfffe;
+      cpu.setFlags({ Z: 1 });
+      emu.memory[0x0101] = 0x00;
+      emu.memory[0x0102] = 0xff;
+      Instructions[0xcc].fn(cpu);
+      expect(cpu.pc).toBe(0xff00);
+      expect(cpu.sp).toBe(0xfffc);
+    });
+  });
+
+  describe('Tests for 0xdc - CALL C, a16', () => {
+    it('should test 0xdc - CALL C, not carry flag', () => {
+      cpu.sp = 0xfffe;
+      cpu.setFlags({ C: 0 });
+      Instructions[0xdc].fn(cpu);
+      expect(cpu.pc).toBe(0x0103);
+      expect(cpu.sp).toBe(0xfffe);
+    });
+
+    it('should test 0xdc - CALL C, carry flag', () => {
+      cpu.sp = 0xfffe;
+      cpu.setFlags({ C: 1 });
+      emu.memory[0x0101] = 0x00;
+      emu.memory[0x0102] = 0xff;
+      Instructions[0xdc].fn(cpu);
+      expect(cpu.pc).toBe(0xff00);
+      expect(cpu.sp).toBe(0xfffc);
+    });
+  });
 });
 
 function checkCounterIncrement(instruction: number, times: number) {
