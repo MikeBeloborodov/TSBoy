@@ -19,6 +19,15 @@ function SRL(value: number): { value: number; carry: boolean } {
   return { value: result, carry };
 }
 
+function RR(
+  value: number,
+  carry: FlagState
+): { value: number; carry: boolean } {
+  const result = (value >> 1) | (carry ? 0x80 : 0);
+  const newCarry = (value & 1) !== 0;
+  return { value: result, carry: newCarry };
+}
+
 export const PrefixInstructions: InstructionsMap = {
   0xc0: {
     asm: 'SET 0, B',
@@ -1990,6 +1999,128 @@ export const PrefixInstructions: InstructionsMap = {
     cycles: 8,
     fn: (cpu: CPU): void => {
       const { value, carry } = SRL(cpu.registers.a);
+      cpu.registers.a = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x18: {
+    asm: 'RR B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RR(cpu.registers.b, cpu.getFlags().C);
+      cpu.registers.b = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x19: {
+    asm: 'RR C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RR(cpu.registers.c, cpu.getFlags().C);
+      cpu.registers.c = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x1a: {
+    asm: 'RR D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RR(cpu.registers.d, cpu.getFlags().C);
+      cpu.registers.d = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x1b: {
+    asm: 'RR E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RR(cpu.registers.e, cpu.getFlags().C);
+      cpu.registers.e = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x1c: {
+    asm: 'RR H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RR(cpu.registers.h, cpu.getFlags().C);
+      cpu.registers.h = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x1d: {
+    asm: 'RR L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RR(cpu.registers.l, cpu.getFlags().C);
+      cpu.registers.l = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x1e: {
+    asm: 'RR [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      const { value: newValue, carry } = RR(value, cpu.getFlags().C);
+      cpu.memWrite(address, newValue);
+      cpu.setFlags({
+        Z: newValue === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x1f: {
+    asm: 'RR A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RR(cpu.registers.a, cpu.getFlags().C);
       cpu.registers.a = value;
       cpu.setFlags({
         Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
