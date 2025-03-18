@@ -2320,4 +2320,38 @@ export const Instructions: InstructionsMap = {
       cpu.incrementProgramCounter(1);
     },
   },
+  0xe6: {
+    asm: 'AND d8',
+    size: 2,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      cpu.registers.a &= value;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xf6: {
+    asm: 'OR d8',
+    size: 2,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      cpu.registers.a |= value;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
 };

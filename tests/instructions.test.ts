@@ -3324,6 +3324,60 @@ describe('Tests for CPU instructions', () => {
       expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 1, H: 0, C: 0 });
     });
   });
+
+  describe('Tests for 0xe6 - AND d8', () => {
+    it('should test 0xe6 - AND 0x00', () => {
+      cpu.registers.a = 0x01;
+      emu.memory[0x0101] = 0x00;
+      Instructions[0xe6].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 0, H: 1, C: 0 });
+    });
+
+    it('should test 0xe6 - AND 0x01', () => {
+      cpu.registers.a = 0x01;
+      emu.memory[0x0101] = 0x01;
+      Instructions[0xe6].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 1, C: 0 });
+    });
+  });
+
+  describe('Tests for 0xf6 - OR d8', () => {
+    it('should test 0xf6 - OR 0x00', () => {
+      cpu.registers.a = 0x01;
+      emu.memory[0x0101] = 0x00;
+      Instructions[0xf6].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xf6 - OR 0x01', () => {
+      cpu.registers.a = 0x01;
+      emu.memory[0x0101] = 0x01;
+      Instructions[0xf6].fn(cpu);
+      expect(cpu.registers.a).toBe(0x01);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xf6 - OR 0x00', () => {
+      cpu.registers.a = 0x00;
+      emu.memory[0x0101] = 0x00;
+      Instructions[0xf6].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 1, N: 0, H: 0, C: 0 });
+    });
+  });
 });
 
 function checkCounterIncrement(instruction: number, times: number) {
