@@ -23,7 +23,9 @@ export const Instructions: InstructionsMap = {
       const instruction = cpu.memRead(cpu.pc);
       const prefixInstruction = PrefixInstructions[instruction];
       if (!prefixInstruction) {
-        throw new Error(`Unknown prefix instruction ${instruction}`);
+        throw new Error(
+          `Unknown prefix instruction ${instruction.toString(16)}`
+        );
       }
       prefixInstruction.fn(cpu);
       cpu.incrementProgramCounter(1);

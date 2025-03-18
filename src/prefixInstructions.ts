@@ -13,6 +13,12 @@ function BIT(value: number, bit: number): boolean {
   return (value & (1 << bit)) !== 0;
 }
 
+function SRL(value: number): { value: number; carry: boolean } {
+  const result = value >> 1;
+  const carry = (value & 1) !== 0;
+  return { value: result, carry };
+}
+
 export const PrefixInstructions: InstructionsMap = {
   0xc0: {
     asm: 'SET 0, B',
@@ -1868,6 +1874,128 @@ export const PrefixInstructions: InstructionsMap = {
         Z: BIT(cpu.registers.a, 7) ? FlagState.FALSE : FlagState.TRUE,
         N: FlagState.FALSE,
         H: FlagState.TRUE,
+      });
+    },
+  },
+  0x38: {
+    asm: 'SRL B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SRL(cpu.registers.b);
+      cpu.registers.b = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x39: {
+    asm: 'SRL C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SRL(cpu.registers.c);
+      cpu.registers.c = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x3a: {
+    asm: 'SRL D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SRL(cpu.registers.d);
+      cpu.registers.d = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x3b: {
+    asm: 'SRL E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SRL(cpu.registers.e);
+      cpu.registers.e = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x3c: {
+    asm: 'SRL H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SRL(cpu.registers.h);
+      cpu.registers.h = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x3d: {
+    asm: 'SRL L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SRL(cpu.registers.l);
+      cpu.registers.l = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x3e: {
+    asm: 'SRL [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      const { value: newValue, carry } = SRL(value);
+      cpu.memWrite(address, newValue);
+      cpu.setFlags({
+        Z: newValue === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x3f: {
+    asm: 'SRL A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SRL(cpu.registers.a);
+      cpu.registers.a = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
       });
     },
   },

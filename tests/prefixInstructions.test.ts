@@ -1750,4 +1750,138 @@ describe('Tests prefix instructions', () => {
       expect({ Z, N, H }).toEqual({ Z: 1, N: 0, H: 1 });
     });
   });
+
+  describe('Tests for SRL instructions', () => {
+    it('should shift right 0x38 - register B carry', () => {
+      cpu.registers.b = 0x03;
+      PrefixInstructions[0x38].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(cpu.registers.b).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 1 });
+    });
+
+    it('should shift right 0x38 - register B no carry', () => {
+      cpu.registers.b = 0x02;
+      PrefixInstructions[0x38].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(cpu.registers.b).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should shift right 0x39 - register C carry', () => {
+      cpu.registers.c = 0x03;
+      PrefixInstructions[0x39].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(cpu.registers.c).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 1 });
+    });
+
+    it('should shift right 0x39 - register C no carry', () => {
+      cpu.registers.c = 0x02;
+      PrefixInstructions[0x39].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(cpu.registers.c).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should shift right 0x3a - register D carry', () => {
+      cpu.registers.d = 0x03;
+      PrefixInstructions[0x3a].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(cpu.registers.d).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 1 });
+    });
+
+    it('should shift right 0x3a - register D no carry', () => {
+      cpu.registers.d = 0x02;
+      PrefixInstructions[0x3a].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(cpu.registers.d).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should shift right 0x3b - register E carry', () => {
+      cpu.registers.e = 0x03;
+      PrefixInstructions[0x3b].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(cpu.registers.e).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 1 });
+    });
+
+    it('should shift right 0x3b - register E no carry', () => {
+      cpu.registers.e = 0x02;
+      PrefixInstructions[0x3b].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(cpu.registers.e).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should shift right 0x3c - register H carry', () => {
+      cpu.registers.h = 0x03;
+      PrefixInstructions[0x3c].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(cpu.registers.h).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 1 });
+    });
+
+    it('should shift right 0x3c - register H no carry', () => {
+      cpu.registers.h = 0x02;
+      PrefixInstructions[0x3c].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(cpu.registers.h).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should shift right 0x3d - register L carry', () => {
+      cpu.registers.l = 0x03;
+      PrefixInstructions[0x3d].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(cpu.registers.l).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 1 });
+    });
+
+    it('should shift right 0x3d - register L no carry', () => {
+      cpu.registers.l = 0x02;
+      PrefixInstructions[0x3d].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(cpu.registers.l).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should shift right 0x3e - value at address HL carry', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x03;
+      PrefixInstructions[0x3e].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(emu.memory[0xff00]).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 1 });
+    });
+
+    it('should shift right 0x3e - value at address HL no carry', () => {
+      cpu.registers.h = 0xff;
+      cpu.registers.l = 0x00;
+      emu.memory[0xff00] = 0x02;
+      PrefixInstructions[0x3e].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(emu.memory[0xff00]).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should shift right 0x3f - register A carry', () => {
+      cpu.registers.a = 0x03;
+      PrefixInstructions[0x3f].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(cpu.registers.a).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 1 });
+    });
+
+    it('should shift right 0x3f - register A no carry', () => {
+      cpu.registers.a = 0x02;
+      PrefixInstructions[0x3f].fn(cpu);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect(cpu.registers.a).toBe(0x01);
+      expect({ Z, N, H, C }).toEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+  });
 });
