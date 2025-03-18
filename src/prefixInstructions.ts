@@ -1,5 +1,5 @@
 import { CPU } from './CPU';
-import { CombinedRegister, InstructionsMap } from './types';
+import { CombinedRegister, FlagState, InstructionsMap } from './types';
 
 function SET(value: number, bit: number): number {
   return value | (1 << bit);
@@ -7,6 +7,10 @@ function SET(value: number, bit: number): number {
 
 function RES(value: number, bit: number): number {
   return value & ~(1 << bit);
+}
+
+function BIT(value: number, bit: number): boolean {
+  return (value & (1 << bit)) !== 0;
 }
 
 export const PrefixInstructions: InstructionsMap = {
@@ -1080,6 +1084,791 @@ export const PrefixInstructions: InstructionsMap = {
     cycles: 8,
     fn: (cpu: CPU): void => {
       cpu.registers.a = RES(cpu.registers.a, 7);
+    },
+  },
+  0x40: {
+    asm: 'BIT 0, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.b, 0) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x41: {
+    asm: 'BIT 0, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.c, 0) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x42: {
+    asm: 'BIT 0, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.d, 0) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x43: {
+    asm: 'BIT 0, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.e, 0) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x44: {
+    asm: 'BIT 0, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.h, 0) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x45: {
+    asm: 'BIT 0, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.l, 0) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x46: {
+    asm: 'BIT 0, [HL]',
+    size: 1,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.setFlags({
+        Z: BIT(value, 0) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x47: {
+    asm: 'BIT 0, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.a, 0) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x48: {
+    asm: 'BIT 1, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.b, 1) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x49: {
+    asm: 'BIT 1, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.c, 1) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x4a: {
+    asm: 'BIT 1, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.d, 1) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x4b: {
+    asm: 'BIT 1, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.e, 1) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x4c: {
+    asm: 'BIT 1, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.h, 1) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x4d: {
+    asm: 'BIT 1, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.l, 1) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x4e: {
+    asm: 'BIT 1, [HL]',
+    size: 1,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.setFlags({
+        Z: BIT(value, 1) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x4f: {
+    asm: 'BIT 1, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.a, 1) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x50: {
+    asm: 'BIT 2, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.b, 2) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x51: {
+    asm: 'BIT 2, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.c, 2) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x52: {
+    asm: 'BIT 2, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.d, 2) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x53: {
+    asm: 'BIT 2, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.e, 2) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x54: {
+    asm: 'BIT 2, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.h, 2) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x55: {
+    asm: 'BIT 2, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.l, 2) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x56: {
+    asm: 'BIT 2, [HL]',
+    size: 1,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.setFlags({
+        Z: BIT(value, 2) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x57: {
+    asm: 'BIT 2, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.a, 2) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x58: {
+    asm: 'BIT 3, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.b, 3) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x59: {
+    asm: 'BIT 3, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.c, 3) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x5a: {
+    asm: 'BIT 3, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.d, 3) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x5b: {
+    asm: 'BIT 3, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.e, 3) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x5c: {
+    asm: 'BIT 3, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.h, 3) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x5d: {
+    asm: 'BIT 3, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.l, 3) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x5e: {
+    asm: 'BIT 3, [HL]',
+    size: 1,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.setFlags({
+        Z: BIT(value, 3) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x5f: {
+    asm: 'BIT 3, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.a, 3) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x60: {
+    asm: 'BIT 4, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.b, 4) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x61: {
+    asm: 'BIT 4, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.c, 4) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x62: {
+    asm: 'BIT 4, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.d, 4) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x63: {
+    asm: 'BIT 4, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.e, 4) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x64: {
+    asm: 'BIT 4, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.h, 4) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x65: {
+    asm: 'BIT 4, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.l, 4) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x66: {
+    asm: 'BIT 4, [HL]',
+    size: 1,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.setFlags({
+        Z: BIT(value, 4) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x67: {
+    asm: 'BIT 4, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.a, 4) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x68: {
+    asm: 'BIT 5, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.b, 5) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  // nice
+  0x69: {
+    asm: 'BIT 5, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.c, 5) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x6a: {
+    asm: 'BIT 5, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.d, 5) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x6b: {
+    asm: 'BIT 5, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.e, 5) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x6c: {
+    asm: 'BIT 5, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.h, 5) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x6d: {
+    asm: 'BIT 5, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.l, 5) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x6e: {
+    asm: 'BIT 5, [HL]',
+    size: 1,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.setFlags({
+        Z: BIT(value, 5) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x6f: {
+    asm: 'BIT 5, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.a, 5) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x70: {
+    asm: 'BIT 6, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.b, 6) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x71: {
+    asm: 'BIT 6, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.c, 6) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x72: {
+    asm: 'BIT 6, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.d, 6) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x73: {
+    asm: 'BIT 6, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.e, 6) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x74: {
+    asm: 'BIT 6, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.h, 6) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x75: {
+    asm: 'BIT 6, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.l, 6) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x76: {
+    asm: 'BIT 6, [HL]',
+    size: 1,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.setFlags({
+        Z: BIT(value, 6) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x77: {
+    asm: 'BIT 6, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.a, 6) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x78: {
+    asm: 'BIT 7, B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.b, 7) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x79: {
+    asm: 'BIT 7, C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.c, 7) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x7a: {
+    asm: 'BIT 7, D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.d, 7) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x7b: {
+    asm: 'BIT 7, E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.e, 7) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x7c: {
+    asm: 'BIT 7, H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.h, 7) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x7d: {
+    asm: 'BIT 7, L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.l, 7) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x7e: {
+    asm: 'BIT 7, [HL]',
+    size: 1,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      cpu.setFlags({
+        Z: BIT(value, 7) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
+    },
+  },
+  0x7f: {
+    asm: 'BIT 7, A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: BIT(cpu.registers.a, 7) ? FlagState.FALSE : FlagState.TRUE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+      });
     },
   },
 };
