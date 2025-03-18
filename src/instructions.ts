@@ -2422,4 +2422,230 @@ export const Instructions: InstructionsMap = {
       }
     },
   },
+  0xa0: {
+    asm: 'AND A, B',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a &= cpu.registers.b;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xa1: {
+    asm: 'AND A, C',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a &= cpu.registers.c;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xa2: {
+    asm: 'AND A, D',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a &= cpu.registers.d;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xa3: {
+    asm: 'AND A, E',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a &= cpu.registers.e;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xa4: {
+    asm: 'AND A, H',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a &= cpu.registers.h;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xa5: {
+    asm: 'AND A, L',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a &= cpu.registers.l;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xa6: {
+    asm: 'AND A, (HL)',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
+      cpu.registers.a &= value;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xa7: {
+    asm: 'AND A, A',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.TRUE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xa8: {
+    asm: 'XOR A, B',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a ^= cpu.registers.b;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xa9: {
+    asm: 'XOR A, C',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a ^= cpu.registers.c;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xaa: {
+    asm: 'XOR A, D',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a ^= cpu.registers.d;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xab: {
+    asm: 'XOR A, E',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a ^= cpu.registers.e;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xac: {
+    asm: 'XOR A, H',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a ^= cpu.registers.h;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xad: {
+    asm: 'XOR A, L',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.registers.a ^= cpu.registers.l;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xae: {
+    asm: 'XOR A, (HL)',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
+      cpu.registers.a ^= value;
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+      cpu.incrementProgramCounter(1);
+    },
+  },
 };
