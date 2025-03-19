@@ -1,25 +1,25 @@
 import { CPU } from './CPU';
 import { CombinedRegister, FlagState, InstructionsMap } from './types';
 
-function SET(value: number, bit: number): number {
+export function SET(value: number, bit: number): number {
   return value | (1 << bit);
 }
 
-function RES(value: number, bit: number): number {
+export function RES(value: number, bit: number): number {
   return value & ~(1 << bit);
 }
 
-function BIT(value: number, bit: number): boolean {
+export function BIT(value: number, bit: number): boolean {
   return (value & (1 << bit)) !== 0;
 }
 
-function SRL(value: number): { value: number; carry: boolean } {
+export function SRL(value: number): { value: number; carry: boolean } {
   const result = value >> 1;
   const carry = (value & 1) !== 0;
   return { value: result, carry };
 }
 
-function RR(
+export function RR(
   value: number,
   carry: FlagState
 ): { value: number; carry: boolean } {

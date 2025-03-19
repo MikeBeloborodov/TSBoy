@@ -115,12 +115,19 @@ export class CPU {
       value.toString(16).length === 1
         ? `0${value.toString(16)}`
         : value.toString(16);
-    const logInfo16 = (value: number): string =>
-      value.toString(16).length === 3
-        ? `0${value.toString(16)}`
-        : value.toString(16);
+    const logInfo16 = (value: number): string => {
+      if (value.toString(16).length === 1) {
+        return `000${value.toString(16)}`;
+      } else if (value.toString(16).length == 2) {
+        return `00${value.toString(16)}`;
+      } else if (value.toString(16).length == 3) {
+        return `0${value.toString(16)}`;
+      } else {
+        return value.toString(16);
+      }
+    };
     this.logger.log(
-      `A:${logInfo(this.registers.a)} F:${logInfo(this.registers.f)} B:${logInfo(this.registers.b)} C:${logInfo(this.registers.c)} D:${logInfo(this.registers.d)} E:${logInfo(this.registers.e)} H:${logInfo(this.registers.h)} L:${logInfo(this.registers.l)} SP:${logInfo(this.sp)} PC:${logInfo16(this.pc)} PCMEM:${logInfo(this.memRead(this.pc))},${logInfo(this.memRead(this.pc + 1))},${logInfo(this.memRead(this.pc + 2))},${logInfo(this.memRead(this.pc + 3))}`
+      `A:${logInfo(this.registers.a)} F:${logInfo(this.registers.f)} B:${logInfo(this.registers.b)} C:${logInfo(this.registers.c)} D:${logInfo(this.registers.d)} E:${logInfo(this.registers.e)} H:${logInfo(this.registers.h)} L:${logInfo(this.registers.l)} SP:${logInfo16(this.sp)} PC:${logInfo16(this.pc)} PCMEM:${logInfo(this.memRead(this.pc))},${logInfo(this.memRead(this.pc + 1))},${logInfo(this.memRead(this.pc + 2))},${logInfo(this.memRead(this.pc + 3))}`
     );
     instructionInfo.fn(this);
   }
