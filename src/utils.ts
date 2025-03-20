@@ -9,7 +9,7 @@ export function numTo8bitString(num: number): string {
   return converted;
 }
 
-export function isHalfCarrySubstraction(
+export function isHalfCarrySubtraction(
   a: number,
   b: number,
   bits: number = 8
@@ -45,7 +45,7 @@ export function isCarrySum(a: number, b: number, bits: number = 8): boolean {
     throw new Error('Unsupported bit width. Use 8 or 16.');
   }
 }
-export function isCarrySubstraction(
+export function isCarrySubtraction(
   a: number,
   b: number,
   bits: number
@@ -110,7 +110,7 @@ export function sumThreeValuesWithCarryInfo(
   return { result, halfCarry, carry };
 }
 
-export function substractThreeValuesWithCarryInfo(
+export function subtractThreeValuesWithCarryInfo(
   a: number,
   b: number,
   c: number

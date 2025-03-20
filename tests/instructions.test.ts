@@ -9,6 +9,17 @@ let cpu: CPU;
 beforeEach(() => {
   emu = new Emulator(Buffer.alloc(0x200000));
   cpu = emu.cpu;
+  cpu.execute = jest.fn(async function () {
+    const nextInstruction = this.getInstruction();
+    const instructionInfo = this.translateInstruction(nextInstruction);
+    if (!instructionInfo) {
+      throw new Error(
+        `PC: ${this.pc.toString(16)}\n, Instruction ${nextInstruction.toString(16)} is not implemented yet`
+      );
+    }
+    this.executeInstruction(instructionInfo);
+    this.doInterrupts();
+  });
 });
 
 describe('Tests for CPU instructions', () => {
@@ -4470,26 +4481,6 @@ describe('Tests for CPU instructions', () => {
       expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 1, C: 1 });
     });
 
-    // it('should test 0xe8 - ADD SP,n8 half-carry negative', () => {
-    //   cpu.sp = 0x0010;
-    //   emu.memory[0x0101] = 0xff;
-    //   Instructions[0xe8].fn(cpu);
-    //   expect(cpu.sp).toBe(0x000f);
-    //   expect(cpu.pc).toBe(0x0102);
-    //   const { Z, N, H, C } = cpu.getFlags();
-    //   expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 1, C: 0 });
-    // });
-
-    // it('should test 0xe8 - ADD SP,n8 carry negative', () => {
-    //   cpu.sp = 0x0100;
-    //   emu.memory[0x0101] = 0xff;
-    //   Instructions[0xe8].fn(cpu);
-    //   expect(cpu.sp).toBe(0x00ff);
-    //   expect(cpu.pc).toBe(0x0102);
-    //   const { Z, N, H, C } = cpu.getFlags();
-    //   expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 1, C: 1 });
-    // });
-
     it('should test 0xe8 - ADD SP, e8 with correct flags', () => {
       cpu.sp = 0x0001;
       emu.memory[0x0101] = 0xff;
@@ -4538,6 +4529,288 @@ describe('Tests for CPU instructions', () => {
       expect(cpu.pc).toBe(0x0102);
       const { Z, N, H, C } = cpu.getFlags();
       expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 1, C: 0 });
+    });
+  });
+
+  describe('Tests for 0xf8 - LD HL,SP+n8', () => {
+    it('should test 0xf8 - LD HL,SP+n8 positive', () => {
+      cpu.sp = 0x0000;
+      emu.memory[0x0101] = 0x01;
+      Instructions[0xf8].fn(cpu);
+      expect(cpu.registers.h).toBe(0x00);
+      expect(cpu.registers.l).toBe(0x01);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xf8 - LD HL,SP+n8 negative', () => {
+      cpu.sp = 0x0002;
+      emu.memory[0x0101] = 0xff;
+      Instructions[0xf8].fn(cpu);
+      expect(cpu.registers.h).toBe(0x00);
+      expect(cpu.registers.l).toBe(0x01);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 1, C: 1 });
+    });
+
+    it('should test 0xf8 - LD HL,SP+e8 correct negative carry', () => {
+      cpu.sp = 0x0010;
+      emu.memory[0x0101] = 0xff;
+      Instructions[0xf8].fn(cpu);
+      expect(cpu.registers.h).toBe(0x00);
+      expect(cpu.registers.l).toBe(0x0f);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 1 });
+    });
+
+    it('should test 0xf8 - LD HL,SP+n8 half-carry positive', () => {
+      cpu.sp = 0x000f;
+      emu.memory[0x0101] = 0x01;
+      Instructions[0xf8].fn(cpu);
+      expect(cpu.registers.h).toBe(0x00);
+      expect(cpu.registers.l).toBe(0x10);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 1, C: 0 });
+    });
+
+    it('should test 0xf8 - LD HL,SP+n8 carry positive', () => {
+      cpu.sp = 0x00ff;
+      emu.memory[0x0101] = 0x01;
+      Instructions[0xf8].fn(cpu);
+      expect(cpu.registers.h).toBe(0x01);
+      expect(cpu.registers.l).toBe(0x00);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 1, C: 1 });
+    });
+
+    it('should test 0xf8 - LD HL,SP+e8 with correct flags', () => {
+      cpu.sp = 0x0001;
+      emu.memory[0x0101] = 0xff;
+      Instructions[0xf8].fn(cpu);
+      expect(cpu.registers.h).toBe(0x00);
+      expect(cpu.registers.l).toBe(0x00);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 1, C: 1 });
+    });
+
+    it('should test 0xf8 - LD HL,SP+e8 with correct flags 3', () => {
+      cpu.sp = 0x0100;
+      emu.memory[0x0101] = 0xff;
+      Instructions[0xf8].fn(cpu);
+      expect(cpu.registers.h).toBe(0x00);
+      expect(cpu.registers.l).toBe(0xff);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xf8 - LD HL,SP+e8 with correct flags 4', () => {
+      cpu.sp = 0x1000;
+      emu.memory[0x0101] = 0xff;
+      Instructions[0xf8].fn(cpu);
+      expect(cpu.registers.h).toBe(0x0f);
+      expect(cpu.registers.l).toBe(0xff);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test 0xf8 - LD HL,SP+e8 carry negative 2', () => {
+      cpu.sp = 0x0000;
+      emu.memory[0x0101] = 0xff;
+      Instructions[0xf8].fn(cpu);
+      expect(cpu.registers.h).toBe(0xff);
+      expect(cpu.registers.l).toBe(0xff);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should pass my test - LD HL,SP+e8', () => {
+      cpu.sp = 0x000f;
+      emu.memory[0x0101] = 0x01;
+      Instructions[0xf8].fn(cpu);
+      expect(cpu.registers.h).toBe(0x00);
+      expect(cpu.registers.l).toBe(0x10);
+      expect(cpu.pc).toBe(0x0102);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 1, C: 0 });
+    });
+  });
+
+  describe('Tests for JP conditional instrucitons', () => {
+    it('should test 0xc2 - JP NZ,a16', () => {
+      emu.memory[0x0101] = 0x00;
+      emu.memory[0x0102] = 0x05;
+      cpu.setFlags({ Z: 0 });
+      Instructions[0xc2].fn(cpu);
+      expect(cpu.pc).toBe(0x0500);
+    });
+
+    it('should test 0xc2 - JP NZ,a16 with Z flag set', () => {
+      emu.memory[0x0101] = 0x00;
+      emu.memory[0x0102] = 0x05;
+      cpu.setFlags({ Z: 1 });
+      Instructions[0xc2].fn(cpu);
+      expect(cpu.pc).toBe(0x0103);
+    });
+
+    it('should test 0xd2 - JP NC,a16', () => {
+      emu.memory[0x0101] = 0x00;
+      emu.memory[0x0102] = 0x05;
+      cpu.setFlags({ C: 0 });
+      Instructions[0xd2].fn(cpu);
+      expect(cpu.pc).toBe(0x0500);
+    });
+
+    it('should test 0xd2 - JP NC,a16 with C flag set', () => {
+      emu.memory[0x0101] = 0x00;
+      emu.memory[0x0102] = 0x05;
+      cpu.setFlags({ C: 1 });
+      Instructions[0xd2].fn(cpu);
+      expect(cpu.pc).toBe(0x0103);
+    });
+
+    it('should test 0xca - JP Z,a16', () => {
+      emu.memory[0x0101] = 0x00;
+      emu.memory[0x0102] = 0x05;
+      cpu.setFlags({ Z: 1 });
+      Instructions[0xca].fn(cpu);
+      expect(cpu.pc).toBe(0x0500);
+    });
+
+    it('should test 0xca - JP Z,a16 with Z flag set', () => {
+      emu.memory[0x0101] = 0x00;
+      emu.memory[0x0102] = 0x05;
+      cpu.setFlags({ Z: 0 });
+      Instructions[0xca].fn(cpu);
+      expect(cpu.pc).toBe(0x0103);
+    });
+
+    it('should test 0xda - JP C,a16', () => {
+      emu.memory[0x0101] = 0x00;
+      emu.memory[0x0102] = 0x05;
+      cpu.setFlags({ C: 1 });
+      Instructions[0xda].fn(cpu);
+      expect(cpu.pc).toBe(0x0500);
+    });
+
+    it('should test 0xda - JP C,a16 with C flag set', () => {
+      emu.memory[0x0101] = 0x00;
+      emu.memory[0x0102] = 0x05;
+      cpu.setFlags({ C: 0 });
+      Instructions[0xda].fn(cpu);
+      expect(cpu.pc).toBe(0x0103);
+    });
+  });
+
+  describe('Test interrupt instructions', () => {
+    it('should test 0xfb - EI', () => {
+      cpu.IME = false;
+      Instructions[0xfb].fn(cpu);
+      expect(cpu.IME).toBe(true);
+    });
+
+    it('should test 0xf3 - DI', () => {
+      cpu.IME = true;
+      Instructions[0xf3].fn(cpu);
+      expect(cpu.IME).toBe(false);
+    });
+
+    it('should test V-Blank interrupt', async () => {
+      cpu.IME = true;
+      cpu.pc = 0x105;
+      emu.memory[0xffff] = 1;
+      emu.memory[0xff0f] = 1;
+      emu.memory[0x0105] = 0x00;
+      emu.memory[0x40] = 0xd9;
+      await cpu.execute();
+      expect(cpu.pc).toBe(0x40);
+      expect(emu.memory[0xfffc]).toBe(0x06);
+      expect(emu.memory[0xfffd]).toBe(0x01);
+      expect(emu.memory[0xff0f]).toBe(0);
+      expect(cpu.IME).toBe(false);
+      await cpu.execute();
+      expect(cpu.pc).toBe(0x0106);
+      expect(cpu.IME).toBe(true);
+    });
+
+    it('should test LCD interrupt', async () => {
+      cpu.IME = true;
+      cpu.pc = 0x105;
+      emu.memory[0xffff] = 2;
+      emu.memory[0xff0f] = 2;
+      emu.memory[0x0105] = 0x00;
+      emu.memory[0x48] = 0xd9;
+      await cpu.execute();
+      expect(cpu.pc).toBe(0x48);
+      expect(emu.memory[0xfffc]).toBe(0x06);
+      expect(emu.memory[0xfffd]).toBe(0x01);
+      expect(emu.memory[0xff0f]).toBe(0);
+      expect(cpu.IME).toBe(false);
+      await cpu.execute();
+      expect(cpu.pc).toBe(0x0106);
+      expect(cpu.IME).toBe(true);
+    });
+
+    it('should test Timer interrupt', async () => {
+      cpu.IME = true;
+      cpu.pc = 0x105;
+      emu.memory[0xffff] = 4;
+      emu.memory[0xff0f] = 4;
+      emu.memory[0x0105] = 0x00;
+      emu.memory[0x50] = 0xd9;
+      await cpu.execute();
+      expect(cpu.pc).toBe(0x50);
+      expect(emu.memory[0xfffc]).toBe(0x06);
+      expect(emu.memory[0xfffd]).toBe(0x01);
+      expect(emu.memory[0xff0f]).toBe(0);
+      expect(cpu.IME).toBe(false);
+      await cpu.execute();
+      expect(cpu.pc).toBe(0x0106);
+      expect(cpu.IME).toBe(true);
+    });
+
+    it('should test Serial interrupt', async () => {
+      cpu.IME = true;
+      cpu.pc = 0x105;
+      emu.memory[0xffff] = 8;
+      emu.memory[0xff0f] = 8;
+      emu.memory[0x0105] = 0x00;
+      emu.memory[0x58] = 0xd9;
+      await cpu.execute();
+      expect(cpu.pc).toBe(0x58);
+      expect(emu.memory[0xfffc]).toBe(0x06);
+      expect(emu.memory[0xfffd]).toBe(0x01);
+      expect(emu.memory[0xff0f]).toBe(0);
+      expect(cpu.IME).toBe(false);
+      await cpu.execute();
+      expect(cpu.pc).toBe(0x0106);
+      expect(cpu.IME).toBe(true);
+    });
+
+    it('should test Joypad interrupt', async () => {
+      cpu.IME = true;
+      cpu.pc = 0x105;
+      emu.memory[0xffff] = 16;
+      emu.memory[0xff0f] = 16;
+      emu.memory[0x0105] = 0x00;
+      emu.memory[0x60] = 0xd9;
+      await cpu.execute();
+      expect(cpu.pc).toBe(0x60);
+      expect(emu.memory[0xfffc]).toBe(0x06);
+      expect(emu.memory[0xfffd]).toBe(0x01);
+      expect(emu.memory[0xff0f]).toBe(0);
+      expect(cpu.IME).toBe(false);
+      await cpu.execute();
+      expect(cpu.pc).toBe(0x0106);
+      expect(cpu.IME).toBe(true);
     });
   });
 });

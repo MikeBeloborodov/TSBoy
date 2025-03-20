@@ -2,12 +2,12 @@ import { CPU } from './CPU';
 import { PrefixInstructions, RR, SRL } from './prefixInstructions';
 import { CombinedRegister, FlagState, InstructionsMap } from './types';
 import {
-  isCarrySubstraction,
+  isCarrySubtraction,
   isCarrySum,
-  isHalfCarrySubstraction,
+  isHalfCarrySubtraction,
   isHalfCarrySum,
   signed8bit,
-  substractThreeValuesWithCarryInfo,
+  subtractThreeValuesWithCarryInfo,
   sumThreeValuesWithCarryInfo,
   unsignedAddition,
   unsignedSubtract,
@@ -73,7 +73,7 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.b, 1, 8);
-      const HC = isHalfCarrySubstraction(cpu.registers.b, 1);
+      const HC = isHalfCarrySubtraction(cpu.registers.b, 1);
       cpu.registers.b = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -89,7 +89,7 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.d, 1, 8);
-      const HC = isHalfCarrySubstraction(cpu.registers.d, 1);
+      const HC = isHalfCarrySubtraction(cpu.registers.d, 1);
       cpu.registers.d = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -105,7 +105,7 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.h, 1, 8);
-      const HC = isHalfCarrySubstraction(cpu.registers.h, 1);
+      const HC = isHalfCarrySubtraction(cpu.registers.h, 1);
       cpu.registers.h = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -122,7 +122,7 @@ export const Instructions: InstructionsMap = {
     fn: (cpu: CPU): void => {
       const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
       const result = unsignedSubtract(value, 1, 8);
-      const HC = isHalfCarrySubstraction(value, 1);
+      const HC = isHalfCarrySubtraction(value, 1);
       cpu.memWrite(cpu.getCombinedRegister(CombinedRegister.HL), result);
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -138,7 +138,7 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.c, 1, 8);
-      const HC = isHalfCarrySubstraction(cpu.registers.c, 1);
+      const HC = isHalfCarrySubtraction(cpu.registers.c, 1);
       cpu.registers.c = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -154,7 +154,7 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.e, 1, 8);
-      const HC = isHalfCarrySubstraction(cpu.registers.e, 1);
+      const HC = isHalfCarrySubtraction(cpu.registers.e, 1);
       cpu.registers.e = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -170,7 +170,7 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.l, 1, 8);
-      const HC = isHalfCarrySubstraction(cpu.registers.l, 1);
+      const HC = isHalfCarrySubtraction(cpu.registers.l, 1);
       cpu.registers.l = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -186,7 +186,7 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, 1, 8);
-      const HC = isHalfCarrySubstraction(cpu.registers.a, 1);
+      const HC = isHalfCarrySubtraction(cpu.registers.a, 1);
       cpu.registers.a = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -207,15 +207,6 @@ export const Instructions: InstructionsMap = {
       if (!cpu.getFlags().Z) {
         cpu.pc += value;
       }
-    },
-  },
-  0xf3: {
-    asm: `DI`,
-    size: 1,
-    cycles: 4,
-    fn: (cpu: CPU): void => {
-      // TODO: Implement disable interrupt
-      cpu.incrementProgramCounter(1);
     },
   },
   0x40: {
@@ -1363,8 +1354,8 @@ export const Instructions: InstructionsMap = {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
       const result = unsignedSubtract(cpu.registers.a, value, 8);
-      const H = isHalfCarrySubstraction(cpu.registers.a, value);
-      const C = isCarrySubstraction(cpu.registers.a, value, 8);
+      const H = isHalfCarrySubtraction(cpu.registers.a, value);
+      const C = isCarrySubtraction(cpu.registers.a, value, 8);
       cpu.registers.a = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -1826,11 +1817,11 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.b, 8);
-      const halfCarry = isHalfCarrySubstraction(
+      const halfCarry = isHalfCarrySubtraction(
         cpu.registers.a,
         cpu.registers.b
       );
-      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.b, 8);
+      const carry = isCarrySubtraction(cpu.registers.a, cpu.registers.b, 8);
       cpu.registers.a = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -1847,11 +1838,11 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.c, 8);
-      const halfCarry = isHalfCarrySubstraction(
+      const halfCarry = isHalfCarrySubtraction(
         cpu.registers.a,
         cpu.registers.c
       );
-      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.c, 8);
+      const carry = isCarrySubtraction(cpu.registers.a, cpu.registers.c, 8);
       cpu.registers.a = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -1868,11 +1859,11 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.d, 8);
-      const halfCarry = isHalfCarrySubstraction(
+      const halfCarry = isHalfCarrySubtraction(
         cpu.registers.a,
         cpu.registers.d
       );
-      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.d, 8);
+      const carry = isCarrySubtraction(cpu.registers.a, cpu.registers.d, 8);
       cpu.registers.a = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -1889,11 +1880,11 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.e, 8);
-      const halfCarry = isHalfCarrySubstraction(
+      const halfCarry = isHalfCarrySubtraction(
         cpu.registers.a,
         cpu.registers.e
       );
-      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.e, 8);
+      const carry = isCarrySubtraction(cpu.registers.a, cpu.registers.e, 8);
       cpu.registers.a = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -1910,11 +1901,11 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.h, 8);
-      const halfCarry = isHalfCarrySubstraction(
+      const halfCarry = isHalfCarrySubtraction(
         cpu.registers.a,
         cpu.registers.h
       );
-      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.h, 8);
+      const carry = isCarrySubtraction(cpu.registers.a, cpu.registers.h, 8);
       cpu.registers.a = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -1931,11 +1922,11 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.l, 8);
-      const halfCarry = isHalfCarrySubstraction(
+      const halfCarry = isHalfCarrySubtraction(
         cpu.registers.a,
         cpu.registers.l
       );
-      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.l, 8);
+      const carry = isCarrySubtraction(cpu.registers.a, cpu.registers.l, 8);
       cpu.registers.a = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -1953,8 +1944,8 @@ export const Instructions: InstructionsMap = {
     fn: (cpu: CPU): void => {
       const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
       const result = unsignedSubtract(cpu.registers.a, value, 8);
-      const halfCarry = isHalfCarrySubstraction(cpu.registers.a, value);
-      const carry = isCarrySubstraction(cpu.registers.a, value, 8);
+      const halfCarry = isHalfCarrySubtraction(cpu.registers.a, value);
+      const carry = isCarrySubtraction(cpu.registers.a, value, 8);
       cpu.registers.a = result;
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -1986,7 +1977,7 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const C = cpu.getFlags().C;
-      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+      const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
         cpu.registers.a,
         cpu.registers.b,
         C
@@ -2007,7 +1998,7 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const C = cpu.getFlags().C;
-      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+      const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
         cpu.registers.a,
         cpu.registers.c,
         C
@@ -2028,7 +2019,7 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const C = cpu.getFlags().C;
-      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+      const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
         cpu.registers.a,
         cpu.registers.d,
         C
@@ -2049,7 +2040,7 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const C = cpu.getFlags().C;
-      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+      const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
         cpu.registers.a,
         cpu.registers.e,
         C
@@ -2070,7 +2061,7 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const C = cpu.getFlags().C;
-      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+      const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
         cpu.registers.a,
         cpu.registers.h,
         C
@@ -2091,7 +2082,7 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const C = cpu.getFlags().C;
-      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+      const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
         cpu.registers.a,
         cpu.registers.l,
         C
@@ -2113,7 +2104,7 @@ export const Instructions: InstructionsMap = {
     fn: (cpu: CPU): void => {
       const C = cpu.getFlags().C;
       const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
-      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+      const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
         cpu.registers.a,
         value,
         C
@@ -2279,11 +2270,11 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.b, 8);
-      const halfCarry = isHalfCarrySubstraction(
+      const halfCarry = isHalfCarrySubtraction(
         cpu.registers.a,
         cpu.registers.b
       );
-      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.b, 8);
+      const carry = isCarrySubtraction(cpu.registers.a, cpu.registers.b, 8);
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
         N: FlagState.TRUE,
@@ -2299,11 +2290,11 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.c, 8);
-      const halfCarry = isHalfCarrySubstraction(
+      const halfCarry = isHalfCarrySubtraction(
         cpu.registers.a,
         cpu.registers.c
       );
-      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.c, 8);
+      const carry = isCarrySubtraction(cpu.registers.a, cpu.registers.c, 8);
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
         N: FlagState.TRUE,
@@ -2319,11 +2310,11 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.d, 8);
-      const halfCarry = isHalfCarrySubstraction(
+      const halfCarry = isHalfCarrySubtraction(
         cpu.registers.a,
         cpu.registers.d
       );
-      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.d, 8);
+      const carry = isCarrySubtraction(cpu.registers.a, cpu.registers.d, 8);
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
         N: FlagState.TRUE,
@@ -2339,11 +2330,11 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.e, 8);
-      const halfCarry = isHalfCarrySubstraction(
+      const halfCarry = isHalfCarrySubtraction(
         cpu.registers.a,
         cpu.registers.e
       );
-      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.e, 8);
+      const carry = isCarrySubtraction(cpu.registers.a, cpu.registers.e, 8);
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
         N: FlagState.TRUE,
@@ -2359,11 +2350,11 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.h, 8);
-      const halfCarry = isHalfCarrySubstraction(
+      const halfCarry = isHalfCarrySubtraction(
         cpu.registers.a,
         cpu.registers.h
       );
-      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.h, 8);
+      const carry = isCarrySubtraction(cpu.registers.a, cpu.registers.h, 8);
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
         N: FlagState.TRUE,
@@ -2379,11 +2370,11 @@ export const Instructions: InstructionsMap = {
     cycles: 4,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.l, 8);
-      const halfCarry = isHalfCarrySubstraction(
+      const halfCarry = isHalfCarrySubtraction(
         cpu.registers.a,
         cpu.registers.l
       );
-      const carry = isCarrySubstraction(cpu.registers.a, cpu.registers.l, 8);
+      const carry = isCarrySubtraction(cpu.registers.a, cpu.registers.l, 8);
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
         N: FlagState.TRUE,
@@ -2400,8 +2391,8 @@ export const Instructions: InstructionsMap = {
     fn: (cpu: CPU): void => {
       const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
       const result = unsignedSubtract(cpu.registers.a, value, 8);
-      const halfCarry = isHalfCarrySubstraction(cpu.registers.a, value);
-      const carry = isCarrySubstraction(cpu.registers.a, value, 8);
+      const halfCarry = isHalfCarrySubtraction(cpu.registers.a, value);
+      const carry = isCarrySubtraction(cpu.registers.a, value, 8);
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
         N: FlagState.TRUE,
@@ -2814,7 +2805,7 @@ export const Instructions: InstructionsMap = {
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
-      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+      const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
         cpu.registers.a,
         value,
         cpu.getFlags().C
@@ -2854,7 +2845,7 @@ export const Instructions: InstructionsMap = {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
       const result = unsignedSubtract(cpu.registers.a, value, 8);
-      const HC = isHalfCarrySubstraction(cpu.registers.a, value);
+      const HC = isHalfCarrySubtraction(cpu.registers.a, value);
       cpu.setFlags({
         Z: result === 0 ? FlagState.TRUE : FlagState.FALSE,
         N: FlagState.TRUE,
@@ -3059,6 +3050,194 @@ export const Instructions: InstructionsMap = {
       });
 
       cpu.sp = newSp;
+    },
+  },
+  0xf8: {
+    asm: 'LD HL, SP+e8',
+    size: 2,
+    cycles: 12,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const signedValue = signed8bit(value);
+
+      const newSp = (cpu.sp + signedValue) & 0xffff;
+
+      const lowerByteSp = cpu.sp & 0xff;
+      const lowerByteValue = signedValue & 0xff;
+      const sumLowerNimble = (lowerByteSp & 0xf) + (lowerByteValue & 0xf);
+      const isHalfCarry =
+        sumLowerNimble > 0xf ? FlagState.TRUE : FlagState.FALSE;
+
+      const sumLowerByte = (lowerByteSp + lowerByteValue) & 0x1ff;
+      const isCarry = sumLowerByte > 0xff ? FlagState.TRUE : FlagState.FALSE;
+
+      cpu.setFlags({
+        Z: FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: isHalfCarry,
+        C: isCarry,
+      });
+
+      cpu.setCombinedRegister(CombinedRegister.HL, newSp);
+    },
+  },
+  0xc2: {
+    asm: 'JP NZ, a16',
+    size: 3,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const address = (b << 8) | a;
+      if (!cpu.getFlags().Z) {
+        cpu.pc = address;
+      }
+    },
+  },
+  0xd2: {
+    asm: 'JP NC, a16',
+    size: 3,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const address = (b << 8) | a;
+      if (!cpu.getFlags().C) {
+        cpu.pc = address;
+      }
+    },
+  },
+  0xca: {
+    asm: 'JP Z, a16',
+    size: 3,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const address = (b << 8) | a;
+      if (cpu.getFlags().Z) {
+        cpu.pc = address;
+      }
+    },
+  },
+  0xda: {
+    asm: 'JP C, a16',
+    size: 3,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const a = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const b = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const address = (b << 8) | a;
+      if (cpu.getFlags().C) {
+        cpu.pc = address;
+      }
+    },
+  },
+  0xfb: {
+    asm: 'EI',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      cpu.IME = true;
+    },
+  },
+  0xf3: {
+    asm: 'DI',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      cpu.IME = false;
+    },
+  },
+  0xd9: {
+    asm: 'RETI',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      cpu.pc = cpu.popStack();
+      cpu.IME = true;
+    },
+  },
+  0x27: {
+    asm: 'DAA',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      let adjust = 0;
+      let isCarry = false;
+      const isSubtraction = cpu.getFlags().N;
+
+      if (
+        cpu.getFlags().H ||
+        (!isCarrySubtraction && (cpu.registers.a & 0x0f) > 9)
+      ) {
+        adjust = 0x06;
+      }
+
+      if (cpu.getFlags().C || (!isCarrySubtraction && cpu.registers.a > 0x99)) {
+        adjust = 0x60;
+        isCarry = true;
+      }
+
+      if (isSubtraction) {
+        cpu.registers.a -= adjust;
+      } else {
+        cpu.registers.a += adjust;
+      }
+
+      cpu.setFlags({
+        Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: isCarry ? FlagState.TRUE : FlagState.FALSE,
+      });
+
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x2f: {
+    asm: 'CPL',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      cpu.registers.a = ~cpu.registers.a;
+      cpu.setFlags({
+        Z: FlagState.FALSE,
+        N: FlagState.TRUE,
+        H: FlagState.TRUE,
+        C: FlagState.FALSE,
+      });
+    },
+  },
+  0x3f: {
+    asm: 'CCF',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      cpu.setFlags({
+        Z: FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: cpu.getFlags().C ? FlagState.FALSE : FlagState.TRUE,
+      });
     },
   },
 };

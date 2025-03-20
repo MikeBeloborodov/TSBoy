@@ -15,6 +15,7 @@ export class CPU {
   registers: Registers;
   pc: number;
   sp: number;
+  IME: boolean;
   memRead: (address: u16) => u8;
   memWrite: (address: u16, value: u8) => void;
   logger: Logger;
@@ -29,6 +30,7 @@ export class CPU {
   ) {
     this.pc = 0x0100;
     this.sp = 0xfffe;
+    this.IME = false;
     this.registers = {
       a: 0x01,
       b: 0x00,
@@ -62,7 +64,7 @@ export class CPU {
     switch (register) {
       case CombinedRegister.AF:
         this.registers.a = (value & 0xff00) >> 8;
-        this.registers.f = value & 0xff;
+        this.registers.f = value & 0xf0;
         break;
       case CombinedRegister.BC:
         this.registers.b = (value & 0xff00) >> 8;
@@ -98,8 +100,55 @@ export class CPU {
       }
 
       this.executeInstruction(instructionInfo);
+      this.doInterrupts();
       this.delay && (await sleep(this.delay));
     }
+  }
+
+  doInterrupts(): void {
+    if (!this.IME) return;
+
+    this.IME = false;
+
+    const IE = this.memRead(0xffff);
+    const IF = this.memRead(0xff0f);
+    const pendingInterrupts = IE & IF;
+
+    if (pendingInterrupts) {
+      if (pendingInterrupts & 0x01) {
+        // V-Blank
+        this.handleInterrupt(0x40);
+        this.memWrite(0xff0f, IF & ~0x01);
+        return;
+      } else if (pendingInterrupts & 0x02) {
+        // LCD STAT
+        this.handleInterrupt(0x48);
+        this.memWrite(0xff0f, IF & ~0x02);
+        return;
+      } else if (pendingInterrupts & 0x04) {
+        // Timer
+        this.handleInterrupt(0x50);
+        this.memWrite(0xff0f, IF & ~0x04);
+        return;
+      } else if (pendingInterrupts & 0x08) {
+        // Serial
+        this.handleInterrupt(0x58);
+        this.memWrite(0xff0f, IF & ~0x08);
+        return;
+      } else if (pendingInterrupts & 0x10) {
+        // Joypad
+        this.handleInterrupt(0x60);
+        this.memWrite(0xff0f, IF & ~0x10);
+        return;
+      }
+    }
+
+    this.IME = true;
+  }
+
+  handleInterrupt(interruptVector: number): void {
+    this.pushStack(this.pc);
+    this.pc = interruptVector;
   }
 
   getInstruction(): u8 {
