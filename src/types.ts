@@ -87,3 +87,11 @@ export type Flags = {
   H: FlagState;
   C: FlagState;
 };
+
+export enum Interrupt {
+  VBlank,
+  LCD,
+  Timer,
+  Serial,
+  Joypad,
+}
