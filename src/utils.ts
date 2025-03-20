@@ -9,10 +9,19 @@ export function numTo8bitString(num: number): string {
   return converted;
 }
 
-export function isHalfCarrySubstraction(a: number, b: number): boolean {
-  return (a & 0xf) < (b & 0xf);
+export function isHalfCarrySubstraction(
+  a: number,
+  b: number,
+  bits: number = 8
+): boolean {
+  if (bits === 8) {
+    return (a & 0xf) < (b & 0xf);
+  } else if (bits === 16) {
+    return (a & 0xfff) < (b & 0xfff);
+  } else {
+    throw new Error('Unsupported bit width. Use 8 or 16.');
+  }
 }
-
 export function isHalfCarrySum(
   a: number,
   b: number,
