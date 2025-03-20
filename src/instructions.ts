@@ -2986,4 +2986,79 @@ export const Instructions: InstructionsMap = {
       cpu.incrementProgramCounter(1);
     },
   },
+  0x0b: {
+    asm: 'DEC BC',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const bc = cpu.getCombinedRegister(CombinedRegister.BC);
+      const result = unsignedSubtract(bc, 1, 16);
+      cpu.setCombinedRegister(CombinedRegister.BC, result);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x1b: {
+    asm: 'DEC DE',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const de = cpu.getCombinedRegister(CombinedRegister.DE);
+      const result = unsignedSubtract(de, 1, 16);
+      cpu.setCombinedRegister(CombinedRegister.DE, result);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x2b: {
+    asm: 'DEC HL',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const hl = cpu.getCombinedRegister(CombinedRegister.HL);
+      const result = unsignedSubtract(hl, 1, 16);
+      cpu.setCombinedRegister(CombinedRegister.HL, result);
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0x3b: {
+    asm: 'DEC SP',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const result = unsignedSubtract(cpu.sp, 1, 16);
+      cpu.sp = result;
+      cpu.incrementProgramCounter(1);
+    },
+  },
+  0xe8: {
+    asm: 'ADD SP, e8',
+    size: 2,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      // this instruction was nightmare
+      cpu.incrementProgramCounter(1);
+      const value = cpu.memRead(cpu.pc);
+      cpu.incrementProgramCounter(1);
+      const signedValue = signed8bit(value);
+
+      const newSp = (cpu.sp + signedValue) & 0xffff;
+
+      const lowerByteSp = cpu.sp & 0xff;
+      const lowerByteValue = signedValue & 0xff;
+      const sumLowerNimble = (lowerByteSp & 0xf) + (lowerByteValue & 0xf);
+      const isHalfCarry =
+        sumLowerNimble > 0xf ? FlagState.TRUE : FlagState.FALSE;
+
+      const sumLowerByte = (lowerByteSp + lowerByteValue) & 0x1ff;
+      const isCarry = sumLowerByte > 0xff ? FlagState.TRUE : FlagState.FALSE;
+
+      cpu.setFlags({
+        Z: FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: isHalfCarry,
+        C: isCarry,
+      });
+
+      cpu.sp = newSp;
+    },
+  },
 };
