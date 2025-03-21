@@ -32,7 +32,7 @@ describe('CPU', () => {
       cpu.registers.a = 0b11001100;
       cpu.registers.f = 0b10011001;
       expect(cpu.getCombinedRegister(CombinedRegister.AF).toString(2)).toBe(
-        '1100110010011001'
+        '1100110010010000'
       );
     });
 
@@ -58,7 +58,7 @@ describe('CPU', () => {
       const value = 0x5d4e;
       cpu.setCombinedRegister(CombinedRegister.AF, value);
       expect(cpu.registers.a).toBe(0x5d);
-      expect(cpu.registers.f).toBe(0x4e);
+      expect(cpu.registers.f).toBe(0x40);
     });
 
     it('should correctly set combined registers bc', () => {
