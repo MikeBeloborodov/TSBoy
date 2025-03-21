@@ -1374,7 +1374,7 @@ describe('Tests for CPU instructions', () => {
       emu.memory[0xfffc] = 0xab;
       emu.memory[0xfffd] = 0xcd;
       Instructions[0xf1].fn(cpu);
-      expect(cpu.getCombinedRegister(CombinedRegister.AF)).toBe(0xcdab);
+      expect(cpu.getCombinedRegister(CombinedRegister.AF)).toBe(0xcda0);
       expect(cpu.pc).toBe(0x0101);
       expect(cpu.sp).toBe(0xfffe);
     });
@@ -1419,7 +1419,7 @@ describe('Tests for CPU instructions', () => {
       cpu.setCombinedRegister(CombinedRegister.AF, 0xcdab);
       Instructions[0xf5].fn(cpu);
       expect(emu.memory[0xfffd]).toBe(0xcd);
-      expect(emu.memory[0xfffc]).toBe(0xab);
+      expect(emu.memory[0xfffc]).toBe(0xa0);
       expect(cpu.pc).toBe(0x0101);
       expect(cpu.sp).toBe(0xfffc);
     });

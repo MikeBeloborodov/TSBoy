@@ -19,6 +19,20 @@ export function SRL(value: number): { value: number; carry: boolean } {
   return { value: result, carry };
 }
 
+export function RLC(value: number): { value: number; carry: boolean } {
+  const carry = !!(value & 0x80);
+  let result = (value << 1) & 0xff;
+  if (carry) result += 1;
+  return { value: result, carry };
+}
+
+export function RRC(value: number): { value: number; carry: boolean } {
+  const carry = !!(value & 1);
+  let result = (value >> 1) & 0xff;
+  if (carry) result |= 0x80;
+  return { value: result, carry };
+}
+
 export function RR(
   value: number,
   carry: FlagState
@@ -26,6 +40,31 @@ export function RR(
   const result = (value >> 1) | (carry ? 0x80 : 0);
   const newCarry = (value & 1) !== 0;
   return { value: result, carry: newCarry };
+}
+
+export function RL(value: number, carry: FlagState) {
+  const result = (value << 1) | (carry ? 1 : 0);
+  const newCarry = !!(value & 0x80);
+  return { value: result & 0xff, carry: newCarry };
+}
+
+export function SLA(value: number): { value: number; carry: boolean } {
+  const result = (value << 1) & 0xff;
+  const carry = !!(value & 0x80);
+  return { value: result, carry };
+}
+
+export function SRA(value: number): { value: number; carry: boolean } {
+  const MSB = value & 0x80;
+  const result = (value >> 1) | (MSB ? 0x80 : 0);
+  const carry = !!(value & 1);
+  return { value: result, carry };
+}
+
+export function SWAP(value: number): number {
+  const lowerNibble = value & 0xf;
+  const upperNibble = (value >> 4) & 0xf;
+  return (lowerNibble << 4) | upperNibble;
 }
 
 export const PrefixInstructions: InstructionsMap = {
@@ -2127,6 +2166,738 @@ export const PrefixInstructions: InstructionsMap = {
         N: FlagState.FALSE,
         H: FlagState.FALSE,
         C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x00: {
+    asm: 'RLC B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RLC(cpu.registers.b);
+      cpu.registers.b = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x01: {
+    asm: 'RLC C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RLC(cpu.registers.c);
+      cpu.registers.c = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x02: {
+    asm: 'RLC D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RLC(cpu.registers.d);
+      cpu.registers.d = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x03: {
+    asm: 'RLC E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RLC(cpu.registers.e);
+      cpu.registers.e = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x04: {
+    asm: 'RLC H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RLC(cpu.registers.h);
+      cpu.registers.h = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x05: {
+    asm: 'RLC L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RLC(cpu.registers.l);
+      cpu.registers.l = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x06: {
+    asm: 'RLC [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      const { value: newValue, carry } = RLC(value);
+      cpu.memWrite(address, newValue);
+      cpu.setFlags({
+        Z: newValue === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x07: {
+    asm: 'RLC A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RLC(cpu.registers.a);
+      cpu.registers.a = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x08: {
+    asm: 'RRC B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RRC(cpu.registers.b);
+      cpu.registers.b = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x09: {
+    asm: 'RRC C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RRC(cpu.registers.c);
+      cpu.registers.c = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x0a: {
+    asm: 'RRC D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RRC(cpu.registers.d);
+      cpu.registers.d = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x0b: {
+    asm: 'RRC E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RRC(cpu.registers.e);
+      cpu.registers.e = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x0c: {
+    asm: 'RRC H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RRC(cpu.registers.h);
+      cpu.registers.h = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x0d: {
+    asm: 'RRC L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RRC(cpu.registers.l);
+      cpu.registers.l = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x0e: {
+    asm: 'RRC [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      const { value: newValue, carry } = RRC(value);
+      cpu.memWrite(address, newValue);
+      cpu.setFlags({
+        Z: newValue === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x0f: {
+    asm: 'RRC A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RRC(cpu.registers.a);
+      cpu.registers.a = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x10: {
+    asm: 'RL B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RL(cpu.registers.b, cpu.getFlags().C);
+      cpu.registers.b = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x11: {
+    asm: 'RL C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RL(cpu.registers.c, cpu.getFlags().C);
+      cpu.registers.c = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x12: {
+    asm: 'RL D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RL(cpu.registers.d, cpu.getFlags().C);
+      cpu.registers.d = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x13: {
+    asm: 'RL E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RL(cpu.registers.e, cpu.getFlags().C);
+      cpu.registers.e = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x14: {
+    asm: 'RL H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RL(cpu.registers.h, cpu.getFlags().C);
+      cpu.registers.h = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x15: {
+    asm: 'RL L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RL(cpu.registers.l, cpu.getFlags().C);
+      cpu.registers.l = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x16: {
+    asm: 'RL [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      const { value: newValue, carry } = RL(value, cpu.getFlags().C);
+      cpu.memWrite(address, newValue);
+      cpu.setFlags({
+        Z: newValue === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x17: {
+    asm: 'RL A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = RL(cpu.registers.a, cpu.getFlags().C);
+      cpu.registers.a = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x20: {
+    asm: 'SLA B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SLA(cpu.registers.b);
+      cpu.registers.b = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x21: {
+    asm: 'SLA C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SLA(cpu.registers.c);
+      cpu.registers.c = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x22: {
+    asm: 'SLA D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SLA(cpu.registers.d);
+      cpu.registers.d = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x23: {
+    asm: 'SLA E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SLA(cpu.registers.e);
+      cpu.registers.e = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x24: {
+    asm: 'SLA H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SLA(cpu.registers.h);
+      cpu.registers.h = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x25: {
+    asm: 'SLA L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SLA(cpu.registers.l);
+      cpu.registers.l = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x26: {
+    asm: 'SLA [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      const { value: newValue, carry } = SLA(value);
+      cpu.memWrite(address, newValue);
+      cpu.setFlags({
+        Z: newValue === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x27: {
+    asm: 'SLA A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SLA(cpu.registers.a);
+      cpu.registers.a = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x28: {
+    asm: 'SRA B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SRA(cpu.registers.b);
+      cpu.registers.b = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x29: {
+    asm: 'SRA C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SRA(cpu.registers.c);
+      cpu.registers.c = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x2a: {
+    asm: 'SRA D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SRA(cpu.registers.d);
+      cpu.registers.d = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x2b: {
+    asm: 'SRA E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SRA(cpu.registers.e);
+      cpu.registers.e = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x2c: {
+    asm: 'SRA H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SRA(cpu.registers.h);
+      cpu.registers.h = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x2d: {
+    asm: 'SRA L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SRA(cpu.registers.l);
+      cpu.registers.l = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x2e: {
+    asm: 'SRA [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      const { value: newValue, carry } = SRA(value);
+      cpu.memWrite(address, newValue);
+      cpu.setFlags({
+        Z: newValue === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x2f: {
+    asm: 'SRA A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const { value, carry } = SRA(cpu.registers.a);
+      cpu.registers.a = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x30: {
+    asm: 'SWAP B',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const value = SWAP(cpu.registers.b);
+      cpu.registers.b = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+    },
+  },
+  0x31: {
+    asm: 'SWAP C',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const value = SWAP(cpu.registers.c);
+      cpu.registers.c = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+    },
+  },
+  0x32: {
+    asm: 'SWAP D',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const value = SWAP(cpu.registers.d);
+      cpu.registers.d = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+    },
+  },
+  0x33: {
+    asm: 'SWAP E',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const value = SWAP(cpu.registers.e);
+      cpu.registers.e = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+    },
+  },
+  0x34: {
+    asm: 'SWAP H',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const value = SWAP(cpu.registers.h);
+      cpu.registers.h = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+    },
+  },
+  0x35: {
+    asm: 'SWAP L',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const value = SWAP(cpu.registers.l);
+      cpu.registers.l = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+    },
+  },
+  0x36: {
+    asm: 'SWAP [HL]',
+    size: 1,
+    cycles: 16,
+    fn: (cpu: CPU): void => {
+      const address = cpu.getCombinedRegister(CombinedRegister.HL);
+      const value = cpu.memRead(address);
+      const newValue = SWAP(value);
+      cpu.memWrite(address, newValue);
+      cpu.setFlags({
+        Z: newValue === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
+      });
+    },
+  },
+  0x37: {
+    asm: 'SWAP A',
+    size: 1,
+    cycles: 8,
+    fn: (cpu: CPU): void => {
+      const value = SWAP(cpu.registers.a);
+      cpu.registers.a = value;
+      cpu.setFlags({
+        Z: value === 0 ? FlagState.TRUE : FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.FALSE,
       });
     },
   },

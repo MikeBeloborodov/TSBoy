@@ -1,27 +1,27 @@
 import {
-  isHalfCarrySubstraction,
+  isHalfCarrySubtraction,
   signed8bit,
   unsigned8bit,
   unsignedSubtract,
   sumThreeValuesWithCarryInfo,
-  substractThreeValuesWithCarryInfo,
+  subtractThreeValuesWithCarryInfo,
 } from '../src/utils';
 
 describe('Tests for utils', () => {
   describe('Tests for isHalfCarrySubstraction', () => {
     it('should return false when no half carry', () => {
-      expect(isHalfCarrySubstraction(0x01, 0x01)).toBe(false);
-      expect(isHalfCarrySubstraction(0x0f, 0x01)).toBe(false);
-      expect(isHalfCarrySubstraction(0x0f, 0x0f)).toBe(false);
-      expect(isHalfCarrySubstraction(0x20, 0x10)).toBe(false);
-      expect(isHalfCarrySubstraction(0x00, 0x00)).toBe(false);
+      expect(isHalfCarrySubtraction(0x01, 0x01)).toBe(false);
+      expect(isHalfCarrySubtraction(0x0f, 0x01)).toBe(false);
+      expect(isHalfCarrySubtraction(0x0f, 0x0f)).toBe(false);
+      expect(isHalfCarrySubtraction(0x20, 0x10)).toBe(false);
+      expect(isHalfCarrySubtraction(0x00, 0x00)).toBe(false);
     });
 
     it('should return true when there is half carry', () => {
-      expect(isHalfCarrySubstraction(0x10, 0x01)).toBe(true);
-      expect(isHalfCarrySubstraction(0x20, 0x01)).toBe(true);
-      expect(isHalfCarrySubstraction(0x01, 0x0f)).toBe(true);
-      expect(isHalfCarrySubstraction(0x10, 0x0f)).toBe(true);
+      expect(isHalfCarrySubtraction(0x10, 0x01)).toBe(true);
+      expect(isHalfCarrySubtraction(0x20, 0x01)).toBe(true);
+      expect(isHalfCarrySubtraction(0x01, 0x0f)).toBe(true);
+      expect(isHalfCarrySubtraction(0x10, 0x0f)).toBe(true);
     });
   });
 
@@ -92,7 +92,7 @@ describe('Tests for utils', () => {
 
   describe('Tests for substractThreeValuesWithCarryInfo', () => {
     it('should return correct values', () => {
-      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+      const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
         0x02,
         0x01,
         0x01
@@ -103,7 +103,7 @@ describe('Tests for utils', () => {
     });
 
     it('should return correct values with carry', () => {
-      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+      const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
         0x01,
         0x01,
         0x01
@@ -114,7 +114,7 @@ describe('Tests for utils', () => {
     });
 
     it('should return correct values with half carry', () => {
-      const { result, halfCarry, carry } = substractThreeValuesWithCarryInfo(
+      const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
         0x10,
         0x01,
         0x01
