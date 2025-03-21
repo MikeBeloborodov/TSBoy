@@ -50,7 +50,7 @@ export class CPU {
   getCombinedRegister(register: CombinedRegister): u16 {
     switch (register) {
       case CombinedRegister.AF:
-        return (this.registers.a << 8) | this.registers.f;
+        return (this.registers.a << 8) | (this.registers.f & 0xf0);
       case CombinedRegister.BC:
         return (this.registers.b << 8) | this.registers.c;
       case CombinedRegister.DE:
