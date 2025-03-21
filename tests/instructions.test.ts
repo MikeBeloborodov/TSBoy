@@ -4813,6 +4813,78 @@ describe('Tests for CPU instructions', () => {
       expect(cpu.IME).toBe(true);
     });
   });
+
+  describe('Tests for DAA', () => {
+    it('should test DAA', () => {
+      cpu.setFlags({ N: 0, H: 0, C: 0, Z: 0 });
+      cpu.registers.a = 0x0a;
+      Instructions[0x27].fn(cpu);
+      expect(cpu.registers.a).toBe(0x10);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, N, H, C } = cpu.getFlags();
+      expect({ Z, N, H, C }).toStrictEqual({ Z: 0, N: 0, H: 0, C: 0 });
+    });
+
+    it('should test DAA 2', () => {
+      cpu.setFlags({ H: 0, C: 0, Z: 0 });
+      cpu.registers.a = 0x9a;
+      Instructions[0x27].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, H, C } = cpu.getFlags();
+      expect({ Z, H, C }).toStrictEqual({ Z: 1, H: 0, C: 1 });
+    });
+
+    it('should test DAA 3', () => {
+      cpu.setFlags({ H: 1, C: 0, Z: 0 });
+      cpu.registers.a = 0x94;
+      Instructions[0x27].fn(cpu);
+      expect(cpu.registers.a).toBe(0x9a);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, H, C } = cpu.getFlags();
+      expect({ Z, H, C }).toStrictEqual({ Z: 0, H: 0, C: 0 });
+    });
+
+    it('should test DAA 4', () => {
+      cpu.setFlags({ H: 1, C: 0, Z: 0 });
+      cpu.registers.a = 0x9a;
+      Instructions[0x27].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, H, C } = cpu.getFlags();
+      expect({ Z, H, C }).toStrictEqual({ Z: 1, H: 0, C: 1 });
+    });
+
+    it('should test DAA 5', () => {
+      cpu.setFlags({ H: 1, C: 0, Z: 0, N: 1 });
+      cpu.registers.a = 0x06;
+      Instructions[0x27].fn(cpu);
+      expect(cpu.registers.a).toBe(0x00);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, H, C, N } = cpu.getFlags();
+      expect({ Z, H, C, N }).toStrictEqual({ Z: 1, H: 0, C: 0, N: 1 });
+    });
+
+    it('should test DAA 6', () => {
+      cpu.setFlags({ H: 0, C: 1, Z: 0, N: 1 });
+      cpu.registers.a = 0x00;
+      Instructions[0x27].fn(cpu);
+      expect(cpu.registers.a).toBe(0xa0);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, H, C, N } = cpu.getFlags();
+      expect({ Z, H, C, N }).toStrictEqual({ Z: 0, H: 0, C: 1, N: 1 });
+    });
+
+    it('should test DAA 7', () => {
+      cpu.setFlags({ H: 1, C: 1, Z: 0, N: 1 });
+      cpu.registers.a = 0x00;
+      Instructions[0x27].fn(cpu);
+      expect(cpu.registers.a).toBe(0x9a);
+      expect(cpu.pc).toBe(0x0101);
+      const { Z, H, C, N } = cpu.getFlags();
+      expect({ Z, H, C, N }).toStrictEqual({ Z: 0, H: 0, C: 1, N: 1 });
+    });
+  });
 });
 
 function checkCounterIncrement(instruction: number, times: number) {

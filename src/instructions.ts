@@ -3181,29 +3181,26 @@ export const Instructions: InstructionsMap = {
     fn: (cpu: CPU): void => {
       let adjust = 0;
       let isCarry = false;
-      const isSubtraction = cpu.getFlags().N;
+      const isNFlag = cpu.getFlags().N;
 
-      if (
-        cpu.getFlags().H ||
-        (!isCarrySubtraction && (cpu.registers.a & 0x0f) > 9)
-      ) {
-        adjust = 0x06;
-      }
-
-      if (cpu.getFlags().C || (!isCarrySubtraction && cpu.registers.a > 0x99)) {
-        adjust = 0x60;
-        isCarry = true;
-      }
-
-      if (isSubtraction) {
-        cpu.registers.a -= adjust;
+      if (isNFlag) {
+        if (cpu.getFlags().H) adjust += -0x06;
+        if (cpu.getFlags().C) {
+          adjust += -0x60;
+          isCarry = true;
+        }
       } else {
-        cpu.registers.a += adjust;
+        if (cpu.getFlags().H || (cpu.registers.a & 0xf) > 9) adjust += 0x06;
+        if (cpu.getFlags().C || cpu.registers.a > 0x99) {
+          adjust += 0x60;
+          isCarry = true;
+        }
       }
+
+      cpu.registers.a = (cpu.registers.a + adjust) & 0xff;
 
       cpu.setFlags({
         Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
-        N: FlagState.FALSE,
         H: FlagState.FALSE,
         C: isCarry ? FlagState.TRUE : FlagState.FALSE,
       });
