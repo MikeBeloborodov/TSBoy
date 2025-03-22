@@ -3,12 +3,24 @@ import { CPU } from './CPU';
 import { SerialPort } from './serialPort';
 import { HeaderInfo, Memory, u16, u8 } from './types';
 
+export const DIV_ADDR = 0xff04;
+export const TIMA_ADDR = 0xff05;
+export const TMA_ADDR = 0xff06;
+export const TAC_ADDR = 0xff07;
+
+export const CLOCK_SPEED = 4194304;
+// clock speed / 60 frames per second
+export const MAXCYCLESPERFRAME = 69905;
+export const DEFAULT_FREQUENCY = 4096;
+
 export class Emulator {
   cpu: CPU;
-  memory: Memory;
+  memory: Memory = new Uint8Array(0x10000).fill(0);
   cartridge: Memory;
   cartHeaderInfo: HeaderInfo;
-  serialPort: SerialPort;
+  serialPort: SerialPort = new SerialPort();
+  mTimerCounter: number = 1024;
+  mDividerCounter: number = 0;
 
   constructor(romFile: Buffer, delay?: number, debug?: boolean) {
     this.cpu = new CPU(
@@ -17,7 +29,6 @@ export class Emulator {
       delay,
       debug
     );
-    this.memory = new Uint8Array(0x10000).fill(0);
     this.cartridge = romFile;
     this.memory = new Uint8Array([
       ...this.cartridge.slice(0, 0x8000),
@@ -27,10 +38,15 @@ export class Emulator {
     this.memory[0xff0f] = 0;
     this.memory[0xffff] = 0;
     this.cartHeaderInfo = new CartridgeHeaderParser(romFile).getHeaderInfo();
-    this.serialPort = new SerialPort();
   }
 
   memoryWrite(address: u16, value: u8): void {
+    if (address == DIV_ADDR) {
+      this.mDividerCounter = 0;
+      this.memory[DIV_ADDR] = 0;
+      return;
+    }
+
     if (address >= 0xff01 && address <= 0xff02) {
       this.serialPort.write(address, value);
     }
@@ -49,6 +65,10 @@ export class Emulator {
 
     // I/O Registers, High RAM (HRAM), Interrupt Enable register (IE)
     if (address >= 0xff00 && address <= 0xffff) {
+      if (address == 0xff0f || address == 0xffff) {
+        this.memory[address] = value;
+        return;
+      }
       this.memory[address] = value;
       return;
     }
@@ -72,7 +92,81 @@ export class Emulator {
     return this.memory[address];
   }
 
-  start() {
-    this.cpu.execute();
+  isClockEnabled(): number {
+    const TAC = this.memory[TAC_ADDR];
+    return TAC & 0x04;
+  }
+
+  getClockFrequency(): number {
+    const TAC = this.memory[TAC_ADDR];
+    return TAC & 0x03;
+  }
+
+  setClockFrequency(): void {
+    const frequency = this.getClockFrequency();
+
+    switch (frequency) {
+      case 0:
+        this.mTimerCounter = 1024;
+        break;
+      case 1:
+        this.mTimerCounter = 16;
+        break;
+      case 2:
+        this.mTimerCounter = 64;
+        break;
+      case 3:
+        this.mTimerCounter = 256;
+        break;
+    }
+  }
+
+  doDividerRegister(cycles: number): void {
+    this.mDividerCounter += cycles;
+
+    if (this.mDividerCounter >= 255) {
+      this.mDividerCounter = 0;
+      this.memory[DIV_ADDR]++;
+    }
+  }
+
+  updateTimers(cycles: number): void {
+    this.doDividerRegister(cycles);
+
+    if (this.isClockEnabled()) {
+      this.mTimerCounter -= cycles;
+
+      if (this.mTimerCounter <= 0) {
+        this.setClockFrequency();
+
+        if (this.memory[TIMA_ADDR] === 0xff) {
+          // be carefult here, TIMA and TMA are not the same
+          this.memory[TIMA_ADDR] = this.memory[TMA_ADDR];
+          this.cpu.requestInterrupt(2);
+        } else {
+          this.memory[TIMA_ADDR]++;
+        }
+      }
+    }
+  }
+
+  async update() {
+    let cyclesThisUpdate = 0;
+
+    while (cyclesThisUpdate < MAXCYCLESPERFRAME) {
+      const cycles = await this.cpu.execute();
+      cyclesThisUpdate += cycles;
+      this.updateTimers(cycles);
+      // this.updateGraphics(cycles);
+      this.cpu.doInterrupts();
+    }
+
+    // this.renderScreen();
+  }
+
+  async start() {
+    while (true) {
+      await this.update();
+    }
   }
 }

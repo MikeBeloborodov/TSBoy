@@ -45,6 +45,7 @@ export class CPU {
     this.memRead = memReadFn;
     this.logger = new Logger();
     this.delay = delay;
+    this.debug = debug;
   }
 
   getCombinedRegister(register: CombinedRegister): u16 {
@@ -81,28 +82,29 @@ export class CPU {
     }
   }
 
-  async execute(): Promise<void> {
-    while (true) {
-      const nextInstruction = this.getInstruction();
-      const instructionInfo = this.translateInstruction(nextInstruction);
-      if (!instructionInfo) {
-        throw new Error(
-          `PC: ${this.pc.toString(16)}\n, Instruction ${nextInstruction.toString(16)} is not implemented yet`
-        );
-      }
-
-      if (this.debug) {
-        console.log(
-          `PC: ${this.pc.toString(16)}\n`,
-          `Executing ${nextInstruction.toString(16)}: ${instructionInfo.asm}`
-        );
-        console.log('---------------------------------');
-      }
-
-      this.executeInstruction(instructionInfo);
-      this.doInterrupts();
-      this.delay && (await sleep(this.delay));
+  async execute(): Promise<number> {
+    const instruction = this.getInstruction();
+    if (!instruction) {
+      throw new Error(
+        `PC: ${this.pc.toString(16)}\n, Instruction ${this.memRead(this.pc).toString(16)} is not implemented yet`
+      );
     }
+
+    if (this.debug) {
+      console.log(
+        `PC: ${this.pc.toString(16)}\n`,
+        `Executing ${this.memRead(this.pc).toString(16)}: ${instruction.asm}`
+      );
+      console.log('---------------------------------');
+    }
+
+    const cycles = this.executeInstruction(instruction);
+
+    if (this.delay) {
+      await sleep(this.delay);
+    }
+
+    return cycles;
   }
 
   doInterrupts(): void {
@@ -146,20 +148,42 @@ export class CPU {
     this.IME = true;
   }
 
+  requestInterrupt(interrupt: number): void {
+    const IF = this.memRead(0xff0f);
+    switch (interrupt) {
+      // V-Blank
+      case 0:
+        this.memWrite(0xff0f, IF | 0x01);
+        break;
+      // LCD STAT
+      case 1:
+        this.memWrite(0xff0f, IF | 0x02);
+        break;
+      // Timer
+      case 2:
+        this.memWrite(0xff0f, IF | 0x04);
+        break;
+      // Serial
+      case 3:
+        this.memWrite(0xff0f, IF | 0x08);
+        break;
+      // Joypad
+      case 4:
+        this.memWrite(0xff0f, IF | 0x10);
+        break;
+    }
+  }
+
   handleInterrupt(interruptVector: number): void {
     this.pushStack(this.pc);
     this.pc = interruptVector;
   }
 
-  getInstruction(): u8 {
-    return this.memRead(this.pc);
+  getInstruction(): InstructionInfo | undefined {
+    return Instructions[this.memRead(this.pc)];
   }
 
-  translateInstruction(instruction: number): InstructionInfo | undefined {
-    return Instructions[instruction];
-  }
-
-  executeInstruction(instructionInfo: InstructionInfo): void {
+  executeInstruction(instruction: InstructionInfo): number {
     const logInfo = (value: number): string =>
       value.toString(16).length === 1
         ? `0${value.toString(16)}`
@@ -178,7 +202,8 @@ export class CPU {
     this.logger.log(
       `A:${logInfo(this.registers.a)} F:${logInfo(this.registers.f)} B:${logInfo(this.registers.b)} C:${logInfo(this.registers.c)} D:${logInfo(this.registers.d)} E:${logInfo(this.registers.e)} H:${logInfo(this.registers.h)} L:${logInfo(this.registers.l)} SP:${logInfo16(this.sp)} PC:${logInfo16(this.pc)} PCMEM:${logInfo(this.memRead(this.pc))},${logInfo(this.memRead(this.pc + 1))},${logInfo(this.memRead(this.pc + 2))},${logInfo(this.memRead(this.pc + 3))}`
     );
-    instructionInfo.fn(this);
+    const cycles = instruction.fn(this);
+    return cycles ? cycles : instruction.cycles;
   }
 
   incrementProgramCounter(times: number) {

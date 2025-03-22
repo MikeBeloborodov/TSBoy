@@ -58,7 +58,7 @@ export interface IMemoryReadable {
   memRead: () => void;
 }
 
-export type InstructionFn = (cpu: CPU) => void;
+export type InstructionFn = (cpu: CPU) => number | void;
 
 export type InstructionInfo = {
   asm: string;
