@@ -200,13 +200,15 @@ export const Instructions: InstructionsMap = {
     asm: 'JR NZ, e8',
     size: 2,
     cycles: 12 / 8,
-    fn: (cpu: CPU): void => {
+    fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const value = signed8bit(cpu.memRead(cpu.pc));
       cpu.incrementProgramCounter(1);
       if (!cpu.getFlags().Z) {
         cpu.pc += value;
+        return 12;
       }
+      return 8;
     },
   },
   0x40: {
@@ -1117,17 +1119,6 @@ export const Instructions: InstructionsMap = {
       cpu.incrementProgramCounter(1);
     },
   },
-  // 0xf8: {
-  //   asm: 'LD HL, SP+r8',
-  //   size: 2,
-  //   cycles: 12,
-  //   fn: (cpu: CPU): void => {
-  //     cpu.incrementProgramCounter(1);
-  //     const value = cpu.memRead(cpu.pc);
-  //     const result = unsignedAddition(cpu.sp, value, 16);
-
-  //   }
-  // },
   0x0c: {
     asm: 'INC C',
     size: 1,
@@ -1370,13 +1361,15 @@ export const Instructions: InstructionsMap = {
     asm: 'JR NC, r8',
     size: 2,
     cycles: 12 / 8,
-    fn: (cpu: CPU): void => {
+    fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const value = signed8bit(cpu.memRead(cpu.pc));
       cpu.incrementProgramCounter(1);
       if (!cpu.getFlags().C) {
         cpu.pc += value;
+        return 12;
       }
+      return 8;
     },
   },
   0xc1: {
@@ -2453,8 +2446,8 @@ export const Instructions: InstructionsMap = {
   0xc4: {
     asm: 'CALL NZ, a16',
     size: 3,
-    cycles: 12 / 8,
-    fn: (cpu: CPU): void => {
+    cycles: 24 / 12,
+    fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
       cpu.incrementProgramCounter(1);
@@ -2464,14 +2457,16 @@ export const Instructions: InstructionsMap = {
       if (!cpu.getFlags().Z) {
         cpu.pushStack(cpu.pc);
         cpu.pc = jumpAddress;
+        return 24;
       }
+      return 12;
     },
   },
   0xd4: {
     asm: 'CALL NC, a16',
     size: 3,
-    cycles: 12 / 8,
-    fn: (cpu: CPU): void => {
+    cycles: 24 / 12,
+    fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
       cpu.incrementProgramCounter(1);
@@ -2481,14 +2476,16 @@ export const Instructions: InstructionsMap = {
       if (!cpu.getFlags().C) {
         cpu.pushStack(cpu.pc);
         cpu.pc = jumpAddress;
+        return 24;
       }
+      return 12;
     },
   },
   0xcc: {
     asm: 'CALL Z, a16',
     size: 3,
-    cycles: 12 / 8,
-    fn: (cpu: CPU): void => {
+    cycles: 24 / 12,
+    fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
       cpu.incrementProgramCounter(1);
@@ -2498,14 +2495,16 @@ export const Instructions: InstructionsMap = {
       if (cpu.getFlags().Z) {
         cpu.pushStack(cpu.pc);
         cpu.pc = jumpAddress;
+        return 24;
       }
+      return 12;
     },
   },
   0xdc: {
     asm: 'CALL C, a16',
     size: 3,
-    cycles: 12 / 8,
-    fn: (cpu: CPU): void => {
+    cycles: 24 / 12,
+    fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
       cpu.incrementProgramCounter(1);
@@ -2515,7 +2514,9 @@ export const Instructions: InstructionsMap = {
       if (cpu.getFlags().C) {
         cpu.pushStack(cpu.pc);
         cpu.pc = jumpAddress;
+        return 24;
       }
+      return 12;
     },
   },
   0xa0: {
@@ -2858,49 +2859,53 @@ export const Instructions: InstructionsMap = {
   0xd0: {
     asm: 'RET NC',
     size: 1,
-    cycles: 20,
-    fn: (cpu: CPU): void => {
+    cycles: 20 / 8,
+    fn: (cpu: CPU): number => {
+      cpu.incrementProgramCounter(1);
       if (!cpu.getFlags().C) {
         cpu.pc = cpu.popStack();
-      } else {
-        cpu.incrementProgramCounter(1);
+        return 20;
       }
+      return 8;
     },
   },
   0xc0: {
     asm: 'RET NZ',
     size: 1,
     cycles: 20,
-    fn: (cpu: CPU): void => {
+    fn: (cpu: CPU): number => {
+      cpu.incrementProgramCounter(1);
       if (!cpu.getFlags().Z) {
         cpu.pc = cpu.popStack();
-      } else {
-        cpu.incrementProgramCounter(1);
+        return 20;
       }
+      return 8;
     },
   },
   0xc8: {
     asm: 'RET Z',
     size: 1,
-    cycles: 20,
-    fn: (cpu: CPU): void => {
+    cycles: 20 / 8,
+    fn: (cpu: CPU): number => {
+      cpu.incrementProgramCounter(1);
       if (cpu.getFlags().Z) {
         cpu.pc = cpu.popStack();
-      } else {
-        cpu.incrementProgramCounter(1);
+        return 20;
       }
+      return 8;
     },
   },
   0xd8: {
     asm: 'RET C',
     size: 1,
-    cycles: 20,
-    fn: (cpu: CPU): void => {
+    cycles: 20 / 8,
+    fn: (cpu: CPU): number => {
+      cpu.incrementProgramCounter(1);
       if (cpu.getFlags().C) {
         cpu.pc = cpu.popStack();
-      } else {
-        cpu.incrementProgramCounter(1);
+        return 20;
       }
+      return 8;
     },
   },
   0x09: {
@@ -3086,8 +3091,8 @@ export const Instructions: InstructionsMap = {
   0xc2: {
     asm: 'JP NZ, a16',
     size: 3,
-    cycles: 16,
-    fn: (cpu: CPU): void => {
+    cycles: 16 / 12,
+    fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
       cpu.incrementProgramCounter(1);
@@ -3096,14 +3101,16 @@ export const Instructions: InstructionsMap = {
       const address = (b << 8) | a;
       if (!cpu.getFlags().Z) {
         cpu.pc = address;
+        return 16;
       }
+      return 12;
     },
   },
   0xd2: {
     asm: 'JP NC, a16',
     size: 3,
-    cycles: 16,
-    fn: (cpu: CPU): void => {
+    cycles: 16 / 12,
+    fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
       cpu.incrementProgramCounter(1);
@@ -3112,14 +3119,16 @@ export const Instructions: InstructionsMap = {
       const address = (b << 8) | a;
       if (!cpu.getFlags().C) {
         cpu.pc = address;
+        return 16;
       }
+      return 12;
     },
   },
   0xca: {
     asm: 'JP Z, a16',
     size: 3,
-    cycles: 16,
-    fn: (cpu: CPU): void => {
+    cycles: 16 / 12,
+    fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
       cpu.incrementProgramCounter(1);
@@ -3128,14 +3137,16 @@ export const Instructions: InstructionsMap = {
       const address = (b << 8) | a;
       if (cpu.getFlags().Z) {
         cpu.pc = address;
+        return 16;
       }
+      return 12;
     },
   },
   0xda: {
     asm: 'JP C, a16',
     size: 3,
-    cycles: 16,
-    fn: (cpu: CPU): void => {
+    cycles: 16 / 12,
+    fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
       cpu.incrementProgramCounter(1);
@@ -3144,7 +3155,9 @@ export const Instructions: InstructionsMap = {
       const address = (b << 8) | a;
       if (cpu.getFlags().C) {
         cpu.pc = address;
+        return 16;
       }
+      return 12;
     },
   },
   0xfb: {
