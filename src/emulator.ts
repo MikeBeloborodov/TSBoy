@@ -9,9 +9,8 @@ export const TMA_ADDR = 0xff06;
 export const TAC_ADDR = 0xff07;
 
 export const CLOCK_SPEED = 4194304;
-// clock speed / 60 frames per second
-export const MAXCYCLESPERFRAME = 69905;
-export const DEFAULT_FREQUENCY = 4096;
+// clock speed / 60 frames per second / 4
+export const MAXCYCLESPERFRAME = 17476;
 
 export class Emulator {
   cpu: CPU;
@@ -19,7 +18,7 @@ export class Emulator {
   cartridge: Memory;
   cartHeaderInfo: HeaderInfo;
   serialPort: SerialPort = new SerialPort();
-  mTimerCounter: number = 1024;
+  mTimerCounter: number = 4;
   mDividerCounter: number = 0;
 
   constructor(romFile: Buffer, delay?: number, debug?: boolean) {
@@ -107,16 +106,16 @@ export class Emulator {
 
     switch (frequency) {
       case 0:
-        this.mTimerCounter = 1024;
+        this.mTimerCounter = 256;
         break;
       case 1:
-        this.mTimerCounter = 16;
+        this.mTimerCounter = 4;
         break;
       case 2:
-        this.mTimerCounter = 64;
+        this.mTimerCounter = 16;
         break;
       case 3:
-        this.mTimerCounter = 256;
+        this.mTimerCounter = 64;
         break;
     }
   }
@@ -144,7 +143,7 @@ export class Emulator {
           this.memory[TIMA_ADDR] = this.memory[TMA_ADDR];
           this.cpu.requestInterrupt(2);
         } else {
-          this.memory[TIMA_ADDR]++;
+          this.memory[TIMA_ADDR] += 1;
         }
       }
     }

@@ -17,8 +17,8 @@ export const Instructions: InstructionsMap = {
   0xcb: {
     asm: 'PREFIX CB',
     size: 1,
-    cycles: 4,
-    fn: (cpu: CPU): void => {
+    cycles: 0,
+    fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const instruction = cpu.memRead(cpu.pc);
       const prefixInstruction = PrefixInstructions[instruction];
@@ -27,14 +27,15 @@ export const Instructions: InstructionsMap = {
           `Unknown prefix instruction ${instruction.toString(16)}`
         );
       }
-      prefixInstruction.fn(cpu);
       cpu.incrementProgramCounter(1);
+      prefixInstruction.fn(cpu);
+      return prefixInstruction.cycles;
     },
   },
   0x00: {
     asm: `NOP`,
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
     },
@@ -42,7 +43,7 @@ export const Instructions: InstructionsMap = {
   0xc3: {
     asm: 'JP a16',
     size: 3,
-    cycles: 16,
+    cycles: 4,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -55,7 +56,7 @@ export const Instructions: InstructionsMap = {
   0xaf: {
     asm: 'XOR A, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       cpu.registers.a = 0;
@@ -70,7 +71,7 @@ export const Instructions: InstructionsMap = {
   0x05: {
     asm: 'DEC B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.b, 1, 8);
       const HC = isHalfCarrySubtraction(cpu.registers.b, 1);
@@ -86,7 +87,7 @@ export const Instructions: InstructionsMap = {
   0x15: {
     asm: 'DEC D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.d, 1, 8);
       const HC = isHalfCarrySubtraction(cpu.registers.d, 1);
@@ -102,7 +103,7 @@ export const Instructions: InstructionsMap = {
   0x25: {
     asm: 'DEC H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.h, 1, 8);
       const HC = isHalfCarrySubtraction(cpu.registers.h, 1);
@@ -118,7 +119,7 @@ export const Instructions: InstructionsMap = {
   0x35: {
     asm: 'DEC [HL]',
     size: 1,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
       const result = unsignedSubtract(value, 1, 8);
@@ -135,7 +136,7 @@ export const Instructions: InstructionsMap = {
   0x0d: {
     asm: 'DEC C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.c, 1, 8);
       const HC = isHalfCarrySubtraction(cpu.registers.c, 1);
@@ -151,7 +152,7 @@ export const Instructions: InstructionsMap = {
   0x1d: {
     asm: 'DEC E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.e, 1, 8);
       const HC = isHalfCarrySubtraction(cpu.registers.e, 1);
@@ -167,7 +168,7 @@ export const Instructions: InstructionsMap = {
   0x2d: {
     asm: 'DEC L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.l, 1, 8);
       const HC = isHalfCarrySubtraction(cpu.registers.l, 1);
@@ -183,7 +184,7 @@ export const Instructions: InstructionsMap = {
   0x3d: {
     asm: 'DEC A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, 1, 8);
       const HC = isHalfCarrySubtraction(cpu.registers.a, 1);
@@ -199,22 +200,22 @@ export const Instructions: InstructionsMap = {
   0x20: {
     asm: 'JR NZ, e8',
     size: 2,
-    cycles: 12 / 8,
+    cycles: 3 / 2,
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const value = signed8bit(cpu.memRead(cpu.pc));
       cpu.incrementProgramCounter(1);
       if (!cpu.getFlags().Z) {
         cpu.pc += value;
-        return 12;
+        return 3;
       }
-      return 8;
+      return 2;
     },
   },
   0x40: {
     asm: 'LD B, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
     },
@@ -222,7 +223,7 @@ export const Instructions: InstructionsMap = {
   0x41: {
     asm: 'LD B, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.b = cpu.registers.c;
       cpu.incrementProgramCounter(1);
@@ -231,7 +232,7 @@ export const Instructions: InstructionsMap = {
   0x42: {
     asm: 'LD B, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.b = cpu.registers.d;
       cpu.incrementProgramCounter(1);
@@ -240,7 +241,7 @@ export const Instructions: InstructionsMap = {
   0x43: {
     asm: 'LD B, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.b = cpu.registers.e;
       cpu.incrementProgramCounter(1);
@@ -249,7 +250,7 @@ export const Instructions: InstructionsMap = {
   0x44: {
     asm: 'LD B, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.b = cpu.registers.h;
       cpu.incrementProgramCounter(1);
@@ -258,7 +259,7 @@ export const Instructions: InstructionsMap = {
   0x45: {
     asm: 'LD B, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.b = cpu.registers.l;
       cpu.incrementProgramCounter(1);
@@ -267,7 +268,7 @@ export const Instructions: InstructionsMap = {
   0x46: {
     asm: 'LD B, [HL]',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.registers.b = cpu.memRead(hl);
@@ -277,7 +278,7 @@ export const Instructions: InstructionsMap = {
   0x47: {
     asm: 'LD B, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.b = cpu.registers.a;
       cpu.incrementProgramCounter(1);
@@ -286,7 +287,7 @@ export const Instructions: InstructionsMap = {
   0x48: {
     asm: 'LD C, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.c = cpu.registers.b;
       cpu.incrementProgramCounter(1);
@@ -295,7 +296,7 @@ export const Instructions: InstructionsMap = {
   0x49: {
     asm: 'LD C, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
     },
@@ -303,7 +304,7 @@ export const Instructions: InstructionsMap = {
   0x4a: {
     asm: 'LD C, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.c = cpu.registers.d;
       cpu.incrementProgramCounter(1);
@@ -312,7 +313,7 @@ export const Instructions: InstructionsMap = {
   0x4b: {
     asm: 'LD C, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.c = cpu.registers.e;
       cpu.incrementProgramCounter(1);
@@ -321,7 +322,7 @@ export const Instructions: InstructionsMap = {
   0x4c: {
     asm: 'LD C, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.c = cpu.registers.h;
       cpu.incrementProgramCounter(1);
@@ -330,7 +331,7 @@ export const Instructions: InstructionsMap = {
   0x4d: {
     asm: 'LD C, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.c = cpu.registers.l;
       cpu.incrementProgramCounter(1);
@@ -339,7 +340,7 @@ export const Instructions: InstructionsMap = {
   0x4e: {
     asm: 'LD C, [HL]',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.registers.c = cpu.memRead(hl);
@@ -349,7 +350,7 @@ export const Instructions: InstructionsMap = {
   0x4f: {
     asm: 'LD C, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.c = cpu.registers.a;
       cpu.incrementProgramCounter(1);
@@ -358,7 +359,7 @@ export const Instructions: InstructionsMap = {
   0x50: {
     asm: 'LD D, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.d = cpu.registers.b;
       cpu.incrementProgramCounter(1);
@@ -367,7 +368,7 @@ export const Instructions: InstructionsMap = {
   0x51: {
     asm: 'LD D, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.d = cpu.registers.c;
       cpu.incrementProgramCounter(1);
@@ -376,7 +377,7 @@ export const Instructions: InstructionsMap = {
   0x52: {
     asm: 'LD D, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
     },
@@ -384,7 +385,7 @@ export const Instructions: InstructionsMap = {
   0x53: {
     asm: 'LD D, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.d = cpu.registers.e;
       cpu.incrementProgramCounter(1);
@@ -393,7 +394,7 @@ export const Instructions: InstructionsMap = {
   0x54: {
     asm: 'LD D, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.d = cpu.registers.h;
       cpu.incrementProgramCounter(1);
@@ -402,7 +403,7 @@ export const Instructions: InstructionsMap = {
   0x55: {
     asm: 'LD D, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.d = cpu.registers.l;
       cpu.incrementProgramCounter(1);
@@ -411,7 +412,7 @@ export const Instructions: InstructionsMap = {
   0x56: {
     asm: 'LD D, [HL]',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.registers.d = cpu.memRead(hl);
@@ -421,7 +422,7 @@ export const Instructions: InstructionsMap = {
   0x57: {
     asm: 'LD D, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.d = cpu.registers.a;
       cpu.incrementProgramCounter(1);
@@ -430,7 +431,7 @@ export const Instructions: InstructionsMap = {
   0x58: {
     asm: 'LD E, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.e = cpu.registers.b;
       cpu.incrementProgramCounter(1);
@@ -439,7 +440,7 @@ export const Instructions: InstructionsMap = {
   0x59: {
     asm: 'LD E, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.e = cpu.registers.c;
       cpu.incrementProgramCounter(1);
@@ -448,7 +449,7 @@ export const Instructions: InstructionsMap = {
   0x5a: {
     asm: 'LD E, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.e = cpu.registers.d;
       cpu.incrementProgramCounter(1);
@@ -457,7 +458,7 @@ export const Instructions: InstructionsMap = {
   0x5b: {
     asm: 'LD E, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
     },
@@ -465,7 +466,7 @@ export const Instructions: InstructionsMap = {
   0x5c: {
     asm: 'LD E, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.e = cpu.registers.h;
       cpu.incrementProgramCounter(1);
@@ -474,7 +475,7 @@ export const Instructions: InstructionsMap = {
   0x5d: {
     asm: 'LD E, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.e = cpu.registers.l;
       cpu.incrementProgramCounter(1);
@@ -483,7 +484,7 @@ export const Instructions: InstructionsMap = {
   0x5e: {
     asm: 'LD E, [HL]',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.registers.e = cpu.memRead(hl);
@@ -493,7 +494,7 @@ export const Instructions: InstructionsMap = {
   0x5f: {
     asm: 'LD E, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.e = cpu.registers.a;
       cpu.incrementProgramCounter(1);
@@ -502,7 +503,7 @@ export const Instructions: InstructionsMap = {
   0x60: {
     asm: 'LD H, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.h = cpu.registers.b;
       cpu.incrementProgramCounter(1);
@@ -511,7 +512,7 @@ export const Instructions: InstructionsMap = {
   0x61: {
     asm: 'LD H, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.h = cpu.registers.c;
       cpu.incrementProgramCounter(1);
@@ -520,7 +521,7 @@ export const Instructions: InstructionsMap = {
   0x62: {
     asm: 'LD H, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.h = cpu.registers.d;
       cpu.incrementProgramCounter(1);
@@ -529,7 +530,7 @@ export const Instructions: InstructionsMap = {
   0x63: {
     asm: 'LD H, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.h = cpu.registers.e;
       cpu.incrementProgramCounter(1);
@@ -538,7 +539,7 @@ export const Instructions: InstructionsMap = {
   0x64: {
     asm: 'LD H, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
     },
@@ -546,7 +547,7 @@ export const Instructions: InstructionsMap = {
   0x65: {
     asm: 'LD H, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.h = cpu.registers.l;
       cpu.incrementProgramCounter(1);
@@ -555,7 +556,7 @@ export const Instructions: InstructionsMap = {
   0x66: {
     asm: 'LD H, [HL]',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.registers.h = cpu.memRead(hl);
@@ -565,7 +566,7 @@ export const Instructions: InstructionsMap = {
   0x67: {
     asm: 'LD H, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.h = cpu.registers.a;
       cpu.incrementProgramCounter(1);
@@ -574,7 +575,7 @@ export const Instructions: InstructionsMap = {
   0x68: {
     asm: 'LD L, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.l = cpu.registers.b;
       cpu.incrementProgramCounter(1);
@@ -583,7 +584,7 @@ export const Instructions: InstructionsMap = {
   0x69: {
     asm: 'LD L, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.l = cpu.registers.c;
       cpu.incrementProgramCounter(1);
@@ -592,7 +593,7 @@ export const Instructions: InstructionsMap = {
   0x6a: {
     asm: 'LD L, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.l = cpu.registers.d;
       cpu.incrementProgramCounter(1);
@@ -601,7 +602,7 @@ export const Instructions: InstructionsMap = {
   0x6b: {
     asm: 'LD L, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.l = cpu.registers.e;
       cpu.incrementProgramCounter(1);
@@ -610,7 +611,7 @@ export const Instructions: InstructionsMap = {
   0x6c: {
     asm: 'LD L, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.l = cpu.registers.h;
       cpu.incrementProgramCounter(1);
@@ -619,7 +620,7 @@ export const Instructions: InstructionsMap = {
   0x6d: {
     asm: 'LD L, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
     },
@@ -627,7 +628,7 @@ export const Instructions: InstructionsMap = {
   0x6e: {
     asm: 'LD L, [HL]',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.registers.l = cpu.memRead(hl);
@@ -637,7 +638,7 @@ export const Instructions: InstructionsMap = {
   0x6f: {
     asm: 'LD L, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.l = cpu.registers.a;
       cpu.incrementProgramCounter(1);
@@ -646,7 +647,7 @@ export const Instructions: InstructionsMap = {
   0x70: {
     asm: 'LD [HL], B',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.memWrite(hl, cpu.registers.b);
@@ -656,7 +657,7 @@ export const Instructions: InstructionsMap = {
   0x71: {
     asm: 'LD [HL], C',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.memWrite(hl, cpu.registers.c);
@@ -666,7 +667,7 @@ export const Instructions: InstructionsMap = {
   0x72: {
     asm: 'LD [HL], D',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.memWrite(hl, cpu.registers.d);
@@ -676,7 +677,7 @@ export const Instructions: InstructionsMap = {
   0x73: {
     asm: 'LD [HL], E',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.memWrite(hl, cpu.registers.e);
@@ -686,7 +687,7 @@ export const Instructions: InstructionsMap = {
   0x74: {
     asm: 'LD [HL], H',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.memWrite(hl, cpu.registers.h);
@@ -696,25 +697,17 @@ export const Instructions: InstructionsMap = {
   0x75: {
     asm: 'LD [HL], L',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.memWrite(hl, cpu.registers.l);
       cpu.incrementProgramCounter(1);
     },
   },
-  // 0x76: {
-  //   asm: 'HALT',
-  //   size: 1,
-  //   cycles: 4,
-  //   fn: (cpu: CPU): void => {
-  //     // TODO: Implement HALT
-  //   }
-  // },
   0x77: {
     asm: 'LD [HL], A',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.memWrite(hl, cpu.registers.a);
@@ -724,7 +717,7 @@ export const Instructions: InstructionsMap = {
   0x78: {
     asm: 'LD A, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a = cpu.registers.b;
       cpu.incrementProgramCounter(1);
@@ -733,7 +726,7 @@ export const Instructions: InstructionsMap = {
   0x79: {
     asm: 'LD A, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a = cpu.registers.c;
       cpu.incrementProgramCounter(1);
@@ -742,7 +735,7 @@ export const Instructions: InstructionsMap = {
   0x7a: {
     asm: 'LD A, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a = cpu.registers.d;
       cpu.incrementProgramCounter(1);
@@ -751,7 +744,7 @@ export const Instructions: InstructionsMap = {
   0x7b: {
     asm: 'LD A, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a = cpu.registers.e;
       cpu.incrementProgramCounter(1);
@@ -760,7 +753,7 @@ export const Instructions: InstructionsMap = {
   0x7c: {
     asm: 'LD A, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a = cpu.registers.h;
       cpu.incrementProgramCounter(1);
@@ -769,7 +762,7 @@ export const Instructions: InstructionsMap = {
   0x7d: {
     asm: 'LD A, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a = cpu.registers.l;
       cpu.incrementProgramCounter(1);
@@ -778,7 +771,7 @@ export const Instructions: InstructionsMap = {
   0x7e: {
     asm: 'LD A, [HL]',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.registers.a = cpu.memRead(hl);
@@ -788,7 +781,7 @@ export const Instructions: InstructionsMap = {
   0x7f: {
     asm: 'LD A, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
     },
@@ -796,7 +789,7 @@ export const Instructions: InstructionsMap = {
   0x01: {
     asm: 'LD BC, n16',
     size: 3,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -810,7 +803,7 @@ export const Instructions: InstructionsMap = {
   0x11: {
     asm: 'LD DE, n16',
     size: 3,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -824,7 +817,7 @@ export const Instructions: InstructionsMap = {
   0x21: {
     asm: 'LD HL, n16',
     size: 3,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -838,7 +831,7 @@ export const Instructions: InstructionsMap = {
   0x31: {
     asm: 'LD SP, n16',
     size: 3,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -852,7 +845,7 @@ export const Instructions: InstructionsMap = {
   0x02: {
     asm: 'LD [BC], A',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const bc = cpu.getCombinedRegister(CombinedRegister.BC);
       cpu.memWrite(bc, cpu.registers.a);
@@ -862,7 +855,7 @@ export const Instructions: InstructionsMap = {
   0x12: {
     asm: 'LD [DE], A',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const de = cpu.getCombinedRegister(CombinedRegister.DE);
       cpu.memWrite(de, cpu.registers.a);
@@ -872,7 +865,7 @@ export const Instructions: InstructionsMap = {
   0x22: {
     asm: 'LD [HL+], A',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.memWrite(hl, cpu.registers.a);
@@ -883,7 +876,7 @@ export const Instructions: InstructionsMap = {
   0x32: {
     asm: 'LD [HL-], A',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.memWrite(hl, cpu.registers.a);
@@ -894,7 +887,7 @@ export const Instructions: InstructionsMap = {
   0x06: {
     asm: 'LD B, n8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -905,7 +898,7 @@ export const Instructions: InstructionsMap = {
   0x16: {
     asm: 'LD D, n8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -916,7 +909,7 @@ export const Instructions: InstructionsMap = {
   0x26: {
     asm: 'LD H, n8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -927,7 +920,7 @@ export const Instructions: InstructionsMap = {
   0x36: {
     asm: 'LD [HL], n8',
     size: 2,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -939,7 +932,7 @@ export const Instructions: InstructionsMap = {
   0x0a: {
     asm: 'LD A, [BC]',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const bc = cpu.getCombinedRegister(CombinedRegister.BC);
       cpu.registers.a = cpu.memRead(bc);
@@ -949,7 +942,7 @@ export const Instructions: InstructionsMap = {
   0x1a: {
     asm: 'LD A, [DE]',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const de = cpu.getCombinedRegister(CombinedRegister.DE);
       cpu.registers.a = cpu.memRead(de);
@@ -959,7 +952,7 @@ export const Instructions: InstructionsMap = {
   0x2a: {
     asm: 'LD A, [HL+]',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.registers.a = cpu.memRead(hl);
@@ -970,7 +963,7 @@ export const Instructions: InstructionsMap = {
   0x3a: {
     asm: 'LD A, [HL-]',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.registers.a = cpu.memRead(hl);
@@ -981,7 +974,7 @@ export const Instructions: InstructionsMap = {
   0x0e: {
     asm: 'LD C, n8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -992,7 +985,7 @@ export const Instructions: InstructionsMap = {
   0x1e: {
     asm: 'LD E, n8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -1003,7 +996,7 @@ export const Instructions: InstructionsMap = {
   0x2e: {
     asm: 'LD L, n8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -1014,7 +1007,7 @@ export const Instructions: InstructionsMap = {
   0x3e: {
     asm: 'LD A, n8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -1025,7 +1018,7 @@ export const Instructions: InstructionsMap = {
   0x08: {
     asm: 'LD [a16], SP',
     size: 3,
-    cycles: 20,
+    cycles: 5,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -1040,7 +1033,7 @@ export const Instructions: InstructionsMap = {
   0xe0: {
     asm: 'LDH [a8], A',
     size: 2,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -1052,7 +1045,7 @@ export const Instructions: InstructionsMap = {
   0xf0: {
     asm: 'LDH A, [a8]',
     size: 2,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -1064,7 +1057,7 @@ export const Instructions: InstructionsMap = {
   0xe2: {
     asm: 'LD [C], A',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const address = (0xff << 8) | cpu.registers.c;
       cpu.memWrite(address, cpu.registers.a);
@@ -1074,7 +1067,7 @@ export const Instructions: InstructionsMap = {
   0xf2: {
     asm: 'LD A, [C]',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const address = (0xff << 8) | cpu.registers.c;
       cpu.registers.a = cpu.memRead(address);
@@ -1084,7 +1077,7 @@ export const Instructions: InstructionsMap = {
   0xea: {
     asm: 'LD [a16], A',
     size: 3,
-    cycles: 16,
+    cycles: 4,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -1098,7 +1091,7 @@ export const Instructions: InstructionsMap = {
   0xfa: {
     asm: 'LD A, [a16]',
     size: 3,
-    cycles: 16,
+    cycles: 4,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -1112,7 +1105,7 @@ export const Instructions: InstructionsMap = {
   0xf9: {
     asm: 'LD SP, HL',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       cpu.sp = hl;
@@ -1122,7 +1115,7 @@ export const Instructions: InstructionsMap = {
   0x0c: {
     asm: 'INC C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.registers.c, 1, 8);
       const HC = isHalfCarrySum(cpu.registers.c, 1);
@@ -1138,7 +1131,7 @@ export const Instructions: InstructionsMap = {
   0x1c: {
     asm: 'INC E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.registers.e, 1, 8);
       const HC = isHalfCarrySum(cpu.registers.e, 1);
@@ -1154,7 +1147,7 @@ export const Instructions: InstructionsMap = {
   0x2c: {
     asm: 'INC L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.registers.l, 1, 8);
       const HC = isHalfCarrySum(cpu.registers.l, 1);
@@ -1170,7 +1163,7 @@ export const Instructions: InstructionsMap = {
   0x3c: {
     asm: 'INC A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.registers.a, 1, 8);
       const HC = isHalfCarrySum(cpu.registers.a, 1);
@@ -1186,7 +1179,7 @@ export const Instructions: InstructionsMap = {
   0x04: {
     asm: 'INC B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.registers.b, 1, 8);
       const HC = isHalfCarrySum(cpu.registers.b, 1);
@@ -1202,7 +1195,7 @@ export const Instructions: InstructionsMap = {
   0x14: {
     asm: 'INC D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.registers.d, 1, 8);
       const HC = isHalfCarrySum(cpu.registers.d, 1);
@@ -1218,7 +1211,7 @@ export const Instructions: InstructionsMap = {
   0x24: {
     asm: 'INC H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.registers.h, 1, 8);
       const HC = isHalfCarrySum(cpu.registers.h, 1);
@@ -1234,7 +1227,7 @@ export const Instructions: InstructionsMap = {
   0x34: {
     asm: 'INC [HL]',
     size: 1,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(hl);
@@ -1252,7 +1245,7 @@ export const Instructions: InstructionsMap = {
   0xcd: {
     asm: 'CALL a16',
     size: 3,
-    cycles: 24,
+    cycles: 6,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -1267,7 +1260,7 @@ export const Instructions: InstructionsMap = {
   0x18: {
     asm: 'JR r8',
     size: 2,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = signed8bit(cpu.memRead(cpu.pc));
@@ -1278,33 +1271,37 @@ export const Instructions: InstructionsMap = {
   0x28: {
     asm: 'JR Z, r8',
     size: 2,
-    cycles: 12 / 8,
-    fn: (cpu: CPU): void => {
+    cycles: 3 / 2,
+    fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const value = signed8bit(cpu.memRead(cpu.pc));
       cpu.incrementProgramCounter(1);
       if (cpu.getFlags().Z) {
         cpu.pc += value;
+        return 3;
       }
+      return 2;
     },
   },
   0x38: {
     asm: 'JR C, r8',
     size: 2,
-    cycles: 12 / 8,
-    fn: (cpu: CPU): void => {
+    cycles: 3 / 2,
+    fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const value = signed8bit(cpu.memRead(cpu.pc));
       cpu.incrementProgramCounter(1);
       if (cpu.getFlags().C) {
         cpu.pc += value;
+        return 3;
       }
+      return 2;
     },
   },
   0xc9: {
     asm: 'RET',
     size: 1,
-    cycles: 16,
+    cycles: 4,
     fn: (cpu: CPU): void => {
       cpu.pc = cpu.popStack();
     },
@@ -1312,7 +1309,7 @@ export const Instructions: InstructionsMap = {
   0xe9: {
     asm: 'JP (HL)',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.pc = cpu.getCombinedRegister(CombinedRegister.HL);
     },
@@ -1320,7 +1317,7 @@ export const Instructions: InstructionsMap = {
   0xc6: {
     asm: 'ADD A, n8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -1340,7 +1337,7 @@ export const Instructions: InstructionsMap = {
   0xd6: {
     asm: 'SUB A n8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -1360,22 +1357,22 @@ export const Instructions: InstructionsMap = {
   0x30: {
     asm: 'JR NC, r8',
     size: 2,
-    cycles: 12 / 8,
+    cycles: 3 / 2,
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const value = signed8bit(cpu.memRead(cpu.pc));
       cpu.incrementProgramCounter(1);
       if (!cpu.getFlags().C) {
         cpu.pc += value;
-        return 12;
+        return 3;
       }
-      return 8;
+      return 2;
     },
   },
   0xc1: {
     asm: 'POP BC',
     size: 1,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       cpu.setCombinedRegister(CombinedRegister.BC, cpu.popStack());
       cpu.incrementProgramCounter(1);
@@ -1384,7 +1381,7 @@ export const Instructions: InstructionsMap = {
   0xd1: {
     asm: 'POP DE',
     size: 1,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       cpu.setCombinedRegister(CombinedRegister.DE, cpu.popStack());
       cpu.incrementProgramCounter(1);
@@ -1393,7 +1390,7 @@ export const Instructions: InstructionsMap = {
   0xe1: {
     asm: 'POP HL',
     size: 1,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       cpu.setCombinedRegister(CombinedRegister.HL, cpu.popStack());
       cpu.incrementProgramCounter(1);
@@ -1402,7 +1399,7 @@ export const Instructions: InstructionsMap = {
   0xf1: {
     asm: 'POP AF',
     size: 1,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       cpu.setCombinedRegister(CombinedRegister.AF, cpu.popStack());
       cpu.incrementProgramCounter(1);
@@ -1411,7 +1408,7 @@ export const Instructions: InstructionsMap = {
   0xc5: {
     asm: 'PUSH BC',
     size: 1,
-    cycles: 16,
+    cycles: 4,
     fn: (cpu: CPU): void => {
       cpu.pushStack(cpu.getCombinedRegister(CombinedRegister.BC));
       cpu.incrementProgramCounter(1);
@@ -1420,7 +1417,7 @@ export const Instructions: InstructionsMap = {
   0xd5: {
     asm: 'PUSH DE',
     size: 1,
-    cycles: 16,
+    cycles: 4,
     fn: (cpu: CPU): void => {
       cpu.pushStack(cpu.getCombinedRegister(CombinedRegister.DE));
       cpu.incrementProgramCounter(1);
@@ -1429,7 +1426,7 @@ export const Instructions: InstructionsMap = {
   0xe5: {
     asm: 'PUSH HL',
     size: 1,
-    cycles: 16,
+    cycles: 4,
     fn: (cpu: CPU): void => {
       cpu.pushStack(cpu.getCombinedRegister(CombinedRegister.HL));
       cpu.incrementProgramCounter(1);
@@ -1438,7 +1435,7 @@ export const Instructions: InstructionsMap = {
   0xf5: {
     asm: 'PUSH AF',
     size: 1,
-    cycles: 16,
+    cycles: 4,
     fn: (cpu: CPU): void => {
       cpu.pushStack(cpu.getCombinedRegister(CombinedRegister.AF));
       cpu.incrementProgramCounter(1);
@@ -1447,7 +1444,7 @@ export const Instructions: InstructionsMap = {
   0x03: {
     asm: 'INC BC',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(
         cpu.getCombinedRegister(CombinedRegister.BC),
@@ -1461,7 +1458,7 @@ export const Instructions: InstructionsMap = {
   0x13: {
     asm: 'INC DE',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(
         cpu.getCombinedRegister(CombinedRegister.DE),
@@ -1475,7 +1472,7 @@ export const Instructions: InstructionsMap = {
   0x23: {
     asm: 'INC HL',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(
         cpu.getCombinedRegister(CombinedRegister.HL),
@@ -1489,7 +1486,7 @@ export const Instructions: InstructionsMap = {
   0x33: {
     asm: 'INC SP',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.sp, 1, 16);
       cpu.sp = result;
@@ -1499,7 +1496,7 @@ export const Instructions: InstructionsMap = {
   0x80: {
     asm: 'ADD A, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.registers.a, cpu.registers.b, 8);
       const H = isHalfCarrySum(cpu.registers.a, cpu.registers.b);
@@ -1517,7 +1514,7 @@ export const Instructions: InstructionsMap = {
   0x81: {
     asm: 'ADD A, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.registers.a, cpu.registers.c, 8);
       const H = isHalfCarrySum(cpu.registers.a, cpu.registers.c);
@@ -1535,7 +1532,7 @@ export const Instructions: InstructionsMap = {
   0x82: {
     asm: 'ADD A, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.registers.a, cpu.registers.d, 8);
       const H = isHalfCarrySum(cpu.registers.a, cpu.registers.d);
@@ -1553,7 +1550,7 @@ export const Instructions: InstructionsMap = {
   0x83: {
     asm: 'ADD A, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.registers.a, cpu.registers.e, 8);
       const H = isHalfCarrySum(cpu.registers.a, cpu.registers.e);
@@ -1571,7 +1568,7 @@ export const Instructions: InstructionsMap = {
   0x84: {
     asm: 'ADD A, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.registers.a, cpu.registers.h, 8);
       const H = isHalfCarrySum(cpu.registers.a, cpu.registers.h);
@@ -1589,7 +1586,7 @@ export const Instructions: InstructionsMap = {
   0x85: {
     asm: 'ADD A, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.registers.a, cpu.registers.l, 8);
       const H = isHalfCarrySum(cpu.registers.a, cpu.registers.l);
@@ -1607,7 +1604,7 @@ export const Instructions: InstructionsMap = {
   0x86: {
     asm: 'ADD A, [HL]',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(hl);
@@ -1627,7 +1624,7 @@ export const Instructions: InstructionsMap = {
   0x87: {
     asm: 'ADD A, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedAddition(cpu.registers.a, cpu.registers.a, 8);
       const H = isHalfCarrySum(cpu.registers.a, cpu.registers.a);
@@ -1645,7 +1642,7 @@ export const Instructions: InstructionsMap = {
   0x88: {
     asm: 'ADC A, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const { result, halfCarry, carry } = sumThreeValuesWithCarryInfo(
         cpu.registers.a,
@@ -1665,7 +1662,7 @@ export const Instructions: InstructionsMap = {
   0x89: {
     asm: 'ADC A, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const { result, halfCarry, carry } = sumThreeValuesWithCarryInfo(
         cpu.registers.a,
@@ -1685,7 +1682,7 @@ export const Instructions: InstructionsMap = {
   0x8a: {
     asm: 'ADC A, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const { result, halfCarry, carry } = sumThreeValuesWithCarryInfo(
         cpu.registers.a,
@@ -1705,7 +1702,7 @@ export const Instructions: InstructionsMap = {
   0x8b: {
     asm: 'ADC A, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const { result, halfCarry, carry } = sumThreeValuesWithCarryInfo(
         cpu.registers.a,
@@ -1725,7 +1722,7 @@ export const Instructions: InstructionsMap = {
   0x8c: {
     asm: 'ADC A, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const { result, halfCarry, carry } = sumThreeValuesWithCarryInfo(
         cpu.registers.a,
@@ -1745,7 +1742,7 @@ export const Instructions: InstructionsMap = {
   0x8d: {
     asm: 'ADC A, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const { result, halfCarry, carry } = sumThreeValuesWithCarryInfo(
         cpu.registers.a,
@@ -1765,7 +1762,7 @@ export const Instructions: InstructionsMap = {
   0x8e: {
     asm: 'ADC A, [HL]',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(hl);
@@ -1787,7 +1784,7 @@ export const Instructions: InstructionsMap = {
   0x8f: {
     asm: 'ADC A, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const { result, halfCarry, carry } = sumThreeValuesWithCarryInfo(
         cpu.registers.a,
@@ -1807,7 +1804,7 @@ export const Instructions: InstructionsMap = {
   0x90: {
     asm: 'SUB A, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.b, 8);
       const halfCarry = isHalfCarrySubtraction(
@@ -1828,7 +1825,7 @@ export const Instructions: InstructionsMap = {
   0x91: {
     asm: 'SUB A, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.c, 8);
       const halfCarry = isHalfCarrySubtraction(
@@ -1849,7 +1846,7 @@ export const Instructions: InstructionsMap = {
   0x92: {
     asm: 'SUB A, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.d, 8);
       const halfCarry = isHalfCarrySubtraction(
@@ -1870,7 +1867,7 @@ export const Instructions: InstructionsMap = {
   0x93: {
     asm: 'SUB A, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.e, 8);
       const halfCarry = isHalfCarrySubtraction(
@@ -1891,7 +1888,7 @@ export const Instructions: InstructionsMap = {
   0x94: {
     asm: 'SUB A, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.h, 8);
       const halfCarry = isHalfCarrySubtraction(
@@ -1912,7 +1909,7 @@ export const Instructions: InstructionsMap = {
   0x95: {
     asm: 'SUB A, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.l, 8);
       const halfCarry = isHalfCarrySubtraction(
@@ -1933,7 +1930,7 @@ export const Instructions: InstructionsMap = {
   0x96: {
     asm: 'SUB A, (HL)',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
       const result = unsignedSubtract(cpu.registers.a, value, 8);
@@ -1952,7 +1949,7 @@ export const Instructions: InstructionsMap = {
   0x97: {
     asm: 'SUB A, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a = 0;
       cpu.setFlags({
@@ -1967,7 +1964,7 @@ export const Instructions: InstructionsMap = {
   0x98: {
     asm: 'SBC A, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const C = cpu.getFlags().C;
       const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
@@ -1988,7 +1985,7 @@ export const Instructions: InstructionsMap = {
   0x99: {
     asm: 'SBC A, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const C = cpu.getFlags().C;
       const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
@@ -2009,7 +2006,7 @@ export const Instructions: InstructionsMap = {
   0x9a: {
     asm: 'SBC A, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const C = cpu.getFlags().C;
       const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
@@ -2030,7 +2027,7 @@ export const Instructions: InstructionsMap = {
   0x9b: {
     asm: 'SBC A, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const C = cpu.getFlags().C;
       const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
@@ -2051,7 +2048,7 @@ export const Instructions: InstructionsMap = {
   0x9c: {
     asm: 'SBC A, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const C = cpu.getFlags().C;
       const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
@@ -2072,7 +2069,7 @@ export const Instructions: InstructionsMap = {
   0x9d: {
     asm: 'SBC A, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const C = cpu.getFlags().C;
       const { result, halfCarry, carry } = subtractThreeValuesWithCarryInfo(
@@ -2093,7 +2090,7 @@ export const Instructions: InstructionsMap = {
   0x9e: {
     asm: 'SBC A, (HL)',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const C = cpu.getFlags().C;
       const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
@@ -2116,7 +2113,7 @@ export const Instructions: InstructionsMap = {
   0x9f: {
     asm: 'SBC A, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const C = cpu.getFlags().C;
@@ -2140,7 +2137,7 @@ export const Instructions: InstructionsMap = {
   0xb0: {
     asm: 'OR A, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a = cpu.registers.a | cpu.registers.b;
       cpu.setFlags({
@@ -2155,7 +2152,7 @@ export const Instructions: InstructionsMap = {
   0xb1: {
     asm: 'OR A, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a = cpu.registers.a | cpu.registers.c;
       cpu.setFlags({
@@ -2170,7 +2167,7 @@ export const Instructions: InstructionsMap = {
   0xb2: {
     asm: 'OR A, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a = cpu.registers.a | cpu.registers.d;
       cpu.setFlags({
@@ -2185,7 +2182,7 @@ export const Instructions: InstructionsMap = {
   0xb3: {
     asm: 'OR A, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a = cpu.registers.a | cpu.registers.e;
       cpu.setFlags({
@@ -2200,7 +2197,7 @@ export const Instructions: InstructionsMap = {
   0xb4: {
     asm: 'OR A, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a = cpu.registers.a | cpu.registers.h;
       cpu.setFlags({
@@ -2215,7 +2212,7 @@ export const Instructions: InstructionsMap = {
   0xb5: {
     asm: 'OR A, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a = cpu.registers.a | cpu.registers.l;
       cpu.setFlags({
@@ -2230,7 +2227,7 @@ export const Instructions: InstructionsMap = {
   0xb6: {
     asm: 'OR A, (HL)',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
       cpu.registers.a = cpu.registers.a | value;
@@ -2246,7 +2243,7 @@ export const Instructions: InstructionsMap = {
   0xb7: {
     asm: 'OR A, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.setFlags({
         Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -2260,7 +2257,7 @@ export const Instructions: InstructionsMap = {
   0xb8: {
     asm: 'CP A, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.b, 8);
       const halfCarry = isHalfCarrySubtraction(
@@ -2280,7 +2277,7 @@ export const Instructions: InstructionsMap = {
   0xb9: {
     asm: 'CP A, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.c, 8);
       const halfCarry = isHalfCarrySubtraction(
@@ -2300,7 +2297,7 @@ export const Instructions: InstructionsMap = {
   0xba: {
     asm: 'CP A, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.d, 8);
       const halfCarry = isHalfCarrySubtraction(
@@ -2320,7 +2317,7 @@ export const Instructions: InstructionsMap = {
   0xbb: {
     asm: 'CP A, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.e, 8);
       const halfCarry = isHalfCarrySubtraction(
@@ -2340,7 +2337,7 @@ export const Instructions: InstructionsMap = {
   0xbc: {
     asm: 'CP A, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.h, 8);
       const halfCarry = isHalfCarrySubtraction(
@@ -2360,7 +2357,7 @@ export const Instructions: InstructionsMap = {
   0xbd: {
     asm: 'CP A, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.registers.a, cpu.registers.l, 8);
       const halfCarry = isHalfCarrySubtraction(
@@ -2380,7 +2377,7 @@ export const Instructions: InstructionsMap = {
   0xbe: {
     asm: 'CP A, (HL)',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
       const result = unsignedSubtract(cpu.registers.a, value, 8);
@@ -2398,7 +2395,7 @@ export const Instructions: InstructionsMap = {
   0xbf: {
     asm: 'CP A, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.setFlags({
         Z: FlagState.TRUE,
@@ -2412,7 +2409,7 @@ export const Instructions: InstructionsMap = {
   0xe6: {
     asm: 'AND d8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -2429,7 +2426,7 @@ export const Instructions: InstructionsMap = {
   0xf6: {
     asm: 'OR d8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -2446,7 +2443,7 @@ export const Instructions: InstructionsMap = {
   0xc4: {
     asm: 'CALL NZ, a16',
     size: 3,
-    cycles: 24 / 12,
+    cycles: 6 / 3,
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -2457,15 +2454,15 @@ export const Instructions: InstructionsMap = {
       if (!cpu.getFlags().Z) {
         cpu.pushStack(cpu.pc);
         cpu.pc = jumpAddress;
-        return 24;
+        return 6;
       }
-      return 12;
+      return 3;
     },
   },
   0xd4: {
     asm: 'CALL NC, a16',
     size: 3,
-    cycles: 24 / 12,
+    cycles: 6 / 3,
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -2476,15 +2473,15 @@ export const Instructions: InstructionsMap = {
       if (!cpu.getFlags().C) {
         cpu.pushStack(cpu.pc);
         cpu.pc = jumpAddress;
-        return 24;
+        return 6;
       }
-      return 12;
+      return 3;
     },
   },
   0xcc: {
     asm: 'CALL Z, a16',
     size: 3,
-    cycles: 24 / 12,
+    cycles: 6 / 3,
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -2495,15 +2492,15 @@ export const Instructions: InstructionsMap = {
       if (cpu.getFlags().Z) {
         cpu.pushStack(cpu.pc);
         cpu.pc = jumpAddress;
-        return 24;
+        return 6;
       }
-      return 12;
+      return 3;
     },
   },
   0xdc: {
     asm: 'CALL C, a16',
     size: 3,
-    cycles: 24 / 12,
+    cycles: 6 / 3,
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -2514,15 +2511,15 @@ export const Instructions: InstructionsMap = {
       if (cpu.getFlags().C) {
         cpu.pushStack(cpu.pc);
         cpu.pc = jumpAddress;
-        return 24;
+        return 6;
       }
-      return 12;
+      return 3;
     },
   },
   0xa0: {
     asm: 'AND A, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a &= cpu.registers.b;
       cpu.setFlags({
@@ -2537,7 +2534,7 @@ export const Instructions: InstructionsMap = {
   0xa1: {
     asm: 'AND A, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a &= cpu.registers.c;
       cpu.setFlags({
@@ -2552,7 +2549,7 @@ export const Instructions: InstructionsMap = {
   0xa2: {
     asm: 'AND A, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a &= cpu.registers.d;
       cpu.setFlags({
@@ -2567,7 +2564,7 @@ export const Instructions: InstructionsMap = {
   0xa3: {
     asm: 'AND A, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a &= cpu.registers.e;
       cpu.setFlags({
@@ -2582,7 +2579,7 @@ export const Instructions: InstructionsMap = {
   0xa4: {
     asm: 'AND A, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a &= cpu.registers.h;
       cpu.setFlags({
@@ -2597,7 +2594,7 @@ export const Instructions: InstructionsMap = {
   0xa5: {
     asm: 'AND A, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a &= cpu.registers.l;
       cpu.setFlags({
@@ -2612,7 +2609,7 @@ export const Instructions: InstructionsMap = {
   0xa6: {
     asm: 'AND A, (HL)',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
       cpu.registers.a &= value;
@@ -2628,7 +2625,7 @@ export const Instructions: InstructionsMap = {
   0xa7: {
     asm: 'AND A, A',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.setFlags({
         Z: cpu.registers.a === 0 ? FlagState.TRUE : FlagState.FALSE,
@@ -2642,7 +2639,7 @@ export const Instructions: InstructionsMap = {
   0xa8: {
     asm: 'XOR A, B',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a ^= cpu.registers.b;
       cpu.setFlags({
@@ -2657,7 +2654,7 @@ export const Instructions: InstructionsMap = {
   0xa9: {
     asm: 'XOR A, C',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a ^= cpu.registers.c;
       cpu.setFlags({
@@ -2672,7 +2669,7 @@ export const Instructions: InstructionsMap = {
   0xaa: {
     asm: 'XOR A, D',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a ^= cpu.registers.d;
       cpu.setFlags({
@@ -2687,7 +2684,7 @@ export const Instructions: InstructionsMap = {
   0xab: {
     asm: 'XOR A, E',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a ^= cpu.registers.e;
       cpu.setFlags({
@@ -2702,7 +2699,7 @@ export const Instructions: InstructionsMap = {
   0xac: {
     asm: 'XOR A, H',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a ^= cpu.registers.h;
       cpu.setFlags({
@@ -2717,7 +2714,7 @@ export const Instructions: InstructionsMap = {
   0xad: {
     asm: 'XOR A, L',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.registers.a ^= cpu.registers.l;
       cpu.setFlags({
@@ -2732,7 +2729,7 @@ export const Instructions: InstructionsMap = {
   0xae: {
     asm: 'XOR A, (HL)',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const value = cpu.memRead(cpu.getCombinedRegister(CombinedRegister.HL));
       cpu.registers.a ^= value;
@@ -2748,7 +2745,7 @@ export const Instructions: InstructionsMap = {
   0x0f: {
     asm: 'RRCA',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const { value, carry } = SRL(cpu.registers.a);
       cpu.registers.a = value;
@@ -2764,7 +2761,7 @@ export const Instructions: InstructionsMap = {
   0x1f: {
     asm: 'RRA',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       const { value, carry } = RR(cpu.registers.a, cpu.getFlags().C);
       cpu.registers.a = value;
@@ -2780,7 +2777,7 @@ export const Instructions: InstructionsMap = {
   0xce: {
     asm: 'ADC A, d8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -2802,7 +2799,7 @@ export const Instructions: InstructionsMap = {
   0xde: {
     asm: 'SBC A, d8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -2824,7 +2821,7 @@ export const Instructions: InstructionsMap = {
   0xee: {
     asm: 'XOR d8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -2841,7 +2838,7 @@ export const Instructions: InstructionsMap = {
   0xfe: {
     asm: 'CP n8',
     size: 2,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -2859,59 +2856,59 @@ export const Instructions: InstructionsMap = {
   0xd0: {
     asm: 'RET NC',
     size: 1,
-    cycles: 20 / 8,
+    cycles: 5 / 2,
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       if (!cpu.getFlags().C) {
         cpu.pc = cpu.popStack();
-        return 20;
+        return 5;
       }
-      return 8;
+      return 2;
     },
   },
   0xc0: {
     asm: 'RET NZ',
     size: 1,
-    cycles: 20,
+    cycles: 5 / 2,
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       if (!cpu.getFlags().Z) {
         cpu.pc = cpu.popStack();
-        return 20;
+        return 5;
       }
-      return 8;
+      return 2;
     },
   },
   0xc8: {
     asm: 'RET Z',
     size: 1,
-    cycles: 20 / 8,
+    cycles: 5 / 2,
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       if (cpu.getFlags().Z) {
         cpu.pc = cpu.popStack();
-        return 20;
+        return 5;
       }
-      return 8;
+      return 2;
     },
   },
   0xd8: {
     asm: 'RET C',
     size: 1,
-    cycles: 20 / 8,
+    cycles: 5 / 2,
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       if (cpu.getFlags().C) {
         cpu.pc = cpu.popStack();
-        return 20;
+        return 5;
       }
-      return 8;
+      return 2;
     },
   },
   0x09: {
     asm: 'ADD HL, BC',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       const bc = cpu.getCombinedRegister(CombinedRegister.BC);
@@ -2930,7 +2927,7 @@ export const Instructions: InstructionsMap = {
   0x19: {
     asm: 'ADD HL, DE',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       const de = cpu.getCombinedRegister(CombinedRegister.DE);
@@ -2949,7 +2946,7 @@ export const Instructions: InstructionsMap = {
   0x29: {
     asm: 'ADD HL, HL',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       const result = unsignedAddition(hl, hl, 16);
@@ -2967,7 +2964,7 @@ export const Instructions: InstructionsMap = {
   0x39: {
     asm: 'ADD HL, SP',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       const result = unsignedAddition(hl, cpu.sp, 16);
@@ -2985,7 +2982,7 @@ export const Instructions: InstructionsMap = {
   0x0b: {
     asm: 'DEC BC',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const bc = cpu.getCombinedRegister(CombinedRegister.BC);
       const result = unsignedSubtract(bc, 1, 16);
@@ -2996,7 +2993,7 @@ export const Instructions: InstructionsMap = {
   0x1b: {
     asm: 'DEC DE',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const de = cpu.getCombinedRegister(CombinedRegister.DE);
       const result = unsignedSubtract(de, 1, 16);
@@ -3007,7 +3004,7 @@ export const Instructions: InstructionsMap = {
   0x2b: {
     asm: 'DEC HL',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const hl = cpu.getCombinedRegister(CombinedRegister.HL);
       const result = unsignedSubtract(hl, 1, 16);
@@ -3018,7 +3015,7 @@ export const Instructions: InstructionsMap = {
   0x3b: {
     asm: 'DEC SP',
     size: 1,
-    cycles: 8,
+    cycles: 2,
     fn: (cpu: CPU): void => {
       const result = unsignedSubtract(cpu.sp, 1, 16);
       cpu.sp = result;
@@ -3028,7 +3025,7 @@ export const Instructions: InstructionsMap = {
   0xe8: {
     asm: 'ADD SP, e8',
     size: 2,
-    cycles: 16,
+    cycles: 4,
     fn: (cpu: CPU): void => {
       // this instruction was nightmare
       cpu.incrementProgramCounter(1);
@@ -3060,7 +3057,7 @@ export const Instructions: InstructionsMap = {
   0xf8: {
     asm: 'LD HL, SP+e8',
     size: 2,
-    cycles: 12,
+    cycles: 3,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       const value = cpu.memRead(cpu.pc);
@@ -3091,7 +3088,7 @@ export const Instructions: InstructionsMap = {
   0xc2: {
     asm: 'JP NZ, a16',
     size: 3,
-    cycles: 16 / 12,
+    cycles: 4 / 3,
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -3101,15 +3098,15 @@ export const Instructions: InstructionsMap = {
       const address = (b << 8) | a;
       if (!cpu.getFlags().Z) {
         cpu.pc = address;
-        return 16;
+        return 4;
       }
-      return 12;
+      return 3;
     },
   },
   0xd2: {
     asm: 'JP NC, a16',
     size: 3,
-    cycles: 16 / 12,
+    cycles: 4 / 3,
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -3119,15 +3116,15 @@ export const Instructions: InstructionsMap = {
       const address = (b << 8) | a;
       if (!cpu.getFlags().C) {
         cpu.pc = address;
-        return 16;
+        return 4;
       }
-      return 12;
+      return 3;
     },
   },
   0xca: {
     asm: 'JP Z, a16',
     size: 3,
-    cycles: 16 / 12,
+    cycles: 4 / 3,
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -3137,15 +3134,15 @@ export const Instructions: InstructionsMap = {
       const address = (b << 8) | a;
       if (cpu.getFlags().Z) {
         cpu.pc = address;
-        return 16;
+        return 4;
       }
-      return 12;
+      return 3;
     },
   },
   0xda: {
     asm: 'JP C, a16',
     size: 3,
-    cycles: 16 / 12,
+    cycles: 4 / 3,
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const a = cpu.memRead(cpu.pc);
@@ -3155,15 +3152,15 @@ export const Instructions: InstructionsMap = {
       const address = (b << 8) | a;
       if (cpu.getFlags().C) {
         cpu.pc = address;
-        return 16;
+        return 4;
       }
-      return 12;
+      return 3;
     },
   },
   0xfb: {
     asm: 'EI',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       cpu.IME = true;
@@ -3172,7 +3169,7 @@ export const Instructions: InstructionsMap = {
   0xf3: {
     asm: 'DI',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       cpu.IME = false;
@@ -3181,7 +3178,7 @@ export const Instructions: InstructionsMap = {
   0xd9: {
     asm: 'RETI',
     size: 1,
-    cycles: 16,
+    cycles: 4,
     fn: (cpu: CPU): void => {
       cpu.pc = cpu.popStack();
       cpu.IME = true;
@@ -3190,7 +3187,7 @@ export const Instructions: InstructionsMap = {
   0x27: {
     asm: 'DAA',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       let adjust = 0;
       let isCarry = false;
@@ -3224,7 +3221,7 @@ export const Instructions: InstructionsMap = {
   0x2f: {
     asm: 'CPL',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       cpu.registers.a = ~cpu.registers.a;
@@ -3239,7 +3236,7 @@ export const Instructions: InstructionsMap = {
   0x3f: {
     asm: 'CCF',
     size: 1,
-    cycles: 4,
+    cycles: 1,
     fn: (cpu: CPU): void => {
       cpu.incrementProgramCounter(1);
       cpu.setFlags({
