@@ -2,6 +2,7 @@ import { CPU } from './CPU';
 import { PrefixInstructions, RR, SRL } from './prefixInstructions';
 import { CombinedRegister, FlagState, InstructionsMap } from './types';
 import {
+  hexToString,
   isCarrySubtraction,
   isCarrySum,
   isHalfCarrySubtraction,
@@ -21,6 +22,7 @@ export const Instructions: InstructionsMap = {
     fn: (cpu: CPU): number => {
       cpu.incrementProgramCounter(1);
       const instruction = cpu.memRead(cpu.pc);
+      const opcode = cpu.memRead(cpu.pc);
       const prefixInstruction = PrefixInstructions[instruction];
       if (!prefixInstruction) {
         throw new Error(
@@ -29,7 +31,32 @@ export const Instructions: InstructionsMap = {
       }
       cpu.incrementProgramCounter(1);
       prefixInstruction.fn(cpu);
-      return prefixInstruction.cycles;
+      const cycles = prefixInstruction.cycles * 4;
+
+      const trueTable = cpu.instsJson['unprefixed'];
+      if (!trueTable) {
+        throw new Error(
+          `No true table found at opcode  ${opcode.toString(16)}`
+        );
+      }
+      const opcodeString = hexToString(opcode);
+      const trueOpcode = trueTable[opcodeString];
+      if (!trueOpcode) {
+        throw new Error(`No true opcode found at opcode  ${opcodeString}`);
+      }
+      const trueCycles = cpu.instsJson['unprefixed'][opcodeString].cycles;
+      if (!trueCycles) {
+        throw new Error(`No cycles found at opcode  ${opcodeString}`);
+      }
+
+      // const isCycles = trueCycles[0] === cycles;
+      // if (!isCycles) {
+      //   throw new Error(
+      //     `opcode ${opcode.toString(16)} has cycles ${cpu.instsJson['unprefixed'][hexToString(opcode)].cycles} but got ${cycles}`
+      //   );
+      // }
+
+      return cycles;
     },
   },
   0x00: {

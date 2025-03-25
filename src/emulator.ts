@@ -9,8 +9,8 @@ export const TMA_ADDR = 0xff06;
 export const TAC_ADDR = 0xff07;
 
 export const CLOCK_SPEED = 4194304;
-// clock speed / 60 frames per second / 4
-export const MAXCYCLESPERFRAME = 17476;
+// clock speed / 60 frames per second
+export const MAXCYCLESPERFRAME = 69905;
 
 export class Emulator {
   cpu: CPU;
@@ -18,7 +18,7 @@ export class Emulator {
   cartridge: Memory;
   cartHeaderInfo: HeaderInfo;
   serialPort: SerialPort = new SerialPort();
-  mTimerCounter: number = 4;
+  mTimerCounter: number = 1024;
   mDividerCounter: number = 0;
 
   constructor(romFile: Buffer, delay?: number, debug?: boolean) {
@@ -106,16 +106,16 @@ export class Emulator {
 
     switch (frequency) {
       case 0:
-        this.mTimerCounter = 256;
+        this.mTimerCounter = 1024;
         break;
       case 1:
-        this.mTimerCounter = 4;
-        break;
-      case 2:
         this.mTimerCounter = 16;
         break;
-      case 3:
+      case 2:
         this.mTimerCounter = 64;
+        break;
+      case 3:
+        this.mTimerCounter = 256;
         break;
     }
   }
@@ -123,7 +123,7 @@ export class Emulator {
   doDividerRegister(cycles: number): void {
     this.mDividerCounter += cycles;
 
-    if (this.mDividerCounter >= 255) {
+    if (this.mDividerCounter >= 256) {
       this.mDividerCounter = 0;
       this.memory[DIV_ADDR]++;
     }
@@ -135,15 +135,15 @@ export class Emulator {
     if (this.isClockEnabled()) {
       this.mTimerCounter -= cycles;
 
-      if (this.mTimerCounter <= 0) {
+      while (this.mTimerCounter <= 0) {
+        const overshoot = this.mTimerCounter;
         this.setClockFrequency();
+        this.mTimerCounter -= overshoot;
 
-        if (this.memory[TIMA_ADDR] === 0xff) {
-          // be carefult here, TIMA and TMA are not the same
+        this.memory[TIMA_ADDR] += 1;
+        if (this.memory[TIMA_ADDR] > 0xff) {
           this.memory[TIMA_ADDR] = this.memory[TMA_ADDR];
           this.cpu.requestInterrupt(2);
-        } else {
-          this.memory[TIMA_ADDR] += 1;
         }
       }
     }
@@ -153,6 +153,9 @@ export class Emulator {
     let cyclesThisUpdate = 0;
 
     while (cyclesThisUpdate < MAXCYCLESPERFRAME) {
+      if (this.cpu.pc > 0xffff) {
+        throw new Error('Program counter overflow');
+      }
       const cycles = await this.cpu.execute();
       cyclesThisUpdate += cycles;
       this.updateTimers(cycles);
