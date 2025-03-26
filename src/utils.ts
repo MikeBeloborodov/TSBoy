@@ -65,28 +65,6 @@ export function isCarrySubtraction(
   return result > a;
 }
 
-export function unsignedSubtract(a: number, b: number, bits: number): number {
-  let mask = 0;
-  if (bits === 8) {
-    mask = 0xff;
-  } else if (bits === 16) {
-    mask = 0xffff;
-  } else {
-    throw new Error('Unsupported bit width. Use 8 or 16.');
-  }
-
-  return (a - b) & mask;
-}
-
-export function unsignedAddition(a: number, b: number, bits: number): number {
-  const max = 1 << bits;
-  return (a + b) % max;
-}
-
-export function unsigned8bit(a: number): number {
-  return a & 0xff;
-}
-
 export function signed8bit(a: number): number {
   return a > 0x7f ? a - 0x100 : a;
 }

@@ -5,12 +5,11 @@ import {
   CombinedRegister,
   u16,
   u8,
-  InstructionInfo,
+  Instruction,
   FlagSetInstructions,
   Flags,
 } from './types';
-import { hexToString, numTo8bitString, sleep } from './utils';
-import fs from 'fs';
+import { numTo8bitString, sleep } from './utils';
 
 export class CPU {
   registers: Registers;
@@ -20,15 +19,11 @@ export class CPU {
   memRead: (address: u16) => u8;
   memWrite: (address: u16, value: u8) => void;
   logger: Logger;
-  delay?: number;
-  debug?: boolean;
   instsJson: any;
 
   constructor(
     memReadFn: (address: u16) => u8,
-    memWriteFn: (address: u16, value: u8) => void,
-    delay?: number,
-    debug?: boolean
+    memWriteFn: (address: u16, value: u8) => void
   ) {
     this.pc = 0x0100;
     this.sp = 0xfffe;
@@ -46,10 +41,18 @@ export class CPU {
     this.memWrite = memWriteFn;
     this.memRead = memReadFn;
     this.logger = new Logger();
-    this.delay = delay;
-    this.debug = debug;
-    const file = fs.readFileSync('./src/instructions.json', 'utf-8');
-    this.instsJson = JSON.parse(file);
+  }
+
+  consumeByte(): u8 {
+    const value = this.memRead(this.pc);
+    this.pc += 1;
+    return value;
+  }
+
+  consumeWord(): u16 {
+    const a = this.consumeByte();
+    const b = this.consumeByte();
+    return (b << 8) | a;
   }
 
   getCombinedRegister(register: CombinedRegister): u16 {
@@ -86,53 +89,15 @@ export class CPU {
     }
   }
 
-  async execute(): Promise<number> {
+  execute(): number {
     const instruction = this.getInstruction();
-    const opcode = this.memRead(this.pc);
     if (!instruction) {
       throw new Error(
         `PC: ${this.pc.toString(16)}\n, Instruction ${this.memRead(this.pc).toString(16)} is not implemented yet`
       );
     }
 
-    if (this.debug) {
-      console.log(
-        `PC: ${this.pc.toString(16)}\n`,
-        `Executing ${this.memRead(this.pc).toString(16)}: ${instruction.asm}`
-      );
-      console.log('---------------------------------');
-    }
-
-    const cycles = this.executeInstruction(instruction) * 4;
-
-    if (opcode !== 0xcb) {
-      const trueTable = this.instsJson['unprefixed'];
-      if (!trueTable) {
-        throw new Error(
-          `No true table found at opcode  ${opcode.toString(16)}`
-        );
-      }
-      const opcodeString = hexToString(opcode);
-      const trueOpcode = trueTable[opcodeString];
-      if (!trueOpcode) {
-        throw new Error(`No true opcode found at opcode  ${opcodeString}`);
-      }
-      const trueCycles = this.instsJson['unprefixed'][opcodeString].cycles;
-      if (!trueCycles) {
-        throw new Error(`No cycles found at opcode  ${opcodeString}`);
-      }
-      // const isCycles = trueCycles[0] == cycles;
-      // if (!isCycles) {
-      //   throw new Error(
-      //     `opcode ${opcode.toString(16)} has cycles ${this.instsJson['unprefixed'][hexToString(opcode)].cycles} but got ${cycles}`
-      //   );
-      // }
-    }
-
-    if (this.delay) {
-      await sleep(this.delay);
-    }
-
+    const cycles = this.executeInstruction(instruction);
     return cycles;
   }
 
@@ -208,11 +173,12 @@ export class CPU {
     this.pc = interruptVector;
   }
 
-  getInstruction(): InstructionInfo | undefined {
-    return Instructions[this.memRead(this.pc)];
+  getInstruction(): Instruction | undefined {
+    const nextByte = this.consumeByte();
+    return Instructions[nextByte];
   }
 
-  executeInstruction(instruction: InstructionInfo): number {
+  executeInstruction(instruction: Instruction): number {
     const logInfo = (value: number): string =>
       value.toString(16).length === 1
         ? `0${value.toString(16)}`
@@ -231,15 +197,13 @@ export class CPU {
     this.logger.log(
       `A:${logInfo(this.registers.a)} F:${logInfo(this.registers.f)} B:${logInfo(this.registers.b)} C:${logInfo(this.registers.c)} D:${logInfo(this.registers.d)} E:${logInfo(this.registers.e)} H:${logInfo(this.registers.h)} L:${logInfo(this.registers.l)} SP:${logInfo16(this.sp)} PC:${logInfo16(this.pc)} PCMEM:${logInfo(this.memRead(this.pc))},${logInfo(this.memRead(this.pc + 1))},${logInfo(this.memRead(this.pc + 2))},${logInfo(this.memRead(this.pc + 3))}`
     );
-    let cycles = instruction.fn(this);
-    if (!cycles) {
-      cycles = instruction.cycles;
-    }
+
+    const cycles = instruction.execute(this);
     return cycles;
   }
 
-  incrementProgramCounter(times: number) {
-    this.pc += times;
+  incrementProgramCounter() {
+    this.pc += 1;
   }
 
   setFlags(flags: FlagSetInstructions): void {

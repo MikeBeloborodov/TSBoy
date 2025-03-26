@@ -21,13 +21,8 @@ export class Emulator {
   mTimerCounter: number = 1024;
   mDividerCounter: number = 0;
 
-  constructor(romFile: Buffer, delay?: number, debug?: boolean) {
-    this.cpu = new CPU(
-      this.memoryRead.bind(this),
-      this.memoryWrite.bind(this),
-      delay,
-      debug
-    );
+  constructor(romFile: Buffer) {
+    this.cpu = new CPU(this.memoryRead.bind(this), this.memoryWrite.bind(this));
     this.cartridge = romFile;
     this.memory = new Uint8Array([
       ...this.cartridge.slice(0, 0x8000),
