@@ -263,7 +263,7 @@ export const PrefixInstructions: InstructionsMap = {
   0xc6: {
     asm: 'SET 0, [HL]',
     size: 1,
-    cycles: 2,
+    cycles: 4,
     fn: (cpu: CPU): void => {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
@@ -274,7 +274,7 @@ export const PrefixInstructions: InstructionsMap = {
   0xd6: {
     asm: 'SET 2, [HL]',
     size: 1,
-    cycles: 2,
+    cycles: 4,
     fn: (cpu: CPU): void => {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
@@ -285,7 +285,7 @@ export const PrefixInstructions: InstructionsMap = {
   0xe6: {
     asm: 'SET 4, [HL]',
     size: 1,
-    cycles: 2,
+    cycles: 4,
     fn: (cpu: CPU): void => {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
@@ -296,7 +296,7 @@ export const PrefixInstructions: InstructionsMap = {
   0xf6: {
     asm: 'SET 6, [HL]',
     size: 1,
-    cycles: 2,
+    cycles: 4,
     fn: (cpu: CPU): void => {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);

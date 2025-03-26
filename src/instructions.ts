@@ -1,5 +1,5 @@
 import { CPU } from './CPU';
-import { PrefixInstructions, RR, SRL } from './prefixInstructions';
+import { PrefixInstructions, RLC, RR, SRL, RL } from './prefixInstructions';
 import { CombinedRegister, FlagState, InstructionsMap } from './types';
 import {
   hexToString,
@@ -31,7 +31,7 @@ export const Instructions: InstructionsMap = {
       }
       cpu.incrementProgramCounter(1);
       prefixInstruction.fn(cpu);
-      const cycles = prefixInstruction.cycles * 4;
+      const cycles = prefixInstruction.cycles;
 
       const trueTable = cpu.instsJson['unprefixed'];
       if (!trueTable) {
@@ -3272,6 +3272,131 @@ export const Instructions: InstructionsMap = {
         H: FlagState.FALSE,
         C: cpu.getFlags().C ? FlagState.FALSE : FlagState.TRUE,
       });
+    },
+  },
+  0x07: {
+    asm: 'RLCA',
+    size: 1,
+    cycles: 1,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const { value, carry } = RLC(cpu.registers.a);
+      cpu.registers.a = value;
+      cpu.setFlags({
+        Z: FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x17: {
+    asm: 'RLA',
+    size: 1,
+    cycles: 1,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      const { value, carry } = RL(cpu.registers.a, cpu.getFlags().C);
+      cpu.registers.a = value;
+      cpu.setFlags({
+        Z: FlagState.FALSE,
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: carry ? FlagState.TRUE : FlagState.FALSE,
+      });
+    },
+  },
+  0x37: {
+    asm: 'SCF',
+    size: 1,
+    cycles: 1,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      cpu.setFlags({
+        N: FlagState.FALSE,
+        H: FlagState.FALSE,
+        C: FlagState.TRUE,
+      });
+    },
+  },
+  0xc7: {
+    asm: 'RST 0x00',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      cpu.pushStack(cpu.pc);
+      cpu.pc = 0x00;
+    },
+  },
+  0xd7: {
+    asm: 'RST 0x10',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      cpu.pushStack(cpu.pc);
+      cpu.pc = 0x10;
+    },
+  },
+  0xe7: {
+    asm: 'RST 0x20',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      cpu.pushStack(cpu.pc);
+      cpu.pc = 0x20;
+    },
+  },
+  0xf7: {
+    asm: 'RST 0x30',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      cpu.pushStack(cpu.pc);
+      cpu.pc = 0x30;
+    },
+  },
+  0xcf: {
+    asm: 'RST 0x08',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      cpu.pushStack(cpu.pc);
+      cpu.pc = 0x08;
+    },
+  },
+  0xdf: {
+    asm: 'RST 0x18',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      cpu.pushStack(cpu.pc);
+      cpu.pc = 0x18;
+    },
+  },
+  0xef: {
+    asm: 'RST 0x28',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      cpu.pushStack(cpu.pc);
+      cpu.pc = 0x28;
+    },
+  },
+  0xff: {
+    asm: 'RST 0x38',
+    size: 1,
+    cycles: 4,
+    fn: (cpu: CPU): void => {
+      cpu.incrementProgramCounter(1);
+      cpu.pushStack(cpu.pc);
+      cpu.pc = 0x38;
     },
   },
 };

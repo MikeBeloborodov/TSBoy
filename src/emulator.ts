@@ -40,6 +40,12 @@ export class Emulator {
   }
 
   memoryWrite(address: u16, value: u8): void {
+    if (address == TAC_ADDR) {
+      this.memory[TAC_ADDR] = value;
+      this.setClockFrequency();
+      return;
+    }
+
     if (address == DIV_ADDR) {
       this.mDividerCounter = 0;
       this.memory[DIV_ADDR] = 0;
@@ -124,7 +130,7 @@ export class Emulator {
     this.mDividerCounter += cycles;
 
     if (this.mDividerCounter >= 256) {
-      this.mDividerCounter = 0;
+      this.mDividerCounter -= 256;
       this.memory[DIV_ADDR]++;
     }
   }
@@ -138,12 +144,13 @@ export class Emulator {
       while (this.mTimerCounter <= 0) {
         const overshoot = this.mTimerCounter;
         this.setClockFrequency();
-        this.mTimerCounter -= overshoot;
+        this.mTimerCounter += overshoot;
 
-        this.memory[TIMA_ADDR] += 1;
-        if (this.memory[TIMA_ADDR] > 0xff) {
+        if (this.memory[TIMA_ADDR] === 0xff) {
           this.memory[TIMA_ADDR] = this.memory[TMA_ADDR];
           this.cpu.requestInterrupt(2);
+        } else {
+          this.memory[TIMA_ADDR] += 1;
         }
       }
     }
