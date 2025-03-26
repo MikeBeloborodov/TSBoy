@@ -58,16 +58,20 @@ export interface IMemoryReadable {
   memRead: () => void;
 }
 
-export type InstructionFn = (cpu: CPU) => number | void;
+export type TCycles = number;
 
-export type InstructionInfo = {
-  asm: string;
-  size: number;
-  cycles: number;
-  fn: InstructionFn;
+export type InstructionFn = (cpu: CPU) => TCycles;
+
+export type Instruction = {
+  execute: InstructionFn;
+  meta?: {
+    asm?: string;
+    size?: number;
+    cycles?: string;
+  };
 };
 
-export type InstructionsMap = { [key: u8]: InstructionInfo };
+export type InstructionsMap = { [key: u8]: Instruction };
 
 export enum FlagState {
   FALSE,

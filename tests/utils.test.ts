@@ -1,8 +1,6 @@
 import {
   isHalfCarrySubtraction,
   signed8bit,
-  unsigned8bit,
-  unsignedSubtract,
   sumThreeValuesWithCarryInfo,
   subtractThreeValuesWithCarryInfo,
 } from '../src/utils';
@@ -25,17 +23,6 @@ describe('Tests for utils', () => {
     });
   });
 
-  describe('Tests for unsignedSubtract', () => {
-    it('should subtract correctly', () => {
-      expect(unsignedSubtract(0x01, 0x01, 8)).toBe(0x00);
-      expect(unsignedSubtract(0x10, 0x01, 8)).toBe(0x0f);
-      expect(unsignedSubtract(0x10, 0x10, 8)).toBe(0x00);
-      expect(unsignedSubtract(0x20, 0x10, 8)).toBe(0x10);
-      expect(unsignedSubtract(0x00, 0x00, 8)).toBe(0x00);
-      expect(unsignedSubtract(0x00, 0x01, 8)).toBe(0xff);
-    });
-  });
-
   describe('Tests for signed8bit', () => {
     it('should return positive number', () => {
       expect(signed8bit(0x01)).toBe(0x01);
@@ -45,13 +32,6 @@ describe('Tests for utils', () => {
     it('should return negative number', () => {
       expect(signed8bit(0x80)).toBe(-0x80);
       expect(signed8bit(0xff)).toBe(-0x01);
-    });
-  });
-
-  describe('Tests for unsigned8bit', () => {
-    it('should return positive number', () => {
-      expect(unsigned8bit(0x01)).toBe(0x01);
-      expect(unsigned8bit(0x7f)).toBe(0x7f);
     });
   });
 

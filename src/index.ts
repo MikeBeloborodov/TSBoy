@@ -12,13 +12,6 @@ if (!rom) {
   console.error('Please provide a ROM file');
   process.exit(1);
 }
-const delay = findArg('--delay');
-const debug = findArg('--debug');
-
-export const emu = new Emulator(
-  fs.readFileSync(rom),
-  delay ? parseInt(delay) : undefined,
-  debug ? true : false
-);
+export const emu = new Emulator(fs.readFileSync(rom));
 console.log('Starting emulator');
 emu.start();
