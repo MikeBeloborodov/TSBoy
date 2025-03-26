@@ -128,3 +128,12 @@ export function subtractThreeValuesWithCarryInfo(
 
   return { result, halfCarry, carry };
 }
+
+export function hexToString(hex: number): string {
+  let str = hex.toString(16).toUpperCase();
+  if (str.length === 1) {
+    str = '0' + str;
+  }
+
+  return '0x' + str;
+}

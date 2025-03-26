@@ -10,15 +10,16 @@ beforeEach(() => {
   emu = new Emulator(Buffer.alloc(0x200000));
   cpu = emu.cpu;
   cpu.execute = jest.fn(async function () {
-    const nextInstruction = this.getInstruction();
-    const instructionInfo = this.translateInstruction(nextInstruction);
-    if (!instructionInfo) {
+    const instruction = this.getInstruction();
+    if (!instruction) {
       throw new Error(
-        `PC: ${this.pc.toString(16)}\n, Instruction ${nextInstruction.toString(16)} is not implemented yet`
+        `PC: ${this.pc.toString(16)}\n, Instruction ${this.memRead(this.pc).toString(16)} is not implemented yet`
       );
     }
-    this.executeInstruction(instructionInfo);
+
+    const cycles = this.executeInstruction(instruction);
     this.doInterrupts();
+    return cycles;
   });
 });
 
