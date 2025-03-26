@@ -1572,17 +1572,23 @@ export const Instructions: InstructionsMap = {
       return 8;
     },
   },
-  // 0x76: {
-  //   meta: {
-  //     asm: 'HALT',
-  //     size: 1,
-  //     cycles: '4',
-  //   },
-  //   execute: (cpu: CPU): TCycles => {
-  //     cpu.halt = true;
-  //     return 4;
-  //   },
-  // },
+  0x76: {
+    meta: {
+      asm: 'HALT',
+      size: 1,
+      cycles: '4',
+    },
+    execute: (cpu: CPU): TCycles => {
+      cpu.isHalted = true;
+      if (cpu.isPendingInterrupts()) {
+        cpu.isHalted = false;
+        if (!cpu.IME) {
+          cpu.isHaltBug = true;
+        }
+      }
+      return 4;
+    },
+  },
   0x77: {
     meta: {
       asm: 'LD [HL], A',

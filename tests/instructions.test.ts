@@ -9,17 +9,10 @@ let cpu: CPU;
 beforeEach(() => {
   emu = new Emulator(Buffer.alloc(0x200000));
   cpu = emu.cpu;
-  cpu.execute = jest.fn(function () {
-    const instruction = this.getInstruction();
-    if (!instruction) {
-      throw new Error(
-        `PC: ${this.pc.toString(16)}\n, Instruction ${this.memRead(this.pc).toString(16)} is not implemented yet`
-      );
-    }
-
-    const cycles = this.executeInstruction(instruction);
-    this.doInterrupts();
-    return cycles;
+  emu.update = jest.fn(function () {
+    const cycles = this.cpu.execute();
+    this.updateTimers(cycles);
+    this.cpu.doInterrupts();
   });
 });
 
@@ -4222,12 +4215,12 @@ describe('Tests for CPU instructions', () => {
       emu.memory[0xff0f] = 1;
       emu.memory[0x0105] = 0x00;
       emu.memory[0x40] = 0xd9;
-      await cpu.execute();
+      emu.update();
       expect(emu.memory[0xfffc]).toBe(0x06);
       expect(emu.memory[0xfffd]).toBe(0x01);
       expect(emu.memory[0xff0f]).toBe(0);
       expect(cpu.IME).toBe(false);
-      await cpu.execute();
+      emu.update();
       expect(cpu.IME).toBe(true);
     });
 
@@ -4238,12 +4231,12 @@ describe('Tests for CPU instructions', () => {
       emu.memory[0xff0f] = 2;
       emu.memory[0x0105] = 0x00;
       emu.memory[0x48] = 0xd9;
-      await cpu.execute();
+      emu.update();
       expect(emu.memory[0xfffc]).toBe(0x06);
       expect(emu.memory[0xfffd]).toBe(0x01);
       expect(emu.memory[0xff0f]).toBe(0);
       expect(cpu.IME).toBe(false);
-      await cpu.execute();
+      emu.update();
       expect(cpu.IME).toBe(true);
     });
 
@@ -4254,12 +4247,12 @@ describe('Tests for CPU instructions', () => {
       emu.memory[0xff0f] = 4;
       emu.memory[0x0105] = 0x00;
       emu.memory[0x50] = 0xd9;
-      await cpu.execute();
+      emu.update();
       expect(emu.memory[0xfffc]).toBe(0x06);
       expect(emu.memory[0xfffd]).toBe(0x01);
       expect(emu.memory[0xff0f]).toBe(0);
       expect(cpu.IME).toBe(false);
-      await cpu.execute();
+      emu.update();
       expect(cpu.IME).toBe(true);
     });
 
@@ -4270,12 +4263,12 @@ describe('Tests for CPU instructions', () => {
       emu.memory[0xff0f] = 8;
       emu.memory[0x0105] = 0x00;
       emu.memory[0x58] = 0xd9;
-      await cpu.execute();
+      emu.update();
       expect(emu.memory[0xfffc]).toBe(0x06);
       expect(emu.memory[0xfffd]).toBe(0x01);
       expect(emu.memory[0xff0f]).toBe(0);
       expect(cpu.IME).toBe(false);
-      await cpu.execute();
+      emu.update();
       expect(cpu.IME).toBe(true);
     });
 
@@ -4286,12 +4279,12 @@ describe('Tests for CPU instructions', () => {
       emu.memory[0xff0f] = 16;
       emu.memory[0x0105] = 0x00;
       emu.memory[0x60] = 0xd9;
-      await cpu.execute();
+      emu.update();
       expect(emu.memory[0xfffc]).toBe(0x06);
       expect(emu.memory[0xfffd]).toBe(0x01);
       expect(emu.memory[0xff0f]).toBe(0);
       expect(cpu.IME).toBe(false);
-      await cpu.execute();
+      emu.update();
       expect(cpu.IME).toBe(true);
     });
   });
@@ -4358,6 +4351,58 @@ describe('Tests for CPU instructions', () => {
       expect(cpu.registers.a).toBe(0x9a);
       const { Z, H, C, N } = cpu.getFlags();
       expect({ Z, H, C, N }).toStrictEqual({ Z: 0, H: 0, C: 1, N: 1 });
+    });
+  });
+
+  describe('Tests for HALT', () => {
+    it('should test HALT 1 - interrupted immediately', () => {
+      Instructions[0xfb].execute(cpu);
+      emu.memory[0x100] = 0x76;
+      emu.memory[0xffff] = 0x01;
+      emu.memory[0xff0f] = 0x01;
+      emu.update();
+      expect(cpu.isHalted).toBe(false);
+    });
+
+    it('should test HALT 2 - not interrupted', () => {
+      emu.memory[0x100] = 0x76;
+      emu.update();
+      expect(cpu.isHalted).toBe(true);
+    });
+
+    it('should test HALT 3 - turned into haltBug and resolved', () => {
+      emu.memory[0x100] = 0x76;
+      emu.memory[0x101] = 0x00;
+      emu.memory[0xffff] = 0x01;
+      emu.memory[0xff0f] = 0x01;
+      emu.update();
+      expect(cpu.isHalted).toBe(false);
+      expect(cpu.isHaltBug).toBe(true);
+      emu.update();
+      expect(cpu.isHaltBug).toBe(false);
+    });
+
+    it('should test HALT 4 - twice executed during haltBug', () => {
+      emu.memory[0x100] = 0x76;
+      emu.memory[0x101] = 0x04;
+      emu.memory[0x102] = 0x00;
+      emu.memory[0xffff] = 0x01;
+      emu.memory[0xff0f] = 0x01;
+      cpu.registers.b = 0x00;
+      emu.update();
+      expect(cpu.registers.b).toBe(0x00);
+      expect(cpu.isHaltBug).toBe(true);
+      expect(cpu.isHalted).toBe(false);
+      emu.update();
+      expect(cpu.registers.b).toBe(0x01);
+      expect(cpu.pc).toBe(0x101);
+      expect(cpu.isHaltBug).toBe(false);
+      expect(cpu.isHalted).toBe(false);
+      emu.update();
+      expect(cpu.registers.b).toBe(0x02);
+      expect(cpu.pc).toBe(0x102);
+      expect(cpu.isHaltBug).toBe(false);
+      expect(cpu.isHalted).toBe(false);
     });
   });
 });

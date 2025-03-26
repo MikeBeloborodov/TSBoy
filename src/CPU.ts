@@ -20,6 +20,8 @@ export class CPU {
   memWrite: (address: u16, value: u8) => void;
   logger: Logger;
   instsJson: any;
+  isHalted: boolean = false;
+  isHaltBug: boolean = false;
 
   constructor(
     memReadFn: (address: u16) => u8,
@@ -90,15 +92,36 @@ export class CPU {
   }
 
   execute(): number {
+    if (this.isHalted) {
+      if (this.isPendingInterrupts()) {
+        this.isHalted = false;
+        if (!this.IME) {
+          this.isHaltBug = true;
+        }
+      }
+      return 4;
+    }
+
+    if (this.isHaltBug) {
+      this.isHaltBug = false;
+      return this.executeInstruction(Instructions[this.memRead(this.pc)]);
+    }
+
     const instruction = this.getInstruction();
     if (!instruction) {
       throw new Error(
-        `PC: ${this.pc.toString(16)}\n, Instruction ${this.memRead(this.pc).toString(16)} is not implemented yet`
+        `PC: ${(this.pc - 1).toString(16)}\n, Instruction ${this.memRead(this.pc - 1).toString(16)} is not implemented yet`
       );
     }
 
     const cycles = this.executeInstruction(instruction);
     return cycles;
+  }
+
+  isPendingInterrupts(): boolean {
+    const IE = this.memRead(0xffff);
+    const IF = this.memRead(0xff0f);
+    return (IE & IF & 0x1f) !== 0;
   }
 
   doInterrupts(): void {
@@ -110,7 +133,7 @@ export class CPU {
     const IF = this.memRead(0xff0f);
     const pendingInterrupts = IE & IF;
 
-    if (pendingInterrupts) {
+    if (this.isPendingInterrupts()) {
       if (pendingInterrupts & 0x01) {
         // V-Blank
         this.handleInterrupt(0x40);
@@ -195,7 +218,7 @@ export class CPU {
       }
     };
     this.logger.log(
-      `A:${logInfo(this.registers.a)} F:${logInfo(this.registers.f)} B:${logInfo(this.registers.b)} C:${logInfo(this.registers.c)} D:${logInfo(this.registers.d)} E:${logInfo(this.registers.e)} H:${logInfo(this.registers.h)} L:${logInfo(this.registers.l)} SP:${logInfo16(this.sp)} PC:${logInfo16(this.pc)} PCMEM:${logInfo(this.memRead(this.pc))},${logInfo(this.memRead(this.pc + 1))},${logInfo(this.memRead(this.pc + 2))},${logInfo(this.memRead(this.pc + 3))}`
+      `A:${logInfo(this.registers.a)} F:${logInfo(this.registers.f)} B:${logInfo(this.registers.b)} C:${logInfo(this.registers.c)} D:${logInfo(this.registers.d)} E:${logInfo(this.registers.e)} H:${logInfo(this.registers.h)} L:${logInfo(this.registers.l)} SP:${logInfo16(this.sp)} PC:${logInfo16(this.pc - 1)} PCMEM:${logInfo(this.memRead(this.pc - 1))},${logInfo(this.memRead(this.pc))},${logInfo(this.memRead(this.pc + 1))},${logInfo(this.memRead(this.pc + 2))}`
     );
 
     const cycles = instruction.execute(this);

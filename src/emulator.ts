@@ -151,14 +151,14 @@ export class Emulator {
     }
   }
 
-  async update() {
+  update() {
     let cyclesThisUpdate = 0;
 
     while (cyclesThisUpdate < MAXCYCLESPERFRAME) {
       if (this.cpu.pc > 0xffff) {
         throw new Error('Program counter overflow');
       }
-      const cycles = await this.cpu.execute();
+      const cycles = this.cpu.execute();
       cyclesThisUpdate += cycles;
       this.updateTimers(cycles);
       // this.updateGraphics(cycles);
@@ -168,9 +168,9 @@ export class Emulator {
     // this.renderScreen();
   }
 
-  async start() {
+  start() {
     while (true) {
-      await this.update();
+      this.update();
     }
   }
 }
