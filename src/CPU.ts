@@ -202,11 +202,11 @@ export class CPU {
   }
 
   executeInstruction(instruction: Instruction): number {
-    const logInfo = (value: number): string =>
+    const logInfo = (value: number = 0): string =>
       value.toString(16).length === 1
         ? `0${value.toString(16)}`
         : value.toString(16);
-    const logInfo16 = (value: number): string => {
+    const logInfo16 = (value: number = 0): string => {
       if (value.toString(16).length === 1) {
         return `000${value.toString(16)}`;
       } else if (value.toString(16).length == 2) {

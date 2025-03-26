@@ -1,5 +1,5 @@
 import { CPU } from './CPU';
-import { PrefixInstructions, RLC, RR, SRL, RL } from './prefixInstructions';
+import { PrefixInstructions, RLC, RR, RL, RRC } from './prefixInstructions';
 import { CombinedRegister, TCycles, FlagState, InstructionsMap } from './types';
 import {
   isCarrySubtraction,
@@ -235,7 +235,7 @@ export const Instructions: InstructionsMap = {
       cycles: '4',
     },
     execute: (cpu: CPU): TCycles => {
-      const { value, carry } = SRL(cpu.registers.a);
+      const { value, carry } = RRC(cpu.registers.a);
       cpu.registers.a = value;
       cpu.setFlags({
         Z: FlagState.FALSE,
@@ -729,12 +729,10 @@ export const Instructions: InstructionsMap = {
       cycles: '4',
     },
     execute: (cpu: CPU): TCycles => {
-      cpu.registers.a = ~cpu.registers.a;
+      cpu.registers.a = ~cpu.registers.a & 0xff;
       cpu.setFlags({
-        Z: FlagState.FALSE,
         N: FlagState.TRUE,
         H: FlagState.TRUE,
-        C: FlagState.FALSE,
       });
       return 4;
     },
@@ -970,7 +968,6 @@ export const Instructions: InstructionsMap = {
     },
     execute: (cpu: CPU): TCycles => {
       cpu.setFlags({
-        Z: FlagState.FALSE,
         N: FlagState.FALSE,
         H: FlagState.FALSE,
         C: cpu.getFlags().C ? FlagState.FALSE : FlagState.TRUE,
