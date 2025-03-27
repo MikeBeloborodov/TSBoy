@@ -342,7 +342,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, SET(value, 0));
-      cpu.registers.a = SET(cpu.registers.a, 0);
       return 16;
     },
   },
@@ -356,7 +355,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, SET(value, 2));
-      cpu.registers.a = SET(cpu.registers.a, 2);
       return 16;
     },
   },
@@ -370,7 +368,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, SET(value, 4));
-      cpu.registers.a = SET(cpu.registers.a, 4);
       return 16;
     },
   },
@@ -384,7 +381,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, SET(value, 6));
-      cpu.registers.a = SET(cpu.registers.a, 6);
       return 16;
     },
   },
@@ -706,7 +702,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, SET(value, 1));
-      cpu.registers.a = SET(cpu.registers.a, 1);
       return 16;
     },
   },
@@ -720,7 +715,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, SET(value, 3));
-      cpu.registers.a = SET(cpu.registers.a, 3);
       return 16;
     },
   },
@@ -734,7 +728,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, SET(value, 5));
-      cpu.registers.a = SET(cpu.registers.a, 5);
       return 16;
     },
   },
@@ -748,7 +741,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, SET(value, 7));
-      cpu.registers.a = SET(cpu.registers.a, 7);
       return 16;
     },
   },
@@ -1070,7 +1062,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, RES(value, 0));
-      cpu.registers.a = RES(cpu.registers.a, 0);
       return 16;
     },
   },
@@ -1084,7 +1075,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, RES(value, 2));
-      cpu.registers.a = RES(cpu.registers.a, 2);
       return 16;
     },
   },
@@ -1098,7 +1088,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, RES(value, 4));
-      cpu.registers.a = RES(cpu.registers.a, 4);
       return 16;
     },
   },
@@ -1112,7 +1101,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, RES(value, 6));
-      cpu.registers.a = RES(cpu.registers.a, 6);
       return 16;
     },
   },
@@ -1434,7 +1422,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, RES(value, 1));
-      cpu.registers.a = RES(cpu.registers.a, 1);
       return 16;
     },
   },
@@ -1448,7 +1435,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, RES(value, 3));
-      cpu.registers.a = RES(cpu.registers.a, 3);
       return 16;
     },
   },
@@ -1462,7 +1448,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, RES(value, 5));
-      cpu.registers.a = RES(cpu.registers.a, 5);
       return 16;
     },
   },
@@ -1476,7 +1461,6 @@ export const PrefixInstructions: InstructionsMap = {
       const address = cpu.getCombinedRegister(CombinedRegister.HL);
       const value = cpu.memRead(address);
       cpu.memWrite(address, RES(value, 7));
-      cpu.registers.a = RES(cpu.registers.a, 7);
       return 16;
     },
   },
